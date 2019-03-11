@@ -21,11 +21,16 @@ nbproject/private/
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
 # JetBrains IDEs – Gradle and Maven (should be auto-recreated on import)
-.idea/**/modules.xml # should be auto-recreated on import
+.idea/**/modules.xml
 .idea/**/libraries
 gradle.xml
-# *.iml # seems to be better to version as it is not recreated (not in right way) when importing
-/captures
+# seems to be better to version as it is not recreated (not in right way) when importing (i.e. in case of Flutter)
+# *.iml
+# created by Android Studio 3.1
+# ignored as it contains absulute paths
+# see https://stackoverflow.com/questions/49557737/should-i-add-idea-caches-build-file-checksums-ser-to-gitignore
+.idea/**/caches
+captures
 
 # common files
 *.log
