@@ -1,0 +1,4 @@
+{
+	"signal": "SIGTERM",
+	"ext": "java,fxml,css,xml"
+}

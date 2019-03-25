@@ -1,0 +1,25 @@
+{
+  "name": "chess",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Chess implementation in Java",
+  "keywords": [
+    "fel"
+  ],
+  "homepage": "https://gitlab.fel.cvut.cz/B182_B0B36PJV/endlemar#readme",
+  "bugs": {
+    "url": "https://gitlab.fel.cvut.cz/B182_B0B36PJV/endlemar/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.fel.cvut.cz/B182_B0B36PJV/endlemar.git"
+  },
+  "license": "proprietary",
+  "author": {
+    "name": "Martin Endler",
+    "url": "https://github.com/pokusew"
+  },
+  "scripts": {
+    "hot": "./hot.sh"
+  }
+}

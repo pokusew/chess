@@ -17,20 +17,23 @@ nbproject/private/
 
 # JetBrains IDEs
 # see https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/**/usage.statistics.xml
-# JetBrains IDEs – Gradle and Maven (should be auto-recreated on import)
-.idea/**/modules.xml
-.idea/**/libraries
-gradle.xml
-# seems to be better to version as it is not recreated (not in right way) when importing (i.e. in case of Flutter)
-# *.iml
-# created by Android Studio 3.1
-# ignored as it contains absulute paths
-# see https://stackoverflow.com/questions/49557737/should-i-add-idea-caches-build-file-checksums-ser-to-gitignore
-.idea/**/caches
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+**/.idea/usage.statistics.xml
+**/.idea/shelf/
+**/.idea/httpRequests/
+**/.idea/dataSources/
+**/.idea/dataSources.local.xml
 captures
+# Gradle and Maven (should be auto-recreated on import)
+**/.idea/modules.xml
+**/.idea/libraries
+gradle.xml
+# *.iml will be recreated when importing the Maven project
+# in case of Maven, it also contains names of resolved modules,
+# that may be different for every developer (dependeing on OS, ...)
+# but manually excluded dirs config wll be lost on clean import
+*.iml
 
 # common files
 *.log
@@ -38,8 +41,14 @@ captures
 
 ### PROJECT
 
-# Maven build
+# Maven builds (in every module)
 target/
 
 # Generated JavaDoc output folder
 /docs/
+
+# export.sh outputs
+/temp/
+
+# local files
+*.local.*
