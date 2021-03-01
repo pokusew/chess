@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane
+	xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="cz.martinendler.chess.ui.controllers.PageTwoController"
+	AnchorPane.bottomAnchor="0"
+	AnchorPane.leftAnchor="0"
+	AnchorPane.rightAnchor="0"
+	AnchorPane.topAnchor="0"
+>
+	<children>
+		<VBox
+			spacing="20"
+			AnchorPane.bottomAnchor="0"
+			AnchorPane.leftAnchor="0"
+			AnchorPane.rightAnchor="0"
+			AnchorPane.topAnchor="0"
+		>
+			<children>
+				<HBox styleClass="top-bar" spacing="20">
+					<children>
+						<Label styleClass="heading" HBox.hgrow="ALWAYS" maxWidth="Infinity">Tags</Label>
+						<Button fx:id="btnRemove" styleClass="btn-action" text="Remove selected"/>
+						<Button fx:id="btnEdit" styleClass="btn-action" text="Edit selected"/>
+						<Button fx:id="btnClearSelection" styleClass="btn-action" text="Clear selection"/>
+						<Button fx:id="btnRefresh" styleClass="btn-action" text="Refresh"/>
+						<Button fx:id="btnAdd" styleClass="btn-action" text="Add new"/>
+					</children>
+				</HBox>
+				<TableView
+					fx:id="tableView"
+					AnchorPane.bottomAnchor="0"
+					AnchorPane.leftAnchor="0"
+					AnchorPane.rightAnchor="0"
+					AnchorPane.topAnchor="0"
+					VBox.vgrow="ALWAYS"
+				>
+					<columns>
+						<TableColumn fx:id="idCol" prefWidth="45.0" text="ID"/>
+						<TableColumn fx:id="nameCol" prefWidth="250.0" text="Name"/>
+						<TableColumn fx:id="descriptionCol" prefWidth="250.0" text="Description"/>
+						<TableColumn fx:id="colorCol" prefWidth="100.0" text="Color"/>
+					</columns>
+				</TableView>
+			</children>
+			<padding>
+				<Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+			</padding>
+		</VBox>
+	</children>
+</AnchorPane>
