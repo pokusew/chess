@@ -39,8 +39,10 @@ public class Board extends Region {
 			int row = i / 8;
 			int column = i % 8;
 
-			child.relocate(row * squareSize, column * squareSize);
-			child.resize(squareSize, squareSize);
+			child.resizeRelocate(
+				row * squareSize, column * squareSize,
+				squareSize, squareSize
+			);
 			// log.info("i = " + i);
 		}
 	}

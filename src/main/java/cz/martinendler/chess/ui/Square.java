@@ -2,6 +2,9 @@ package cz.martinendler.chess.ui;
 
 import cz.martinendler.chess.App;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.SnapshotResult;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -30,7 +33,10 @@ public class Square extends StackPane {
 		log.info("url = " + url);
 		Image image = new Image(url);
 
-		// getChildren().add(new PieceImage());
+		PieceImage pi = new PieceImage();
+
+		getChildren().add(pi);
+
 
 		setBackground(new Background(new BackgroundFill(white ? Color.WHITESMOKE : Color.BLACK, null, null)));
 
@@ -39,74 +45,12 @@ public class Square extends StackPane {
 				new BackgroundFill(white ? Color.WHITESMOKE : Color.BLACK, null, null)
 			),
 			List.of(
-				new BackgroundImage(
-					image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
-					null, new BackgroundSize(-1, -1, true, true, true, true)
-				)
+				// new BackgroundImage(
+				// 	image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+				// 	null, new BackgroundSize(-1, -1, true, true, true, true)
+				// )
 			)
 		));
-
-		setOnDragDetected((MouseEvent event) -> {
-
-			Dragboard db = startDragAndDrop(TransferMode.MOVE);
-
-			db.setDragView(
-				new Image(url, getWidth(), getHeight(), false, true, false),
-				// event coordinate system:
-				//
-				//    (0,0) -----> + event.getX()
-				//    |
-				//    |
-				//    V
-				//    +
-				//    event.getY()
-				//
-				// offset coordinate system:
-				//
-				//                       offsetY--
-				//    ++offsetX (drag view image center = (0,0)) offsetX--
-				//                       offsetY++
-				//
-				(getWidth() / 2) - event.getX(), -(getHeight() / 2) + event.getY()
-			);
-
-			log.info(MessageFormat.format(
-				"setOnDragDetected {0} {1} {2} {3}",
-				event.getX(), event.getY(),
-				getWidth(), getHeight()
-			));
-
-			ClipboardContent content = new ClipboardContent();
-			content.putString("source text");
-			db.setContent(content);
-
-		});
-
-		setOnMouseDragged((MouseEvent event) -> {
-			// event.setDragDetect(true);
-		});
-
-		setOnDragOver((DragEvent event) -> {
-
-			if (event.getGestureSource() != this && event.getDragboard().hasString()) {
-				event.acceptTransferModes(TransferMode.MOVE);
-			}
-
-			event.consume();
-
-		});
-
-		setOnDragDropped((DragEvent event) -> {
-			Dragboard db = event.getDragboard();
-			if (db.hasString()) {
-				log.info("Dropped: " + db.getString());
-				event.setDropCompleted(true);
-			} else {
-				event.setDropCompleted(false);
-			}
-			event.consume();
-		});
-
 
 	}
 
