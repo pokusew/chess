@@ -1,9 +1,12 @@
 package cz.martinendler.chess;
 
+import cz.martinendler.chess.ui.controllers.AppAwareController;
 import cz.martinendler.chess.ui.controllers.RootController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.SplitPane;
@@ -73,11 +76,11 @@ public class App extends Application {
 		log.info("start");
 
 		primaryStage = stage;
-		primaryStage.setTitle("Cookbook");
+		primaryStage.setTitle("Chess");
 
 		// show the main window in the second display for easier developing
-		// primaryStage.setX(-1500);
-		// primaryStage.setY(100);
+		primaryStage.setX(-1500);
+		primaryStage.setY(100);
 
 		// Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
 		// stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
@@ -89,7 +92,7 @@ public class App extends Application {
 
 	private void initRootLayout() {
 
-		Pair<SplitPane, RootController> root = loadFXML("view/root");
+		Pair<Parent, AppAwareController> root = loadFXML("view/one");
 
 		Scene scene = new Scene(root.getKey());
 
@@ -98,6 +101,9 @@ public class App extends Application {
 
 		primaryStage.setScene(scene);
 		primaryStage.show();
+		// initially stage's width and height are set to a size needed by the controls on its scene
+		primaryStage.setMinWidth(primaryStage.getWidth());
+		primaryStage.setMinHeight(primaryStage.getHeight());
 
 		// TilePane tile = new TilePane();
 		// tile.setHgap(8);

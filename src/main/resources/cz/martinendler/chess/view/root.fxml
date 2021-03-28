@@ -11,6 +11,7 @@
 	prefWidth="1200.0"
 	prefHeight="700.0"
 	dividerPositions="0.1"
+	orientation="VERTICAL"
 >
 	<items>
 		<VBox spacing="20.0">

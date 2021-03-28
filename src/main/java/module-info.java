@@ -7,6 +7,7 @@ module chess {
 
 	// opens cz.martinendler.chess to javafx.fxml;
 	opens cz.martinendler.chess;
+	opens cz.martinendler.chess.ui;
 	opens cz.martinendler.chess.ui.controllers;
 
 	exports cz.martinendler.chess;

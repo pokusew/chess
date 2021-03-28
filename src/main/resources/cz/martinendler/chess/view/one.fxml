@@ -1,56 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import cz.martinendler.chess.ui.Board?>
 
-<AnchorPane
+<Board
 	xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="cz.martinendler.chess.ui.controllers.PageOneController"
-	AnchorPane.bottomAnchor="0"
-	AnchorPane.leftAnchor="0"
-	AnchorPane.rightAnchor="0"
-	AnchorPane.topAnchor="0"
+	minWidth="512"
+	minHeight="512"
+	fx:id="board"
 >
-	<children>
-		<VBox
-			spacing="20"
-			AnchorPane.bottomAnchor="0"
-			AnchorPane.leftAnchor="0"
-			AnchorPane.rightAnchor="0"
-			AnchorPane.topAnchor="0"
-		>
-			<children>
-				<HBox styleClass="top-bar" spacing="20">
-					<children>
-						<Label styleClass="heading" HBox.hgrow="ALWAYS" maxWidth="Infinity">Recipes</Label>
-						<Button fx:id="btnRemove" styleClass="btn-action" text="Remove selected"/>
-						<Button fx:id="btnEdit" styleClass="btn-action" text="Edit selected"/>
-						<Button fx:id="btnClearSelection" styleClass="btn-action" text="Clear selection"/>
-						<Button fx:id="btnRefresh" styleClass="btn-action" text="Refresh"/>
-						<Button fx:id="btnAdd" styleClass="btn-action" text="Add new"/>
-					</children>
-				</HBox>
-				<TableView
-					fx:id="tableView"
-					AnchorPane.bottomAnchor="0"
-					AnchorPane.leftAnchor="0"
-					AnchorPane.rightAnchor="0"
-					AnchorPane.topAnchor="0"
-					VBox.vgrow="ALWAYS"
-				>
-					<columns>
-						<TableColumn fx:id="idCol" prefWidth="45.0" text="ID"/>
-						<TableColumn fx:id="nameCol" prefWidth="250.0" text="Name"/>
-						<TableColumn fx:id="prepTimeCol" prefWidth="120.0" text="Preparation time"/>
-						<TableColumn fx:id="numServingsCol" prefWidth="100.0" text="Number of servings"/>
-						<TableColumn fx:id="tagsCol" prefWidth="500.0" text="Tags"/>
-					</columns>
-				</TableView>
-			</children>
-			<padding>
-				<Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-			</padding>
-		</VBox>
-	</children>
-</AnchorPane>
+
+</Board>
