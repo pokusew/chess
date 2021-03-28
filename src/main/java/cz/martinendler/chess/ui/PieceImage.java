@@ -18,10 +18,13 @@ public class PieceImage extends Rectangle {
 
 	public static final Logger log = LoggerFactory.getLogger(PieceImage.class);
 
-	double orgSceneX = -1;
-	double orgSceneY = -1;
-
 	private final int id;
+
+	private boolean dragging = false;
+	private double prevSceneX = 0;
+	private double prevSceneY = 0;
+	private double dragDetectedOffsetX = 0;
+	private double dragDetectedOffsetY = 0;
 
 	public PieceImage(int id) {
 		super();
@@ -51,22 +54,33 @@ public class PieceImage extends Rectangle {
 			// 	orgSceneY = event.getSceneY();
 			// }
 			//
-			// double offsetX = event.getSceneX() - orgSceneX;
-			// double offsetY = event.getSceneY() - orgSceneY;
-			//
-			// // log.info(MessageFormat.format("offsetX = {0}, offsetY = {1}", offsetX, offsetY));
-			//
-			// setTranslateX(getTranslateX() + offsetX);
-			// setTranslateY(getTranslateY() + offsetY);
-			//
-			// orgSceneX = event.getSceneX();
-			// orgSceneY = event.getSceneY();
+
+			if (dragging) {
+
+				double offsetX = event.getSceneX() - prevSceneX;
+				double offsetY = event.getSceneY() - prevSceneY;
+
+				// log.info(MessageFormat.format("offsetX = {0}, offsetY = {1}", offsetX, offsetY));
+
+				setTranslateX(getTranslateX() + offsetX);
+				setTranslateY(getTranslateY() + offsetY);
+
+				prevSceneX = event.getSceneX();
+				prevSceneY = event.getSceneY();
+
+			}
 
 		});
 
 		setOnDragDetected((MouseEvent event) -> {
 			log.info("ID={} setOnDragDetected", id);
 			startFullDrag();
+			prevSceneX = event.getSceneX();
+			prevSceneY = event.getSceneY();
+			dragDetectedOffsetX = event.getX();
+			dragDetectedOffsetY = event.getY();
+			dragging = true;
+			getParent().setViewOrder(-1);
 		});
 
 		setOnMouseDragOver((MouseDragEvent event) -> {
@@ -75,6 +89,10 @@ public class PieceImage extends Rectangle {
 
 		setOnMouseDragReleased((MouseDragEvent event) -> {
 			log.info("ID={} setOnMouseDragReleased", id);
+			dragging = false;
+			getParent().setViewOrder(0);
+			setTranslateX(0);
+			setTranslateY(0);
 		});
 
 		setOnMouseDragEntered((MouseDragEvent event) -> {
@@ -87,12 +105,17 @@ public class PieceImage extends Rectangle {
 
 		setOnMousePressed((MouseEvent event) -> {
 			log.info("ID={} onMousePressed", id);
-			//setMouseTransparent(true);
+			// setMouseTransparent(true);
 		});
 
 		setOnMouseReleased((MouseEvent event) -> {
 			log.info("ID={} onMouseReleased", id);
-			//setMouseTransparent(false);
+			// setMouseTransparent(false);
+			if (dragging) {
+				getParent().setViewOrder(0);
+				setTranslateX(0);
+				setTranslateY(0);
+			}
 		});
 
 	}
