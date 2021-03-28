@@ -1,6 +1,7 @@
 package cz.martinendler.chess.ui;
 
 import cz.martinendler.chess.App;
+import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
@@ -84,36 +85,6 @@ public class Piece extends Rectangle {
 
 		});
 
-		setOnMouseDragOver((MouseDragEvent event) -> {
-			// log.info("ID={} onMouseDragOver", id);
-		});
-
-		setOnMouseDragReleased((MouseDragEvent event) -> {
-
-			log.info("ID={} setOnMouseDragReleased", id);
-
-			if (dragging) {
-				dragging = false;
-				getParent().setViewOrder(0);
-				setTranslateX(0);
-				setTranslateY(0);
-			}
-
-			if (event.getGestureSource() != this && event.getGestureSource() instanceof Piece) {
-				Piece src = (Piece) event.getGestureSource();
-				log.info("ID={} setOnMouseDragReleased {}-->{}", id, src.id, id);
-			}
-
-		});
-
-		setOnMouseDragEntered((MouseDragEvent event) -> {
-			log.info("ID={} onMouseDragEntered", id);
-		});
-
-		setOnMouseDragExited((MouseDragEvent event) -> {
-			log.info("ID={} onMouseDragExited", id);
-		});
-
 		setOnMousePressed((MouseEvent event) -> {
 
 			log.info("ID={} onMousePressed", id);
@@ -127,17 +98,36 @@ public class Piece extends Rectangle {
 
 			log.info("ID={} onMouseReleased", id);
 
-			setMouseTransparent(false);
-			getParent().setMouseTransparent(false);
-
-			if (dragging) {
-				dragging = false;
-				getParent().setViewOrder(0);
-				setTranslateX(0);
-				setTranslateY(0);
-			}
+			stopDragging();
 
 		});
+
+	}
+
+	// TODO: better
+	public void stopDragging() {
+
+		setMouseTransparent(false);
+		getParent().setMouseTransparent(false);
+
+		if (dragging) {
+			dragging = false;
+			getParent().setViewOrder(0);
+			setTranslateX(0);
+			setTranslateY(0);
+		}
+
+	}
+
+	public Square getCurrentSquare() {
+
+		Parent parent = getParent();
+
+		if (parent instanceof Square) {
+			return (Square) parent;
+		}
+
+		return null;
 
 	}
 

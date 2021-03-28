@@ -1,6 +1,7 @@
 package cz.martinendler.chess.ui;
 
 import cz.martinendler.chess.engine.PlayerType;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -22,11 +23,17 @@ public class Square extends StackPane {
 		new BackgroundFill(Color.BLACK, null, null)
 	);
 
+	private final static Background COLOR_TARGET = new Background(
+		new BackgroundFill(Color.LIGHTYELLOW, null, null)
+	);
+
 	public final int row;
 	public final int column;
 	public final PlayerType color;
 
-	protected Piece piece;
+	private final Background normalBg;
+
+	// protected Piece piece;
 
 	public Square(int row, int column, PlayerType color) {
 		super();
@@ -39,38 +46,68 @@ public class Square extends StackPane {
 		this.column = column;
 		this.color = color;
 
-		if (this.color == PlayerType.WHITE) {
-			setBackground(COLOR_WHITE);
-		} else {
-			setBackground(COLOR_BLACK);
-		}
+		normalBg = color == PlayerType.WHITE ? COLOR_WHITE : COLOR_BLACK;
+
+		setBackground(normalBg);
 
 		setOnMouseClicked((MouseEvent event) -> {
 			log.info("r={} c={} clicked", row, column);
 		});
 
+		setOnMouseDragEntered((MouseDragEvent event) -> {
+			log.info("r={} c={} onMouseDragEntered", row, column);
+			setBackground(COLOR_TARGET);
+		});
+
+		setOnMouseDragExited((MouseDragEvent event) -> {
+			log.info("r={} c={} onMouseDragExited", row, column);
+			setBackground(normalBg);
+		});
+
+		setOnMouseDragReleased((MouseDragEvent event) -> {
+
+			log.info("r={} c={} setOnMouseDragReleased", row, column);
+
+			if (event.getGestureSource() instanceof Piece) {
+				Piece src = (Piece) event.getGestureSource();
+				// TODO: rewrite
+				if (getChildren().contains(src)) {
+					return;
+				}
+				// if (src == piece) {
+				// 	return;
+				// }
+				log.info("r={} c={} setOnMouseDragReleased {}-->", row, column, src.id);
+				src.stopDragging();
+				// srcSquare = src.getCurrentSquare()
+				// setPiece(src);
+				getChildren().setAll(src);
+			}
+
+		});
+
 	}
 
-	public boolean hasPiece() {
-		return piece != null;
-	}
-
-	public Piece getPiece() {
-		return piece;
-	}
+	// public boolean hasPiece() {
+	// 	return piece != null;
+	// }
+	//
+	// public Piece getPiece() {
+	// 	return piece;
+	// }
 
 	// TODO: try setPiece(null)
-	public void setPiece(Piece newPiece) {
-
-		if (hasPiece()) {
-			// TODO: un-connect
-			// piece.
-		}
-
-		piece = newPiece;
-		getChildren().setAll(piece);
-
-	}
+	// public void setPiece(Piece newPiece) {
+	//
+	// 	if (hasPiece()) {
+	// 		// TODO: un-connect
+	// 		// piece.
+	// 	}
+	//
+	// 	piece = newPiece;
+	// 	getChildren().setAll(piece);
+	//
+	// }
 
 	// @Override
 	// public boolean isResizable() {

@@ -177,4 +177,9 @@ public class Board extends Region {
 
 	}
 
+	public Square getSquareAt(int r, int c) {
+		// TODO: assert
+		return squares[r][c];
+	}
+
 }
