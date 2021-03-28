@@ -18,97 +18,84 @@ public class PieceImage extends Rectangle {
 
 	public static final Logger log = LoggerFactory.getLogger(PieceImage.class);
 
-	public PieceImage() {
+	double orgSceneX = -1;
+	double orgSceneY = -1;
+
+	private final int id;
+
+	public PieceImage(int id) {
 		super();
+		this.id = id;
 		setWidth(40);
 		setHeight(40);
 
 		String url = App.class.getResource("images/white_knight.png").toString();
-		log.info("url = " + url);
+		log.info("ID={} url = " + url);
 		Image image = new Image(url);
-
 
 		setFill(new ImagePattern(image));
 
-		setOnDragDetected((MouseEvent event) -> {
-
-			Dragboard db = startDragAndDrop(TransferMode.MOVE);
-
-			WritableImage im = new WritableImage((int) getWidth(), (int) getHeight());
-			SnapshotParameters sp = new SnapshotParameters();
-			sp.setFill(Color.TRANSPARENT);
-			snapshot(sp, im);
-
-
-			db.setDragView(
-				// TODO: When Image is used (even when smooth is set to true)
-				//       image is visibly coarse (toothy edges, rough edges).
-				//       BUT when snapshot is used, it seems to be okay.
-				//       tested on macOS 10.14.6:
-				//         java.version = 15.0.2, javafx.version = 15.0.1)
-				//         openjdk 15.0.2 2021-01-19
-				//         OpenJDK Runtime Environment AdoptOpenJDK (build 15.0.2+7)
-				//         OpenJDK 64-Bit Server VM AdoptOpenJDK (build 15.0.2+7, mixed mode, sharing)
-				im,
-				// new Image(url, getWidth(), getHeight(), false, true, false),
-				// event coordinate system:
-				//
-				//    (0,0) -----> + event.getX()
-				//    |
-				//    |
-				//    V
-				//    +
-				//    event.getY()
-				//
-				// offset coordinate system:
-				//
-				//                       offsetY--
-				//    ++offsetX (drag view image center = (0,0)) offsetX--
-				//                       offsetY++
-				//
-				(getWidth() / 2) - event.getX(), -(getHeight() / 2) + event.getY()
-			);
-
-			log.info(MessageFormat.format(
-				"setOnDragDetected {0} {1} {2} {3}",
-				event.getX(), event.getY(),
-				getWidth(), getHeight()
-			));
-
-			ClipboardContent content = new ClipboardContent();
-			content.putString("source text");
-			db.setContent(content);
-
-		});
+		// https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/input/MouseEvent.html
+		// https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/input/MouseDragEvent.html
 
 		setOnMouseDragged((MouseEvent event) -> {
+
+			// log.info("ID={} onMouseDragged", id);
+
 			// event.setDragDetect(true);
+
+			// setViewOrder(-1.0);
+			//
+			// if (orgSceneX == -1) {
+			// 	orgSceneX = event.getSceneX();
+			// 	orgSceneY = event.getSceneY();
+			// }
+			//
+			// double offsetX = event.getSceneX() - orgSceneX;
+			// double offsetY = event.getSceneY() - orgSceneY;
+			//
+			// // log.info(MessageFormat.format("offsetX = {0}, offsetY = {1}", offsetX, offsetY));
+			//
+			// setTranslateX(getTranslateX() + offsetX);
+			// setTranslateY(getTranslateY() + offsetY);
+			//
+			// orgSceneX = event.getSceneX();
+			// orgSceneY = event.getSceneY();
+
 		});
 
-		setOnDragOver((DragEvent event) -> {
-
-			if (event.getGestureSource() != this && event.getDragboard().hasString()) {
-				event.acceptTransferModes(TransferMode.MOVE);
-			}
-
-			event.consume();
-
+		setOnDragDetected((MouseEvent event) -> {
+			log.info("ID={} setOnDragDetected", id);
+			startFullDrag();
 		});
 
-		setOnDragDropped((DragEvent event) -> {
-			Dragboard db = event.getDragboard();
-			if (db.hasString()) {
-				log.info("Dropped: " + db.getString());
-				event.setDropCompleted(true);
-			} else {
-				event.setDropCompleted(false);
-			}
-			event.consume();
+		setOnMouseDragOver((MouseDragEvent event) -> {
+			// log.info("ID={} onMouseDragOver", id);
 		});
 
+		setOnMouseDragReleased((MouseDragEvent event) -> {
+			log.info("ID={} setOnMouseDragReleased", id);
+		});
+
+		setOnMouseDragEntered((MouseDragEvent event) -> {
+			log.info("ID={} onMouseDragEntered", id);
+		});
+
+		setOnMouseDragExited((MouseDragEvent event) -> {
+			log.info("ID={} onMouseDragExited", id);
+		});
+
+		setOnMousePressed((MouseEvent event) -> {
+			log.info("ID={} onMousePressed", id);
+			//setMouseTransparent(true);
+		});
+
+		setOnMouseReleased((MouseEvent event) -> {
+			log.info("ID={} onMouseReleased", id);
+			//setMouseTransparent(false);
+		});
 
 	}
-
 
 
 	@Override
@@ -138,7 +125,7 @@ public class PieceImage extends Rectangle {
 
 	@Override
 	public void resize(double width, double height) {
-		log.info(MessageFormat.format("width = {0}, height = {1}", width, height));
+		// log.info(MessageFormat.format("width = {0}, height = {1}", width, height));
 		setWidth(width);
 		setHeight(height);
 	}

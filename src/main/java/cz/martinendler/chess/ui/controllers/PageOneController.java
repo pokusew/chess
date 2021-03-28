@@ -57,7 +57,7 @@ public class PageOneController extends AppAwareController implements Initializab
 			white = !white;
 			for (int j = 0; j < 8; j++) {
 				white = !white;
-				board.getChildren().add(new Square(white));
+				board.getChildren().add(new Square(white, i * 8 + j));
 				// board.(new Square(), i, j);
 			}
 		}

@@ -25,7 +25,7 @@ public class Square extends StackPane {
 
 	public static final Logger log = LoggerFactory.getLogger(Square.class);
 
-	public Square(boolean white) {
+	public Square(boolean white, int id) {
 		setWidth(40);
 		setHeight(40);
 
@@ -33,7 +33,7 @@ public class Square extends StackPane {
 		log.info("url = " + url);
 		Image image = new Image(url);
 
-		PieceImage pi = new PieceImage();
+		PieceImage pi = new PieceImage(id);
 
 		getChildren().add(pi);
 
@@ -51,6 +51,8 @@ public class Square extends StackPane {
 				// )
 			)
 		));
+
+
 
 	}
 

@@ -3,6 +3,7 @@ package cz.martinendler.chess.ui;
 import cz.martinendler.chess.ui.controllers.PageOneController;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
@@ -14,6 +15,8 @@ import java.util.List;
 public class Board extends Region {
 
 	private static final Logger log = LoggerFactory.getLogger(Board.class);
+
+	private final int id = -1;
 
 	public Board() {
 

@@ -13,6 +13,17 @@ Game
 			Color WHITE / BLACK
 
 
+
+Square
+
+Piece
+
+File
+
+Rank
+
+https://stackoverflow.com/questions/12630296/resizing-images-to-fit-the-parent-node
+
 https://stackoverflow.com/questions/13455188/javafx-imageview-resize-in-stackpane
 
 https://stackoverflow.com/questions/2988196/z-order-in-javafx
