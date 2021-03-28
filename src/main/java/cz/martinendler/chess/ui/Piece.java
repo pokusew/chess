@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class PieceImage extends Rectangle {
+public class Piece extends Rectangle {
 
-	public static final Logger log = LoggerFactory.getLogger(PieceImage.class);
+	public static final Logger log = LoggerFactory.getLogger(Piece.class);
 
 	public final int id;
 
@@ -20,7 +20,7 @@ public class PieceImage extends Rectangle {
 	private double prevSceneX = 0;
 	private double prevSceneY = 0;
 
-	public PieceImage(int id) {
+	public Piece(int id) {
 		super();
 		this.id = id;
 		setWidth(40);
@@ -99,8 +99,8 @@ public class PieceImage extends Rectangle {
 				setTranslateY(0);
 			}
 
-			if (event.getGestureSource() != this && event.getGestureSource() instanceof PieceImage) {
-				PieceImage src = (PieceImage) event.getGestureSource();
+			if (event.getGestureSource() != this && event.getGestureSource() instanceof Piece) {
+				Piece src = (Piece) event.getGestureSource();
 				log.info("ID={} setOnMouseDragReleased {}-->{}", id, src.id, id);
 			}
 

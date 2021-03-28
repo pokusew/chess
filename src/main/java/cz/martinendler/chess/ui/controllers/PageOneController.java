@@ -49,18 +49,18 @@ public class PageOneController extends AppAwareController implements Initializab
 		// board.setPrefRows(8);
 		// board.setPrefColumns(8);
 
-		VBox box = new VBox();
-
-		boolean white = true;
-
-		for (int i = 0; i < 8; i++) {
-			white = !white;
-			for (int j = 0; j < 8; j++) {
-				white = !white;
-				board.getChildren().add(new Square(white, i * 8 + j));
-				// board.(new Square(), i, j);
-			}
-		}
+		// VBox box = new VBox();
+		//
+		// boolean white = true;
+		//
+		// for (int i = 0; i < 8; i++) {
+		// 	white = !white;
+		// 	for (int j = 0; j < 8; j++) {
+		// 		white = !white;
+		// 		board.getChildren().add(new Square(white, i * 8 + j));
+		// 		// board.(new Square(), i, j);
+		// 	}
+		// }
 
 	}
 

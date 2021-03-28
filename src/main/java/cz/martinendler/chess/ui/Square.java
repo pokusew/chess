@@ -1,58 +1,74 @@
 package cz.martinendler.chess.ui;
 
-import cz.martinendler.chess.App;
-import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.SnapshotResult;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
+import cz.martinendler.chess.engine.PlayerType;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class Square extends StackPane {
 
 	public static final Logger log = LoggerFactory.getLogger(Square.class);
 
-	public Square(boolean white, int id) {
+	private final static Background COLOR_WHITE = new Background(
+		new BackgroundFill(Color.WHITESMOKE, null, null)
+	);
+
+	private final static Background COLOR_BLACK = new Background(
+		new BackgroundFill(Color.BLACK, null, null)
+	);
+
+	public final int row;
+	public final int column;
+	public final PlayerType color;
+
+	protected Piece piece;
+
+	public Square(int row, int column, PlayerType color) {
+		super();
+
+		// TODO: better approach
 		setWidth(40);
 		setHeight(40);
 
-		String url = App.class.getResource("images/white_knight.png").toString();
-		log.info("url = " + url);
-		Image image = new Image(url);
+		this.row = row;
+		this.column = column;
+		this.color = color;
 
-		PieceImage pi = new PieceImage(id);
+		if (this.color == PlayerType.WHITE) {
+			setBackground(COLOR_WHITE);
+		} else {
+			setBackground(COLOR_BLACK);
+		}
 
-		getChildren().add(pi);
+		setOnMouseClicked((MouseEvent event) -> {
+			log.info("r={} c={} clicked", row, column);
+		});
 
+	}
 
-		setBackground(new Background(new BackgroundFill(white ? Color.WHITESMOKE : Color.BLACK, null, null)));
+	public boolean hasPiece() {
+		return piece != null;
+	}
 
-		setBackground(new Background(
-			List.of(
-				new BackgroundFill(white ? Color.WHITESMOKE : Color.BLACK, null, null)
-			),
-			List.of(
-				// new BackgroundImage(
-				// 	image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
-				// 	null, new BackgroundSize(-1, -1, true, true, true, true)
-				// )
-			)
-		));
+	public Piece getPiece() {
+		return piece;
+	}
 
+	// TODO: try setPiece(null)
+	public void setPiece(Piece newPiece) {
 
+		if (hasPiece()) {
+			// TODO: un-connect
+			// piece.
+		}
+
+		piece = newPiece;
+		getChildren().setAll(piece);
 
 	}
 

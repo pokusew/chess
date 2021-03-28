@@ -6,8 +6,8 @@
 <Board
 	xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="cz.martinendler.chess.ui.controllers.PageOneController"
-	minWidth="512"
-	minHeight="512"
+	minWidth="560"
+	minHeight="560"
 	fx:id="board"
 >
 
