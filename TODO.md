@@ -12,3 +12,9 @@
     * https://www.baeldung.com/junit-5
     * https://junit.org/junit5/
     * https://junit.org/junit5/docs/current/user-guide/
+
+* sounds
+    * add sound effects for:
+        * chess piece moved
+        * chess piece captured
+        * invalid move attempted

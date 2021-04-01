@@ -31,18 +31,22 @@ java -jar target/chess-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 ## Goal 🎯
 
-**Main goal:** Create an **fully functional and playable** implementation of the [**Chess** board game](https://en.wikipedia.org/wiki/Chess) in **Java**.
+**Main goal:** Create a **fully functional and playable**
+implementation of the [**Chess** board game](https://en.wikipedia.org/wiki/Chess) in **Java**.
 
 
 ### Features ✨
 
 * complete and correct implementation of all Chess rules
+    (see Wikipedia's [Rules of chess](https://en.wikipedia.org/wiki/Rules_of_chess)
+    or/and [FIDE Laws of Chess taking effect from 1 January 2018](https://handbook.fide.com/chapter/E012018))
 * platform independent desktop application (support for macOS, Linux, Windows)
 * GUI
 * game modes
 	* offline, local, two-player game 
 		* human vs human
 		* preparation for human vs computer
+		    * idea: implement [UCI (Universal Chess Interface)](https://www.shredderchess.com/chess-features/uci-universal-chess-interface.html)
 	* online, network, two-player game
 * saving and loading of the game state
 * possibility of manually placing the chess pieces before starting the game (game editor)
