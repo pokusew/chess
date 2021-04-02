@@ -1,6 +1,43 @@
-# Chess rules and notes
+# Chess Game Notes
+
+My notes related to the implementation of chess game.
+Used as brainstorming place during development.
+Also, it contains useful links to chess related tools and standards. 
 
 
+## Brainstorming
+
+```
+Preferences
+	Animation
+	valid moves
+	mark last move
+
+	Highlight Last Move
+	Play Sounds
+	Show Legal Moves
+
+	Show legal moves true/false
+	Play Sounds true/false
+
+File
+	New Game
+	Open Game
+	Save Game
+
+Edit
+	Undo Move
+	Redo Move
+
+NewGameDialog
+	against player
+	against computer
+	network game
+
+	use chess clock option
+```
+
+```
 isCheck
 isCheckmate
 isStalemate
@@ -9,88 +46,37 @@ Piece
 Square
 Square
 
-
 piece.getSquare().getGame()
 
 piece.getSquare().getAdjacentTopLeft()
 
-
 Position
-
 
 game = new Game()
 
-
 move([0,0], [0,4]) --> true/false
-
-
-
 
 board
 	piece
-
 
 Game
 	Board board
 		Square square
 			Piece piece
 
-
-
 move()
-
 
 Piece
 
-
 PieceLogic
 
-
 IPiece
-
 
 Game
 	config
 	moves
 	Board squares
-
-
-## Plan
-
-
-	Preferences
-		Animation
-		valid moves
-		mark last move
-
-		Highlight Last Move
-		Play Sounds
-		Show Legal Moves
-
-		Show legal moves true/false
-		Play Sounds true/false
-
-	File
-		New Game
-		Open Game
-		Save Game
-
-	Edit
-		Undo Move
-		Redo Move
-
-	NewGameDialog
-		against player
-		against computer
-		network game
-
-		time
-
-	Technical Manual
-
-	User Manual
-		what the app can do
-		how to control it
+```
 
 
 ## Rules
@@ -120,7 +106,7 @@ Game
 	* King
 * Check
 * Checkmate
-* Ctalemate
+* Stalemate
 
 
 ## UCI (Universal Chess Interface)

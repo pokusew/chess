@@ -1,10 +1,26 @@
 # Useful info
 
+On this page, I gather various useful information and links related to Java GUI apps development.
+
 
 ## Java
 
+
+**General:**
 * [Java Function interface on SO](https://stackoverflow.com/a/40153253)
 * [How to reference a method in javadoc?](https://stackoverflow.com/questions/5915992/how-to-reference-a-method-in-javadoc)
+
+
+**Logging:**
+* https://stackify.com/slf4j-java/
+* https://www.baeldung.com/slf4j-with-log4j2-logback
+* https://stackify.com/slf4j-java/
+
+
+**Testing:**
+* https://www.baeldung.com/junit-5
+* https://junit.org/junit5/
+* https://junit.org/junit5/docs/current/user-guide/
 * https://howtodoinjava.com/junit5/junit-5-vs-junit-4/
 
 

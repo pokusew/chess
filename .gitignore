@@ -45,7 +45,7 @@ gradle.xml
 target/
 
 # Generated JavaDoc output folder
-/docs/
+/docs/javadoc/
 
 # export.sh outputs
 /temp/

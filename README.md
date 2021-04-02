@@ -1,32 +1,29 @@
 # Chess
 
+A [**Chess** board game](https://en.wikipedia.org/wiki/Chess) implemented as a Java desktop application  
 A term project in [CTU FEL B0B36PJV course](https://cw.fel.cvut.cz/wiki/courses/b0b36pjv/start).
 
 
-## Development ⚙️
+## Content
 
-**Requirements:**
-* **Apache Maven 3.6+**
-* **Java 11+** (tested with Java 15, note: Java 8 will NOT work)
-* Make sure `JAVA_HOME` is properly set to a JDK 15 installation directory. 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-The project can be **run** using Maven CLI as follows:
-```bash
-mvn clean && mvn compile && mvn javafx:run
-```
+- [Documentation](#documentation)
+- [Goal 🎯](#goal-)
+  - [Features ✨](#features-)
+- [Team members](#team-members)
+- [Git repository](#git-repository)
+- [Further information](#further-information)
 
-The project can be also **imported into Intellij IDEA** (_Open or Import_ or _File > New > Project from existing sources ..._ then select Maven ...).
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-The **executable fat JAR can be built** using:
-```bash
-./build.sh
-```
-The executable JAR with all dependencies output is `target/chess-1.0-SNAPSHOT-jar-with-dependencies.jar`.
 
-It can be run as follows:
-```bash
-java -jar target/chess-1.0-SNAPSHOT-jar-with-dependencies.jar
-```
+## Documentation
+
+* [Development plan incl. current state 🗓️](./TODO.md)
+* [Technical Manual ⚙️](./docs/TECHNICAL-MANUAL.md)
+* [User Manual 📘](./docs/USER-MANUAL.md)
 
 
 ## Goal 🎯
@@ -49,26 +46,28 @@ implementation of the [**Chess** board game](https://en.wikipedia.org/wiki/Chess
 		    * idea: implement [UCI (Universal Chess Interface)](https://www.shredderchess.com/chess-features/uci-universal-chess-interface.html)
 	* online, network, two-player game
 * saving and loading of the game state
+    * including the support for [PGN](https://en.wikipedia.org/wiki/Portable_Game_Notation) chess standard format
 * possibility of manually placing the chess pieces before starting the game (game editor)
 * chess clock
 
 
-## Development plan 🗓️
-
-The current development state, all the past, present and future tasks and issues including their time estimates are tracked using GitLab [Issues](https://gitlab.fel.cvut.cz/B182_B0B36PJV/endlemar/issues) and [Milestones](https://gitlab.fel.cvut.cz/B182_B0B36PJV/endlemar/milestones).
-
-👀 See **[project board](https://gitlab.fel.cvut.cz/B182_B0B36PJV/endlemar/boards)** to get an up-to-date overview.
-
-_**Disclaimer:** The issues, milestones, time estimates and docs might be sometimes outdated. However, I'll do my best to keep them up-to-date. 😄_
-
-
 ## Team members
 
-* Martin Endler  
-	https://gitlab.fel.cvut.cz/endlemar
+* **Martin Endler**  
+  endlemar@fel.cvut.cz  
+  [github.com/pokusew](https://github.com/pokusew)
+
+
+## Git repository
+
+The Git repository for this project is hosted at:
+1. **CUT FEL GitLab** [B202_B0B36PJV/endlemar](https://gitlab.fel.cvut.cz/B202_B0B36PJV/endlemar) (as required by the assigment description)
+2. **GitHub** [pokusew/chess](https://github.com/pokusew/chess) (my private GitHub repository)
 
 
 ## Further information
 
+* [Chess Game Notes](./CHESS-GAME-NOTES.md)
+* [Useful Java/JavaFX development info](./USEFUL-INFO.md)
 * [chess project description](https://cw.fel.cvut.cz/wiki/courses/b0b36pjv/semestral/sachy) on the course's website
 * see [term project general requirements](https://cw.fel.cvut.cz/wiki/courses/b0b36pjv/semestral/start) on the course's website
