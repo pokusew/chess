@@ -21,6 +21,7 @@ public class Board extends Region {
 	public final static int NUM_COLS = NUM;
 
 	// TODO: support vertical flip
+	// TODO: support move highlighting
 
 	protected final Square[][] squares;
 	protected final BorderSegment[][] borderCorners;
