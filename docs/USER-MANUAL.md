@@ -34,25 +34,20 @@ The app offers several game modes:
 * **Complete and correct implementation of all Chess rules**
     * [FIDE Laws of Chess taking effect from 1 January 2018](https://handbook.fide.com/chapter/E012018)
     * Wikipedia's [Rules of chess](https://en.wikipedia.org/wiki/Rules_of_chess)
-
 * **Initiative chessboard**
     * Two **possibilities for moving pieces** on the board:
         1. **Drag-And-Drop**
         2. Selecting a piece to move with a click and then selecting a target square with another click.
     * The **chessboard can be rotated** (by 180 degrees) at any time.
-
 * **Moves log**
     * All moves all logged. In mode 1, also undoing of the last _n_ moves is supported.
-
 * **Saving and loading of the game state**
     * The game state can be loaded or saved to a file at any point.
     * The app supports standard [PGN](https://en.wikipedia.org/wiki/Portable_Game_Notation) format.
-
 * **Game editor**
     * Chess pieces can be **manually placed** on the board before starting the game.
     * Any possible (even legally impossible) placement is allowed (e.g. more pieces).
     * The currently running game can be **stopped, edited and then restarted** with the changed state.
-
 * **Chess clock**
     * There is an option to use chess clock during the game.
     * The amount of time is configurable.
@@ -94,7 +89,7 @@ the game screen with the chessboard moves log is shown.
 _Note: The screenshot comes from an early development version
 and it is subject to change. Currently, only the chessboard is shown._
 
-<img alt="Chessboard" title="An early version of chessboard" src="./images/chess-dev-update-2021.04-02.png" width="500" />
+<img alt="Chessboard" title="An early version of chessboard" src="./images/chess-dev-update-2021.04-02.png" width="400" />
 
 
 ### Option: Help > Preferences
