@@ -10,7 +10,7 @@ See also [Useful info](./USEFUL-INFO.md) which contains some useful Java-related
 
 ## Current state 👀
 
-![Chessboard](./docs/images/chess-dev-update-2021.04-02.png "Chessboard")
+<img alt="Chessboard" title="An early version of chessboard" src="./docs/images/chess-dev-update-2021.04-02.png" width="400" />
 
 Project is fully setup (Maven, JavaFX 15, logging, unit testing).
 
