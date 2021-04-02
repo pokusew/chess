@@ -3,17 +3,15 @@ package cz.martinendler.chess.ui;
 import cz.martinendler.chess.App;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class Piece extends Rectangle {
 
-	public static final Logger log = LoggerFactory.getLogger(Piece.class);
+	private static final Logger log = LoggerFactory.getLogger(Piece.class);
 
 	public final int id;
 

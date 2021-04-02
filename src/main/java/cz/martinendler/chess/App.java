@@ -1,18 +1,12 @@
 package cz.martinendler.chess;
 
 import cz.martinendler.chess.ui.controllers.AppAwareController;
-import cz.martinendler.chess.ui.controllers.RootController;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +26,7 @@ import java.net.URL;
  */
 public class App extends Application {
 
-	public static final Logger log = LoggerFactory.getLogger(App.class);
+	private static final Logger log = LoggerFactory.getLogger(App.class);
 
 	private ControllerFactory controllerFactory;
 	private Stage primaryStage;
