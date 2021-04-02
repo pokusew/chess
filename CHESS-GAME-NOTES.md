@@ -1,12 +1,74 @@
 # Chess rules and notes
 
 
+isCheck
+isCheckmate
+isStalemate
+
+Piece
+Square
+Square
+
+
+piece.getSquare().getGame()
+
+piece.getSquare().getAdjacentTopLeft()
+
+
+Position
+
+
+game = new Game()
+
+
+move([0,0], [0,4]) --> true/false
+
+
+
+
+board
+	piece
+
+
+Game
+	Board board
+		Square square
+			Piece piece
+
+
+
+move()
+
+
+Piece
+
+
+PieceLogic
+
+
+IPiece
+
+
+Game
+	config
+	moves
+	Board squares
+
+
 ## Plan
 
 
 	Preferences
 		Animation
 		valid moves
+		mark last move
+
+		Highlight Last Move
+		Play Sounds
+		Show Legal Moves
+
+		Show legal moves true/false
+		Play Sounds true/false
 
 	File
 		New Game
@@ -21,6 +83,8 @@
 		against player
 		against computer
 		network game
+
+		time
 
 	Technical Manual
 
@@ -64,6 +128,13 @@
 * https://www.shredderchess.com/chess-features/uci-universal-chess-interface.html
 * https://www.shredderchess.com/download.html
 * https://www.chessprogramming.org/UCI
+
+
+# PGN (Portable Game Notation)
+
+* http://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm
+* https://en.wikipedia.org/wiki/Portable_Game_Notation
+* https://www.chess.com/analysis
 
 
 ## Chess engines
