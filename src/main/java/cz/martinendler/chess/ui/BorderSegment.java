@@ -6,6 +6,9 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+/**
+ * A border segment (with a text description) of the chessboard {@link Board}
+ */
 public class BorderSegment extends VBox {
 
 	protected final static Background COLOR_BROWN_LIGHT = new Background(

@@ -7,6 +7,10 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * Handles dependency injection for FXML
+ * See {@link cz.martinendler.chess.ui.controllers.AppAwareController}
+ */
 public class ControllerFactory implements Callback<Class<?>, Object> {
 
 	private static final Logger log = LoggerFactory.getLogger(ControllerFactory.class);

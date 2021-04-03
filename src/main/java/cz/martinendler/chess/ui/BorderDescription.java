@@ -6,6 +6,9 @@ import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+/**
+ * A border segment of the chessboard {@link Board}
+ */
 public class BorderDescription extends BorderSegment {
 
 	public BorderDescription(boolean light, String text) {

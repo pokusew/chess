@@ -8,6 +8,13 @@ import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A chessboard
+ *
+ * It handles positioning of its children nodes (instances of `Square` and `BorderSegment`).
+ * It is <strong>fully responsive</strong>. It automatically adapts the layout
+ * according to the available width from its parent.
+ */
 public class Board extends Region {
 
 	private static final Logger log = LoggerFactory.getLogger(Board.class);

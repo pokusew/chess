@@ -10,6 +10,9 @@ import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A square on the chessboard {@link Board}
+ */
 public class Square extends StackPane {
 
 	private static final Logger log = LoggerFactory.getLogger(Square.class);

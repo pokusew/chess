@@ -9,6 +9,9 @@ import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A chess piece that can be placed on a {@link Square}
+ */
 public class Piece extends Rectangle {
 
 	private static final Logger log = LoggerFactory.getLogger(Piece.class);
