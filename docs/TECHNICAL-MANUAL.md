@@ -90,7 +90,11 @@ cz.martinendler.chess
 
 ### package: `cz.martinendler.chess.engine`
 
-TODO: describe
+_Note: This is an early version.
+It is functionally-incomplete (with regard to all chess rules
+that needs to be considered). It will be modified a lot._
+
+<img alt="class diagram of the package cz.martinendler.chess.engine" title="cz.martinendler.chess.engine" src="./images/package-engine.png" width="1200" />
 
 
 ### package: `cz.martinendler.chess.ui`
@@ -104,4 +108,4 @@ It is **fully responsive** (It automatically adapts the layout according to the 
 `Sqaure` represents a square on the chessboard. It is a container for a `Piece`.
 When a `Piece` is dropped on a `Sqaure`, the `Square` make the `Piece` its child node.
 
-<img alt="class diagram of the package cz.martinendler.chess.ui" title="cz.martinendler.chess.ui" src="./images/package-ui-board-related.png" />
+<img alt="class diagram of the package cz.martinendler.chess.ui" title="cz.martinendler.chess.ui" src="./images/package-ui-board-related.png" width="800" />
