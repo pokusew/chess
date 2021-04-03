@@ -8,6 +8,32 @@ Also, it contains useful links to chess related tools and standards.
 ## Brainstorming
 
 ```
+
+https://www.chessprogramming.org/Board_Representation
+
+https://www.chessprogramming.org/Fifty-move_Rule
+
+https://www.chessprogramming.org/Ranks
+https://www.chessprogramming.org/Files
+
+ranks = rows (numbered from bottom to top)
+    (board TOP)
+    visual number / id
+    8 - 7
+    7 - 6
+    6 - 5
+    5 - 4
+    4 - 3
+    3 - 2
+    2 - 1
+    1 - 0
+    (board BOTTOM)
+
+ranks = columns (labeled from left to right)
+    visual label: (board LEFT) a b c d e f g h (board RIGHT)
+              id:              0 1 2 3 4 5 6 7
+
+
 Preferences
 	Animation
 	valid moves
