@@ -23,6 +23,8 @@ A term project in [CTU FEL B0B36PJV course](https://cw.fel.cvut.cz/wiki/courses/
 
 * [Development plan incl. current state 🗓️](./TODO.md)
 * [Technical Manual ⚙️](./docs/TECHNICAL-MANUAL.md)
+    * 👉 See its **[Development section](./docs/TECHNICAL-MANUAL.md#development)** that includes notes
+        about **building and running the project**.
 * [User Manual 📘](./docs/USER-MANUAL.md)
 
 
