@@ -1,6 +1,6 @@
 # Technical Manual
 
-Chess App is as Java desktop application powered by [JavaFX](https://openjfx.io/).
+The Chess App is a Java desktop application powered by [JavaFX](https://openjfx.io/).
 
 
 ## Content
@@ -53,9 +53,55 @@ java -jar target/chess-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 ## App architecture
 
-TODO
+_Note: See also [current development state](../TODO.md)._
+
+The game logic (chess rules) is independent of the GUI.
+
+The following diagram briefly describes the packages and the classes:
+```text
+cz.martinendler.chess
+├── engine - game logic
+│   └── pieces - chess pieces
+│   │   ├── Piece - abstract class for all pieces
+│   │   ├── Pawn
+│   │   ├── Rook
+│   │   ├── Knight
+│   │   ├── Bishop
+│   │   ├── Queen
+│   │   └── King
+│   ├── Game - chess game state
+│   ├── Board - chess board state
+│   ├── PlayerType - enum (WHITE, BLACK)
+│   ├── 
+│   └──
+├── ui - GUI
+│   ├── controllers - FXML controllers
+│   ├── routing - routing primitives
+│   ├── Board - represents the chessboard
+│   ├── BorderSegment - represents a border segment of the chessboard
+│   ├── BorderDescription - represents a border segment with a text description
+│   ├── Square - represents a square on the chessboard
+│   └── Piece - represents a chess piece that can be placed on a square
+├── ControllerFactory - handles dependency injection for FXML
+├── App - JavaFX application, entrypoint
+└── Main - entrypoint (calls App.main()) (bug workaround, see Main code)
+```
 
 
-### Class diagram
+### package: `cz.martinendler.chess.engine`
 
-TODO
+TODO: describe
+
+
+### package: `cz.martinendler.chess.ui`
+
+_Note: Only chessboard related classes are shown and described._
+
+`Board` represents the chessboard. It extends from `javafx.scene.layout.Region`.
+It handles positioning of its children nodes (instances of `Square` and `BorderSegment`) in `layoutChildren()`.
+It is **fully responsive** (It automatically adapts the layout according to the available width from its parent).
+ 
+`Sqaure` represents a square on the chessboard. It is a container for a `Piece`.
+When a `Piece` is dropped on a `Sqaure`, the `Square` make the `Piece` its child node.
+
+<img alt="class diagram of the package cz.martinendler.chess.ui" title="cz.martinendler.chess.ui" src="./images/package-ui-board-related.png" />
