@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 by Bart Kiers
+ * Copyright (c) 2013-2014 by Bart Kiers
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -27,13 +27,15 @@
  * Project      : A Portable Game Notation (PGN) ANTLR 4 grammar
  *                and parser.
  * Developed by : Bart Kiers, bart@big-o.nl
+ * Source URL   : https://github.com/antlr/grammars-v4/blob/master/pgn/PGN.g4
+ * Also see     : https://github.com/bkiers/PGN-parser
  */
 
 //
 // A Portable Game Notation (PGN) grammar based on:
 // http://www.thechessdrum.net/PGN_Reference.txt
 //
-// The inline comments starting with "///" in this grammar are direct 
+// The inline comments starting with "///" in this grammar are direct
 // copy-pastes from the PGN reference linked above.
 //
 grammar PGN;
@@ -74,7 +76,7 @@ tag_name
 tag_value
  : STRING
  ;
- 
+
 /// <movetext-section> ::= <element-sequence> <game-termination>
 movetext_section
  : element_sequence game_termination
