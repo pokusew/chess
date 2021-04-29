@@ -15,6 +15,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>15</maven.compiler.source>
 		<maven.compiler.target>15</maven.compiler.target>
+		<antlr4.version>4.9.2</antlr4.version>
 	</properties>
 
 	<dependencies>
@@ -57,6 +58,15 @@
 			<version>15.0.1</version>
 		</dependency>
 
+		<!-- ANTLR v4 -->
+		<!-- see https://github.com/antlr/antlr4 -->
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+			<version>${antlr4.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -91,6 +101,26 @@
 					<launcher>launcher</launcher>
 					<mainClass>chess/cz.martinendler.chess.App</mainClass>
 				</configuration>
+			</plugin>
+
+			<!-- ANTLR v4 Maven Plugin -->
+			<!-- see https://github.com/antlr/antlr4 -->
+			<!-- see https://www.antlr.org/api/maven-plugin/latest/usage.html -->
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>${antlr4.version}</version>
+				<configuration>
+					<listener>true</listener>
+					<visitor>true</visitor>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 		</plugins>
