@@ -1,0 +1,47 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+
+      - uses: actions/checkout@v2
+        # https://github.com/actions/checkout
+
+      - name: Set up JDK 15
+        # https://github.com/actions/setup-java
+        uses: actions/setup-java@v2
+        with:
+          distribution: adopt
+          java-version: 15
+          java-package: jdk
+
+      - name: Print Java and Maven versions
+        run: |
+          java --version
+          mvn --version
+
+      - name: Cache local Maven repository
+        # https://github.com/actions/cache
+        # https://github.com/actions/cache/blob/main/examples.md#java---maven
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          # see https://docs.github.com/en/actions/guides/caching-dependencies-to-speed-up-workflows#matching-a-cache-key
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Test with Maven
+        # -B means
+        run: mvn -B test --file pom.xml
+
+      # TODO: upload JUnit 5 test reports
+      # TODO: sth like https://github.com/marketplace/actions/publish-unit-test-results
