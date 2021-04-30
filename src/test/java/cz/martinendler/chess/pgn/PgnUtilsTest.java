@@ -70,4 +70,13 @@ class PgnUtilsTest {
 
 	}
 
+	@Test
+	void databaseToString() {
+
+		// TODO
+
+		System.out.println(getExampleDatabase());
+
+	}
+
 }

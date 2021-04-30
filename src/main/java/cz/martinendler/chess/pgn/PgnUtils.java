@@ -11,6 +11,22 @@ import java.io.IOException;
 
 public class PgnUtils {
 
+	public static String escapeString(String str) {
+
+		// A quote inside a string is represented by the backslash
+		// immediately followed by a quote. A backslash inside a string is represented by
+		// two adjacent backslashes.
+
+		return str
+			.replace("\\", "\\\\")  // \ -> \\
+			.replace("\"", "\\\""); // " -> \"
+
+	}
+
+	public static String tagToString(String tagName, String tagValue) {
+		return "[" + tagName + " \"" + escapeString(tagValue) + "\"]";
+	}
+
 	public static PgnDatabase parseFile(String fileName) throws IOException {
 
 		// TODO: error reporting (see the Book)

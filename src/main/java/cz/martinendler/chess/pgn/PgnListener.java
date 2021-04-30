@@ -4,6 +4,7 @@ import cz.martinendler.chess.pgn.antlr4.PGNBaseListener;
 import cz.martinendler.chess.pgn.antlr4.PGNParser;
 import cz.martinendler.chess.pgn.entity.PgnDatabase;
 import cz.martinendler.chess.pgn.entity.PgnGame;
+import cz.martinendler.chess.pgn.entity.PgnGameTermination;
 
 /**
  * A small demo listener that retrieves the player's name and
@@ -49,14 +50,16 @@ public class PgnListener extends PGNBaseListener {
 
 	}
 
+	// TODO: correct moves parsing
+
 	@Override
-	public void enterMovetext_section(PGNParser.Movetext_sectionContext ctx) {
+	public void enterSan_move(PGNParser.San_moveContext ctx) {
+		game.moves.add(ctx.getText());
+	}
 
-		String result = ctx.game_termination().getText();
-
-		// System.out.printf("`%s` with white against `%s` with black resulted in: %s\n",
-		// 	white, black, result);
-
+	@Override
+	public void enterGame_termination(PGNParser.Game_terminationContext ctx) {
+		game.termination = PgnGameTermination.fromNotation(ctx.getText());
 	}
 
 }
