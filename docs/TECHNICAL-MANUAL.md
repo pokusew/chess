@@ -49,6 +49,7 @@ java -jar target/chess-1.0-SNAPSHOT-jar-with-dependencies.jar
 * [JavaFX 15](https://openjfx.io/)
 * [JUnit 5](https://junit.org/junit5/) for unit tests
 * [slf4j](http://www.slf4j.org/) and [logback](http://logback.qos.ch/) for logging
+* [ANTLR v4](https://github.com/antlr/antlr4) for generating parser for PGN format from CFG grammar description
 
 
 ## App architecture
@@ -109,3 +110,8 @@ It is **fully responsive** (It automatically adapts the layout according to the 
 When a `Piece` is dropped on a `Sqaure`, the `Square` make the `Piece` its child node.
 
 <img alt="class diagram of the package cz.martinendler.chess.ui" title="cz.martinendler.chess.ui" src="./images/package-ui-board-related.png" width="800" />
+
+
+### package: `cz.martinendler.chess.pgn`
+
+TODO: document, also update architecture graph

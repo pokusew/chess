@@ -44,6 +44,12 @@
 			<version>5.7.1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>2.2</version>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- JavaFX -->
 		<!-- see https://openjfx.io/openjfx-docs/#maven -->
