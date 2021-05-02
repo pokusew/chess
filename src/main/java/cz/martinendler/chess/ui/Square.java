@@ -1,6 +1,6 @@
 package cz.martinendler.chess.ui;
 
-import cz.martinendler.chess.engine.PlayerType;
+import cz.martinendler.chess.engine.Side;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -31,13 +31,13 @@ public class Square extends StackPane {
 
 	public final int row;
 	public final int column;
-	public final PlayerType color;
+	public final Side color;
 
 	private final Background normalBg;
 
 	// protected Piece piece;
 
-	public Square(int row, int column, PlayerType color) {
+	public Square(int row, int column, Side color) {
 		super();
 
 		// TODO: better approach
@@ -48,7 +48,7 @@ public class Square extends StackPane {
 		this.column = column;
 		this.color = color;
 
-		normalBg = color == PlayerType.WHITE ? COLOR_WHITE : COLOR_BLACK;
+		normalBg = color == Side.WHITE ? COLOR_WHITE : COLOR_BLACK;
 
 		setBackground(normalBg);
 

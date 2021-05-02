@@ -95,6 +95,10 @@ _Note: This is an early version.
 It is functionally-incomplete (with regard to all chess rules
 that needs to be considered). It will be modified a lot._
 
+_It was designed with help of [Chess Programming WIKI](https://www.chessprogramming.org/).
+A lot of inspiration and some pieces of code (though much rewritten) come
+from [github.com/bhlangonijr/chesslib](https://github.com/bhlangonijr/chesslib)._
+
 <img alt="class diagram of the package cz.martinendler.chess.engine" title="cz.martinendler.chess.engine" src="./images/package-engine.png" width="1200" />
 
 

@@ -20,6 +20,14 @@
 
 	<dependencies>
 
+		<!-- see https://github.com/JetBrains/java-annotations -->
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>20.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

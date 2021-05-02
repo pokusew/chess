@@ -5,6 +5,7 @@ module chess {
 
 	requires org.slf4j;
 	requires org.antlr.antlr4.runtime;
+	requires org.jetbrains.annotations;
 
 	// opens cz.martinendler.chess to javafx.fxml;
 	opens cz.martinendler.chess;

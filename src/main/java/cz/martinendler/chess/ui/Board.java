@@ -1,6 +1,6 @@
 package cz.martinendler.chess.ui;
 
-import cz.martinendler.chess.engine.PlayerType;
+import cz.martinendler.chess.engine.Side;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Region;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A chessboard
- *
+ * <p>
  * It handles positioning of its children nodes (instances of `Square` and `BorderSegment`).
  * It is <strong>fully responsive</strong>. It automatically adapts the layout
  * according to the available width from its parent.
@@ -57,7 +57,7 @@ public class Board extends Region {
 			white = !white;
 			for (int c = 0; c < NUM_COLS; c++) {
 				white = !white;
-				squares[r][c] = new Square(r, c, white ? PlayerType.WHITE : PlayerType.BLACK);
+				squares[r][c] = new Square(r, c, white ? Side.WHITE : Side.BLACK);
 				getChildren().add(squares[r][c]);
 			}
 		}

@@ -16,6 +16,8 @@ public class PgnGame extends PgnEntity {
 		"White",
 		"Black",
 		"Result"
+		// SetUp
+		// FEN
 	);
 
 	public final Map<String, String> tags;
@@ -32,7 +34,7 @@ public class PgnGame extends PgnEntity {
 	public void validate() throws PgnValidationException {
 
 		// check that all 7 required tags are present
-		// 8.1.1: Seven Tag Roster
+		// PGN 8.1.1: Seven Tag Roster
 		// http://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm#c8.1.1
 
 		for (String tagName : SEVEN_TAG_ROSTER) {
@@ -51,6 +53,12 @@ public class PgnGame extends PgnEntity {
 				"The game termination marker must match the value of the Result tag."
 			);
 		}
+
+		// check that custom starting position is correctly set
+		// PGN 9.7: Alternative starting positions
+		// http://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm#c9.7.2
+
+		// tags.get("SetUp")
 
 		// TODO: validate moves?
 
