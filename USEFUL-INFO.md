@@ -7,8 +7,11 @@ On this page, I gather various useful information and links related to Java GUI 
 
 
 **General:**
-* [Java Function interface on SO](https://stackoverflow.com/a/40153253)
-* [How to reference a method in javadoc?](https://stackoverflow.com/questions/5915992/how-to-reference-a-method-in-javadoc)
+* [Java Function interface (SO)](https://stackoverflow.com/a/40153253)
+* [How to reference a method in javadoc? (SO)](https://stackoverflow.com/questions/5915992/how-to-reference-a-method-in-javadoc)
+* [Comparing Java enum members: == or equals()? (SO)](https://stackoverflow.com/questions/1750435/comparing-java-enum-members-or-equals)
+* [What is a serialVersionUID and why should I use it? (SO)](https://stackoverflow.com/questions/285793/what-is-a-serialversionuid-and-why-should-i-use-it)
+  (see also [this article on DZone](https://dzone.com/articles/what-is-serialversionuid))
 
 
 **Logging:**
@@ -22,6 +25,14 @@ On this page, I gather various useful information and links related to Java GUI 
 * https://junit.org/junit5/
 * https://junit.org/junit5/docs/current/user-guide/
 * https://howtodoinjava.com/junit5/junit-5-vs-junit-4/
+* https://dzone.com/articles/7-popular-unit-test-naming
+
+
+**Static analysis annotations (e.g. `@NonNull`, `@NotNull`)**
+* https://stackoverflow.com/questions/35892063/which-nonnull-java-annotation-to-use
+* https://stackoverflow.com/questions/4963300/which-notnull-java-annotation-should-i-use
+* https://www.jetbrains.com/help/idea/annotating-source-code.html
+* https://checkerframework.org/manual/
 
 
 ## Maven
@@ -44,9 +55,11 @@ On this page, I gather various useful information and links related to Java GUI 
 * https://openjfx.io/openjfx-docs/
 * https://github.com/openjfx/samples
 
+
 **Java API docs:**
 * https://openjfx.io/javadoc/16/
 * https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/input/MouseEvent.html
+
 
 **Tutorials:**
 * JavaFX tutorial
@@ -78,8 +91,35 @@ On this page, I gather various useful information and links related to Java GUI 
 * https://github.com/McFoggy/cssfx
 
 
+**Redux for Java(FX):**
+* https://netopyr.com/2016/10/11/mvc-dead-comes-next/
+* https://github.com/manuel-mauky/redux-javafx-devtool
+* https://lestard.eu/tags/#redux
+* https://github.com/netopyr/reduxfx
+
+
 **Legacy:**
 * [Client Technologies docs](https://docs.oracle.com/javase/8/javase-clienttechnologies.htm), Java Platform, Standard Edition (Java SE) 8
+
+
+## Parsing
+
+yacc, bison, ANTLR v4, CFGs ...
+
+**ANTLR v4:**
+* https://github.com/antlr/antlr4
+* https://github.com/antlr/antlr4/blob/master/doc/index.md
+* https://github.com/antlr/grammars-v4
+* https://github.com/antlr/grammars-v4/tree/master/pgn
+* https://github.com/antlr/grammars-v4/tree/master/fen
+* https://github.com/antlr/intellij-plugin-v4
+* https://www.antlr.org/api/Java/index.html
+* https://github.com/antlr/antlr4/blob/master/doc/listeners.md
+* https://github.com/bkiers/Mu/tree/master/src/main/java/mu
+* https://github.com/bkiers/Mu
+* https://github.com/bkiers/PGN-parser
+* https://tomassetti.me/parsing-in-java/
+* https://strumenta.com/
 
 
 ## Tools
