@@ -278,16 +278,35 @@ public class Bitboard {
 	};
 
 	/**
-	 * TODO: ???
-	 * The constant bits between Table
+	 * Bitboard with bits between two given squares
+	 * <p>
+	 * {@code bitsBetween[x][y]} corresponds to a bitboard where all bits between bits x and y
+	 * are set to 1b (including the bits x and y themselves).
+	 * <p>
+	 * For example, {@code Bitboard.bbTable[18][28]}:
+	 * <pre>
+	 * .   A B C D E F G H   .
+	 * 8 | 0 0 0 0 0 0 0 0 | 8
+	 * 7 | 0 0 0 0 0 0 0 0 | 7
+	 * 6 | 0 0 0 0 0 0 0 0 | 6
+	 * 5 | 0 0 0 0 0 0 0 0 | 5
+	 * 4 | 1 1 1 1 1 0 0 0 | 4
+	 * 3 | 0 0 1 1 1 1 1 1 | 3
+	 * 2 | 0 0 0 0 0 0 0 0 | 2
+	 * 1 | 0 0 0 0 0 0 0 0 | 1
+	 * .   A B C D E F G H   .
+	 * </pre>
+	 * <p>
+	 * TODO: What if x > y (it seems that it returns nonsense),
+	 * or x == y (only bit x == y is set to 1b, that makes sense)?
 	 */
-	static final long[][] bbTable = new long[64][64];
+	static final long[][] bitsBetween = new long[64][64];
 
 	static {
 		for (int x = 0; x < 64; x++) {
 			for (int y = 0; y < 64; y++) {
 				// TODO: ???
-				bbTable[x][y] = ((1L << y) | ((1L << y) - (1L << x)));
+				bitsBetween[x][y] = ((1L << y) | ((1L << y) - (1L << x)));
 			}
 		}
 	}
@@ -377,7 +396,7 @@ public class Bitboard {
 	 * @return long
 	 */
 	public static long bitsBetween(long bb, int sq1, int sq2) {
-		return bbTable[sq1][sq2] & bb;
+		return bitsBetween[sq1][sq2] & bb;
 	}
 
 	/**
@@ -421,15 +440,18 @@ public class Bitboard {
 	}
 
 	/**
-	 * TODO
 	 * Gets slider attacks based on the attacks mask and occupancy
 	 *
-	 * @param attacks
-	 * @param mask
-	 * @param index
-	 * @return
+	 * @param attacks bitboard with possible attacks
+	 * @param mask    ???
+	 * @param index   index of the square where the attacking piece currently is
+	 * @return ???
+	 * @see <a href="https://www.chessprogramming.org/Sliding_Piece_Attacks">Sliding Piece Attacks on CPW</a>
 	 */
 	private static long getSliderAttacks(long attacks, long mask, int index) {
+
+		// TODO: How exactly does this work?
+		// TODO: Cover with tests.
 
 		long occ = mask & attacks;
 		if (occ == 0L) {
@@ -440,53 +462,57 @@ public class Bitboard {
 		long upperMask = occ & ~m;
 		int minor = lowerMask == 0L ? 0 : bitScanReverse(lowerMask);
 		int major = upperMask == 0L ? 63 : bitScanForward(upperMask);
+
 		return bitsBetween(attacks, minor, major);
+
 	}
 
 	/**
-	 * TODO
-	 * Get the bishop attacks
+	 * Gets the bishop attacks
 	 *
 	 * @param mask   the mask
-	 * @param square the square
+	 * @param square the square where the bishop currently is
 	 * @return bishop attacks
 	 */
 	public static long getBishopAttacks(long mask, Square square) {
-		return getSliderAttacks(diagA1H8Attacks[square.ordinal()], mask, square.ordinal()) |
-			getSliderAttacks(diagH1A8Attacks[square.ordinal()], mask, square.ordinal());
+		// rook is a sliding piece that can move along the diagonals and anti-diagonals
+		return (
+			getSliderAttacks(diagA1H8Attacks[square.ordinal()], mask, square.ordinal())
+				| getSliderAttacks(diagH1A8Attacks[square.ordinal()], mask, square.ordinal())
+		);
 	}
 
 	/**
-	 * TODO
-	 * Get the rook attacks
+	 * Gets the rook attacks
 	 *
 	 * @param mask   the mask
-	 * @param square the square
+	 * @param square the square where the rook currently is
 	 * @return rook attacks
 	 */
 	public static long getRookAttacks(long mask, Square square) {
-		return getSliderAttacks(fileAttacks[square.ordinal()], mask, square.ordinal()) |
-			getSliderAttacks(rankAttacks[square.ordinal()], mask, square.ordinal());
+		// rook is a sliding piece that can move along the ranks or files
+		return (
+			getSliderAttacks(fileAttacks[square.ordinal()], mask, square.ordinal())
+				| getSliderAttacks(rankAttacks[square.ordinal()], mask, square.ordinal())
+		);
 	}
 
 	/**
-	 * TODO
-	 * Get the queen attacks
+	 * Gets the queen attacks
 	 *
 	 * @param mask   the mask
-	 * @param square the square
+	 * @param square the square where the queen currently is
 	 * @return queen attacks
 	 */
 	public static long getQueenAttacks(long mask, Square square) {
-		return getRookAttacks(mask, square) |
-			getBishopAttacks(mask, square);
+		// queen is a sliding piece that can move along the ranks, files, diagonals and anti-diagonals
+		return getRookAttacks(mask, square) | getBishopAttacks(mask, square);
 	}
 
 	/**
-	 * TODO
-	 * return a bitboard with attacked squares by the pawn in the given square
+	 * Gets a bitboard with attacked squares by the knight in the given square
 	 *
-	 * @param square   the square
+	 * @param square   the square where the knight currently is
 	 * @param occupied the occupied
 	 * @return knight attacks
 	 */
@@ -495,22 +521,21 @@ public class Bitboard {
 	}
 
 	/**
-	 * TODO
 	 * Gets a bitboard with move squares by the pawn that is currently in the given square
 	 *
-	 * @param side   the side
-	 * @param square the current square of the pawn whose moves squares we want
+	 * @param side   the side of the pawn
+	 * @param square the square where the pawn currently is
 	 * @return the pawn attacks
 	 */
 	public static long getPawnAttacks(Side side, Square square) {
-		return (side.equals(Side.WHITE) ?
-			whitePawnAttacks[square.ordinal()] :
-			blackPawnAttacks[square.ordinal()]);
+		return side.equals(Side.WHITE)
+			? whitePawnAttacks[square.ordinal()]
+			: blackPawnAttacks[square.ordinal()];
 	}
 
 	/**
 	 * TODO
-	 * return a bitboard with move squares by the pawn in the given square
+	 * Gets a bitboard with move squares by the pawn in the given square
 	 *
 	 * @param side      the side
 	 * @param square    the square
@@ -519,20 +544,24 @@ public class Bitboard {
 	 * @return the pawn captures
 	 */
 	public static long getPawnCaptures(Side side, Square square, long occupied, Square enPassant) {
-		long pawnAttacks = (side.equals(Side.WHITE) ?
-			whitePawnAttacks[square.ordinal()] :
-			blackPawnAttacks[square.ordinal()]);
+
+		long pawnAttacks = side.equals(Side.WHITE)
+			? whitePawnAttacks[square.ordinal()]
+			: blackPawnAttacks[square.ordinal()];
+
 		if (!enPassant.equals(Square.NONE)) {
 			long ep = enPassant.getBitboard();
 			occupied |= side.equals(Side.WHITE) ? ep << 8L : ep >> 8L;
 		}
+
 		return pawnAttacks & occupied;
+
 	}
 
 
 	/**
 	 * TODO
-	 * return a bitboard with move squares by the pawn in the given square
+	 * Gets a bitboard with move squares by the pawn in the given square
 	 *
 	 * @param side     the side
 	 * @param square   the square
@@ -541,29 +570,30 @@ public class Bitboard {
 	 */
 	public static long getPawnMoves(Side side, Square square, long occupied) {
 
-		long pawnMoves = (side.equals(Side.WHITE) ?
-			whitePawnMoves[square.ordinal()] : blackPawnMoves[square.ordinal()]);
+		long pawnMoves = side.equals(Side.WHITE)
+			? whitePawnMoves[square.ordinal()]
+			: blackPawnMoves[square.ordinal()];
+
 		long occ = occupied;
 
-		if (square.getRank().equals(Rank.RANK_2) &&
-			side.equals(Side.WHITE)) {
+		if (square.getRank().equals(Rank.RANK_2) && side.equals(Side.WHITE)) {
 			if ((square.getBitboard() << 8 & occ) != 0L) {
 				occ |= square.getBitboard() << 16; // double move
 			}
-		} else if (square.getRank().equals(Rank.RANK_7) &&
-			side.equals(Side.BLACK)) {
+		} else if (square.getRank().equals(Rank.RANK_7) && side.equals(Side.BLACK)) {
 			if ((square.getBitboard() >> 8 & occ) != 0L) {
 				occ |= square.getBitboard() >> 16; // double move
 			}
 		}
+
 		return pawnMoves & ~occ;
+
 	}
 
 	/**
-	 * TODO
-	 * return a bitboard with attacked squares by the King in the given square
+	 * Gets a bitboard with attacked squares by the king in the given square
 	 *
-	 * @param square   the square
+	 * @param square   the square where the king currently is
 	 * @param occupied the occupied
 	 * @return the king attacks
 	 */

@@ -201,8 +201,8 @@ class BitboardTest {
 		// 		Bitboard.bbToPrettyString(Bitboard.diagH1A8Attacks[i])
 		// 	);
 		// }
-		System.out.println("Bitboard.bbTable[1][8] = ");
-		System.out.println(Bitboard.bbToPrettyString(Bitboard.bbTable[18][28]));
+		System.out.println("Bitboard.bbTable[28][18] = ");
+		System.out.println(Bitboard.bbToPrettyString(Bitboard.bitsBetween[18][18]));
 	}
 
 	/**
