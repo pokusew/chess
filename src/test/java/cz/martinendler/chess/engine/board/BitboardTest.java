@@ -2,7 +2,7 @@ package cz.martinendler.chess.engine.board;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BitboardTest {
 
@@ -45,11 +45,164 @@ class BitboardTest {
 	}
 
 	@Test
-	public void testRankBB() {
+	public void testFileBB() {
+
+		String[] expectedBitboards = new String[]{
+			// file A
+			"""
+			.   A B C D E F G H   .
+			8 | 1 0 0 0 0 0 0 0 | 8
+			7 | 1 0 0 0 0 0 0 0 | 7
+			6 | 1 0 0 0 0 0 0 0 | 6
+			5 | 1 0 0 0 0 0 0 0 | 5
+			4 | 1 0 0 0 0 0 0 0 | 4
+			3 | 1 0 0 0 0 0 0 0 | 3
+			2 | 1 0 0 0 0 0 0 0 | 2
+			1 | 1 0 0 0 0 0 0 0 | 1
+			.   A B C D E F G H   .
+			""",
+			// file B
+			"""
+			.   A B C D E F G H   .
+			8 | 0 1 0 0 0 0 0 0 | 8
+			7 | 0 1 0 0 0 0 0 0 | 7
+			6 | 0 1 0 0 0 0 0 0 | 6
+			5 | 0 1 0 0 0 0 0 0 | 5
+			4 | 0 1 0 0 0 0 0 0 | 4
+			3 | 0 1 0 0 0 0 0 0 | 3
+			2 | 0 1 0 0 0 0 0 0 | 2
+			1 | 0 1 0 0 0 0 0 0 | 1
+			.   A B C D E F G H   .
+			""",
+			// file C
+			"""
+			.   A B C D E F G H   .
+			8 | 0 0 1 0 0 0 0 0 | 8
+			7 | 0 0 1 0 0 0 0 0 | 7
+			6 | 0 0 1 0 0 0 0 0 | 6
+			5 | 0 0 1 0 0 0 0 0 | 5
+			4 | 0 0 1 0 0 0 0 0 | 4
+			3 | 0 0 1 0 0 0 0 0 | 3
+			2 | 0 0 1 0 0 0 0 0 | 2
+			1 | 0 0 1 0 0 0 0 0 | 1
+			.   A B C D E F G H   .
+			""",
+			// file D
+			"""
+			.   A B C D E F G H   .
+			8 | 0 0 0 1 0 0 0 0 | 8
+			7 | 0 0 0 1 0 0 0 0 | 7
+			6 | 0 0 0 1 0 0 0 0 | 6
+			5 | 0 0 0 1 0 0 0 0 | 5
+			4 | 0 0 0 1 0 0 0 0 | 4
+			3 | 0 0 0 1 0 0 0 0 | 3
+			2 | 0 0 0 1 0 0 0 0 | 2
+			1 | 0 0 0 1 0 0 0 0 | 1
+			.   A B C D E F G H   .
+			""",
+			// file E
+			"""
+			.   A B C D E F G H   .
+			8 | 0 0 0 0 1 0 0 0 | 8
+			7 | 0 0 0 0 1 0 0 0 | 7
+			6 | 0 0 0 0 1 0 0 0 | 6
+			5 | 0 0 0 0 1 0 0 0 | 5
+			4 | 0 0 0 0 1 0 0 0 | 4
+			3 | 0 0 0 0 1 0 0 0 | 3
+			2 | 0 0 0 0 1 0 0 0 | 2
+			1 | 0 0 0 0 1 0 0 0 | 1
+			.   A B C D E F G H   .
+			""",
+			// file F
+			"""
+			.   A B C D E F G H   .
+			8 | 0 0 0 0 0 1 0 0 | 8
+			7 | 0 0 0 0 0 1 0 0 | 7
+			6 | 0 0 0 0 0 1 0 0 | 6
+			5 | 0 0 0 0 0 1 0 0 | 5
+			4 | 0 0 0 0 0 1 0 0 | 4
+			3 | 0 0 0 0 0 1 0 0 | 3
+			2 | 0 0 0 0 0 1 0 0 | 2
+			1 | 0 0 0 0 0 1 0 0 | 1
+			.   A B C D E F G H   .
+			""",
+			// file G
+			"""
+			.   A B C D E F G H   .
+			8 | 0 0 0 0 0 0 1 0 | 8
+			7 | 0 0 0 0 0 0 1 0 | 7
+			6 | 0 0 0 0 0 0 1 0 | 6
+			5 | 0 0 0 0 0 0 1 0 | 5
+			4 | 0 0 0 0 0 0 1 0 | 4
+			3 | 0 0 0 0 0 0 1 0 | 3
+			2 | 0 0 0 0 0 0 1 0 | 2
+			1 | 0 0 0 0 0 0 1 0 | 1
+			.   A B C D E F G H   .
+			""",
+			// file H
+			"""
+			.   A B C D E F G H   .
+			8 | 0 0 0 0 0 0 0 1 | 8
+			7 | 0 0 0 0 0 0 0 1 | 7
+			6 | 0 0 0 0 0 0 0 1 | 6
+			5 | 0 0 0 0 0 0 0 1 | 5
+			4 | 0 0 0 0 0 0 0 1 | 4
+			3 | 0 0 0 0 0 0 0 1 | 3
+			2 | 0 0 0 0 0 0 0 1 | 2
+			1 | 0 0 0 0 0 0 0 1 | 1
+			.   A B C D E F G H   .
+			""",
+		};
 
 		for (int i = 0; i < Bitboard.fileBB.length; i++) {
-			System.out.println(Bitboard.bbToPrettyString(Bitboard.fileBB[i], true));
+			assertEquals(
+				expectedBitboards[i],
+				Bitboard.bbToPrettyString(Bitboard.fileBB[i], true)
+			);
 		}
+	}
+
+	@Test
+	public void testDiagonalH1A8BB() {
+		assertEquals(
+			"""
+				.   A B C D E F G H   .
+				8 | 0 0 0 0 0 0 0 0 | 8
+				7 | 1 0 0 0 0 0 0 0 | 7
+				6 | 0 1 0 0 0 0 0 0 | 6
+				5 | 0 0 1 0 0 0 0 0 | 5
+				4 | 0 0 0 1 0 0 0 0 | 4
+				3 | 0 0 0 0 1 0 0 0 | 3
+				2 | 0 0 0 0 0 1 0 0 | 2
+				1 | 0 0 0 0 0 0 1 0 | 1
+				.   A B C D E F G H   .
+				""",
+			Bitboard.bbToPrettyString(Bitboard.diagonalH1A8BB[6], true)
+		);
+	}
+
+	@Test
+	void testKnightAttacks() {
+
+		for (int i = 0; i < Bitboard.knightAttacks.length; i++) {
+			System.out.printf(
+				"Bitboard.knightAttacks[%d]:%n%s%n", i,
+				Bitboard.bbToPrettyString(Bitboard.knightAttacks[i])
+			);
+		}
+
+	}
+
+	@Test
+	void experiment() {
+		// for (int i = 0; i < Bitboard.diagH1A8Attacks.length; i++) {
+		// 	System.out.printf(
+		// 		"Bitboard.diagH1A8Attacks[%d]:%n%s%n", i,
+		// 		Bitboard.bbToPrettyString(Bitboard.diagH1A8Attacks[i])
+		// 	);
+		// }
+		System.out.println("Bitboard.bbTable[1][8] = ");
+		System.out.println(Bitboard.bbToPrettyString(Bitboard.bbTable[18][28]));
 	}
 
 	/**
@@ -103,6 +256,42 @@ class BitboardTest {
 				00010000
 				"""
 		);
+
+	}
+
+	@Test
+	void testHasOnly1Bit() {
+
+		for (int i = 0; i < 64; i++) {
+			long value = 1L << i;
+			assertTrue(
+				Bitboard.hasOnly1Bit(value),
+				"a long with one bit: " + Long.toBinaryString(value)
+			);
+		}
+
+		assertFalse(Bitboard.hasOnly1Bit(
+			0b00000001_00000000_00000000_00000001_00000000_00000000_00000000_00000000L
+		));
+
+		assertFalse(Bitboard.hasOnly1Bit(
+			0L
+		));
+
+	}
+
+	@Test
+	void testGetBBTable() {
+
+		for (Square sq: Square.values()) {
+
+			if (Square.NONE.equals(sq)) {
+				continue;
+			}
+
+			assertEquals(sq.getBitboard(), Bitboard.getBBTable(sq));
+
+		}
 
 	}
 
