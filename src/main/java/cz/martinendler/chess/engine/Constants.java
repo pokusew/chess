@@ -1,5 +1,6 @@
 package cz.martinendler.chess.engine;
 
+import cz.martinendler.chess.engine.board.Bitboard;
 import cz.martinendler.chess.engine.board.Square;
 import cz.martinendler.chess.engine.move.Move;
 import cz.martinendler.chess.engine.pieces.Piece;
@@ -127,6 +128,31 @@ public class Constants {
 		Square.B8
 	);
 
+	public static final long DEFAULT_WHITE_OO_SQUARES_BB = Bitboard.squareListToBB(
+		Constants.DEFAULT_WHITE_OO_SQUARES
+	);
+	public static final long DEFAULT_WHITE_OOO_SQUARES_BB = Bitboard.squareListToBB(
+		Constants.DEFAULT_WHITE_OOO_SQUARES
+	);
+	public static final long DEFAULT_BLACK_OO_SQUARES_BB = Bitboard.squareListToBB(
+		Constants.DEFAULT_BLACK_OO_SQUARES
+	);
+	public static final long DEFAULT_BLACK_OOO_SQUARES_BB = Bitboard.squareListToBB(
+		Constants.DEFAULT_BLACK_OOO_SQUARES
+	);
+	public static final long DEFAULT_WHITE_OO_ALL_SQUARES_BB = Bitboard.squareListToBB(
+		Constants.DEFAULT_WHITE_OO_ALL_SQUARES
+	);
+	public static final long DEFAULT_WHITE_OOO_ALL_SQUARES_BB = Bitboard.squareListToBB(
+		Constants.DEFAULT_WHITE_OOO_ALL_SQUARES
+	);
+	public static final long DEFAULT_BLACK_OO_ALL_SQUARES_BB = Bitboard.squareListToBB(
+		Constants.DEFAULT_BLACK_OO_ALL_SQUARES
+	);
+	public static final long DEFAULT_BLACK_OOO_ALL_SQUARES_BB = Bitboard.squareListToBB(
+		Constants.DEFAULT_BLACK_OOO_ALL_SQUARES
+	);
+
 	/**
 	 * The constant pieceNotation.
 	 */
@@ -189,6 +215,75 @@ public class Constants {
 	 */
 	public static Piece getPieceByNotation(String notation) {
 		return pieceNotationR.get(notation);
+	}
+
+	public static long getOOAllSquaresBB(Side side) {
+		return Side.WHITE.equals(side)
+			? DEFAULT_WHITE_OO_ALL_SQUARES_BB
+			: DEFAULT_BLACK_OO_ALL_SQUARES_BB;
+	}
+
+	public static List<Square> getOOSquares(Side side) {
+		return Side.WHITE.equals(side)
+			? DEFAULT_WHITE_OO_SQUARES
+			: DEFAULT_BLACK_OO_SQUARES;
+	}
+
+	public static long getOOOAllSquaresBB(Side side) {
+		return Side.WHITE.equals(side)
+			? DEFAULT_WHITE_OOO_ALL_SQUARES_BB
+			: DEFAULT_BLACK_OOO_ALL_SQUARES_BB;
+	}
+
+	public static List<Square> getOOOSquares(Side side) {
+		return Side.WHITE.equals(side)
+			? DEFAULT_WHITE_OOO_SQUARES
+			: DEFAULT_BLACK_OOO_SQUARES;
+	}
+
+	/**
+	 * Gets the rook castle move
+	 *
+	 * @param side        the side
+	 * @param castleRight the castle right
+	 * @return rook castle move
+	 */
+	public static Move getRookCastleMove(Side side, CastlingRight castleRight) {
+		Move move = null;
+		if (Side.WHITE.equals(side)) {
+			if (CastlingRight.KING_SIDE.equals(castleRight)) {
+				move = DEFAULT_WHITE_ROOK_OO;
+			} else if (CastlingRight.QUEEN_SIDE.equals(castleRight)) {
+				move = DEFAULT_WHITE_ROOK_OOO;
+			}
+		} else {
+			if (CastlingRight.KING_SIDE.equals(castleRight)) {
+				move = DEFAULT_BLACK_ROOK_OO;
+			} else if (CastlingRight.QUEEN_SIDE.equals(castleRight)) {
+				move = DEFAULT_BLACK_ROOK_OOO;
+			}
+		}
+		return move;
+	}
+
+	/**
+	 * Gets rookoo.
+	 *
+	 * @param side the side
+	 * @return the rookoo
+	 */
+	public static Move getRookoo(Side side) {
+		return Side.WHITE.equals(side) ? DEFAULT_WHITE_ROOK_OO : DEFAULT_BLACK_ROOK_OO;
+	}
+
+	/**
+	 * Gets rookooo.
+	 *
+	 * @param side the side
+	 * @return the rookooo
+	 */
+	public static Move getRookooo(Side side) {
+		return Side.WHITE.equals(side) ? DEFAULT_WHITE_ROOK_OOO : DEFAULT_BLACK_ROOK_OOO;
 	}
 
 }

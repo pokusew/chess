@@ -618,6 +618,20 @@ public class Bitboard {
 	}
 
 	/**
+	 * Converts the given list of squares to the bitboard
+	 *
+	 * @param squares the list of squares
+	 * @return the bitboard
+	 */
+	public static long squareListToBB(List<Square> squares) {
+		long bb = 0L;
+		for (Square sq : squares) {
+			bb |= sq.getBitboard();
+		}
+		return bb;
+	}
+
+	/**
 	 * Converts the given bitboard to an array of squares
 	 *
 	 * @param pieces the pieces
