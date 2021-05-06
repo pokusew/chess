@@ -802,4 +802,14 @@ public class Bitboard {
 		return bbToPrettyString(bb, true);
 	}
 
+	/**
+	 * Check if all required squares (bits set to 1 in the given mask) are empty
+	 * @param occupied bitboard where each bit is set to 0 iff is empty
+	 * @param mask bitboard of the required squares
+	 * @return {@code true} iff all required squares are empty
+	 */
+	public static boolean areSquaresFree(long occupied, long mask) {
+		return (occupied & mask) == 0L;
+	}
+
 }

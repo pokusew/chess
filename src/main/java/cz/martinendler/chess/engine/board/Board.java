@@ -156,20 +156,20 @@ public class Board {
 	}
 
 	/**
-	 * Does the given mode of the given side leads to the pawn promotion?
+	 * Does the given move of the given side leads to the pawn promotion?
 	 *
 	 * @param side the side
 	 * @param move the move
-	 * @return true/false
+	 * @return true if the given move leads to the pawn promotion
 	 */
-	private static boolean doesMoveLeadsToPromotion(Side side, Move move) {
-
-		if (side.equals(Side.WHITE) && move.getTo().getRank().equals(Rank.RANK_8)) {
-			return true;
-		}
-
-		return side.equals(Side.BLACK) && move.getTo().getRank().equals(Rank.RANK_1);
-
+	public static boolean doesMoveLeadsToPromotion(Side side, Move move) {
+		return (
+			(
+				side.isWhite() && move.getTo().getRank() == Rank.RANK_8
+			) || (
+				side.isBlack() && move.getTo().getRank() == Rank.RANK_1
+			)
+		);
 	}
 
 	private static Square findEnPassantTarget(Square sq, Side side) {
@@ -403,7 +403,7 @@ public class Board {
 	 * @param fullValidation performs a full validation on the move, not only if it leaves own king on check, but also if
 	 *                       castling is legal, based on attacked pieces and squares, if board is in a consistent state:
 	 *                       e.g.: Occupancy of source square by a piece that belongs to playing side, etc.
-	 * @return the boolean
+	 * @return {@code true} iff the move is legal
 	 */
 	public boolean isMoveLegal(@NotNull Move move, boolean fullValidation) {
 
@@ -415,85 +415,123 @@ public class Board {
 		if (fullValidation) {
 
 			// player cannot capture their own pieces
-			if (fromPiece.getPieceSide().equals(capturedPiece.getPieceSide())) {
+			if (fromPiece.getPieceSide() == capturedPiece.getPieceSide()) {
 				return false;
 			}
 
 			// player tries to move the opponent's piece
-			if (!side.equals(fromPiece.getPieceSide())) {
+			if (side != fromPiece.getPieceSide()) {
 				return false;
 			}
 
-			boolean pawnPromoting = fromPiece.getPieceType().equals(PieceType.PAWN) && doesMoveLeadsToPromotion(side, move);
-			boolean hasPromoPiece = !move.getPromotion().equals(Piece.NONE);
+			boolean pawnPromoting = fromPiece.isOfType(PieceType.PAWN) && doesMoveLeadsToPromotion(side, move);
 
-			if (hasPromoPiece != pawnPromoting) {
+			if (move.hasValidPromotion() != pawnPromoting) {
+				// pawn should be promoted but the promotion NOT set on the move
+				// or pawn should NOT be promoted but the promotion is set on the move
 				return false;
 			}
 
-			if (fromType.equals(PieceType.KING)) {
+			// if players moves with their king
+			// we need to check if this move is a (valid) attempt for a castling
+			if (fromType == PieceType.KING) {
+
+				// player does not have castle right for the attempted castle move
+				if (!move.hasCastleRight(getCastleRight(side))) {
+					return false;
+				}
+
 				if (move.isKingSideCastle()) {
-					if (getCastleRight(side).equals(CastlingRight.KING_AND_QUEEN_SIDE) ||
-						(getCastleRight(side).equals(CastlingRight.KING_SIDE))) {
-						if ((getBitboard() & Constants.getOOAllSquaresBB(side)) == 0L) {
-							return !isSquareAttackedBy(Constants.getOOSquares(side), side.flip());
-						}
+
+					// some squares between the king and the rook are not empty
+					if (!Bitboard.areSquaresFree(getBitboard(), Constants.getOOAllSquaresBB(side))) {
+						return false;
 					}
-					return false;
+
+					// if no squares (required for the castling) are attacked
+					// then this move is valid
+					// TODO: Shouldn't we check all squares?
+					return !isSquareAttackedBy(Constants.getOOSquares(side), side.flip());
+
 				}
+
 				if (move.isQueenSideCastle()) {
-					if (getCastleRight(side).equals(CastlingRight.KING_AND_QUEEN_SIDE) ||
-						(getCastleRight(side).equals(CastlingRight.QUEEN_SIDE))) {
-						if ((getBitboard() & Constants.getOOOAllSquaresBB(side)) == 0L) {
-							return !isSquareAttackedBy(Constants.getOOOSquares(side), side.flip());
-						}
+
+					// some squares between the king and the rook are not empty
+					if (!Bitboard.areSquaresFree(getBitboard(), Constants.getOOOAllSquaresBB(side))) {
+						return false;
 					}
-					return false;
+
+					// if no squares (required for the castling) are attacked
+					// then this move is valid
+					// TODO: Shouldn't we check all squares?
+					return !isSquareAttackedBy(Constants.getOOOSquares(side), side.flip());
+
 				}
+
 			}
+
 		}
 
-		if (fromType.equals(PieceType.KING)) {
+		// king cannot be moved to a square that is currently under attack
+		if (fromType == PieceType.KING) {
 			if (squareAttackedBy(move.getTo(), side.flip()) != 0L) {
 				return false;
 			}
 		}
 
-		Square kingSq = (fromType.equals(PieceType.KING) ? move.getTo() : getKingSquare(side));
-		Side other = side.flip();
+		// the square of the side's king after this move
+		Square kingSq = fromType == PieceType.KING ? move.getTo() : getKingSquare(side);
+		Side otherSide = side.flip();
+
 		long moveTo = move.getTo().getBitboard();
 		long moveFrom = move.getFrom().getBitboard();
-		long ep = getEnPassantTarget() != Square.NONE && move.getTo() == getEnPassant() &&
-			(fromType.equals(PieceType.PAWN)) ? getEnPassantTarget().getBitboard() : 0;
+
+		// TODO: ep
+		long ep = getEnPassantTarget() != Square.NONE && move.getTo() == getEnPassant() && (fromType.equals(PieceType.PAWN)) ? getEnPassantTarget().getBitboard() : 0;
 		long allPieces = (getBitboard() ^ moveFrom ^ ep) | moveTo;
 
-		long bishopAndQueens = ((getBitboard(Piece.make(other, PieceType.BISHOP)) |
-			getBitboard(Piece.make(other, PieceType.QUEEN)))) & ~moveTo;
+		long bishopsAndQueens = (
+			(
+				getBitboard(Piece.make(otherSide, PieceType.BISHOP))
+					| getBitboard(Piece.make(otherSide, PieceType.QUEEN))
+			) & ~moveTo
+		);
 
-		if (bishopAndQueens != 0L &&
-			(Bitboard.getBishopAttacks(allPieces, kingSq) & bishopAndQueens) != 0L) {
+		// after this move, the king would be attacked by some of the other side's bishops and/or queens (diagonals)
+		if (bishopsAndQueens != 0L && (Bitboard.getBishopAttacks(allPieces, kingSq) & bishopsAndQueens) != 0L) {
 			return false;
 		}
 
-		long rookAndQueens = ((getBitboard(Piece.make(other, PieceType.ROOK)) |
-			getBitboard(Piece.make(other, PieceType.QUEEN)))) & ~moveTo;
+		long rooksAndQueens = (
+			(
+				getBitboard(Piece.make(otherSide, PieceType.ROOK)) |
+					getBitboard(Piece.make(otherSide, PieceType.QUEEN))
+			) & ~moveTo
+		);
 
-		if (rookAndQueens != 0L &&
-			(Bitboard.getRookAttacks(allPieces, kingSq) & rookAndQueens) != 0L) {
+		// after this move, the king would be attacked by some of the other side's bishops and/or queens (rank or files)
+		if (rooksAndQueens != 0L && (Bitboard.getRookAttacks(allPieces, kingSq) & rooksAndQueens) != 0L) {
 			return false;
 		}
 
-		long knights = (getBitboard(Piece.make(other, PieceType.KNIGHT))) & ~moveTo;
+		long knights = (getBitboard(Piece.make(otherSide, PieceType.KNIGHT))) & ~moveTo;
 
-		if (knights != 0L &&
-			(Bitboard.getKnightAttacks(kingSq, allPieces) & knights) != 0L) {
+		// after this move, the king would be attacked by some of the other side's knights
+		if (knights != 0L && (Bitboard.getKnightAttacks(kingSq, allPieces) & knights) != 0L) {
 			return false;
 		}
 
-		long pawns = (getBitboard(Piece.make(other, PieceType.PAWN))) & ~moveTo & ~ep;
+		long pawns = (getBitboard(Piece.make(otherSide, PieceType.PAWN))) & ~moveTo & ~ep;
 
-		return pawns == 0L ||
-			(Bitboard.getPawnAttacks(side, kingSq) & pawns) == 0L;
+		// after this move, the king would be attacked by some of the other side's pawns
+		// noinspection RedundantIfStatement
+		if (pawns != 0L && (Bitboard.getPawnAttacks(side, kingSq) & pawns) == 0L) {
+			return false;
+		}
+
+		// the move is legal
+		return true;
 
 	}
 

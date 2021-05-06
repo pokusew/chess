@@ -6,22 +6,30 @@ package cz.martinendler.chess.engine;
 public enum CastlingRight {
 
 	/**
-	 * King side castle right.
+	 * King side castling right
+	 *
+	 * A player can do ONLY kingside castling
 	 */
 	KING_SIDE,
 
 	/**
-	 * Queen side castle right.
+	 * Queen side castling right
+	 *
+	 * A player can do ONLY queenside castling
 	 */
 	QUEEN_SIDE,
 
 	/**
-	 * King and queen side castle right.
+	 * King and queen side castling right
+	 *
+	 * A player can do BOTH kingside and queenside castling
 	 */
 	KING_AND_QUEEN_SIDE,
 
 	/**
-	 * None castle right.
+	 * None castling right
+	 *
+	 * A player can do NO castling of any type
 	 */
 	NONE;
 

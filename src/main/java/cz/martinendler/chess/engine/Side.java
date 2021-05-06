@@ -1,7 +1,7 @@
 package cz.martinendler.chess.engine;
 
 /**
- * A possible
+ * A side (player color) in chess
  *
  * @see <a href="https://www.chessprogramming.org/Side_to_move">Side to move on CPW</a>
  * @see <a href="https://www.chessprogramming.org/Color">Color on CPW</a>
@@ -9,11 +9,11 @@ package cz.martinendler.chess.engine;
 public enum Side {
 
 	/**
-	 * White side.
+	 * White side
 	 */
 	WHITE,
 	/**
-	 * Black side.
+	 * Black side
 	 */
 	BLACK;
 
@@ -39,14 +39,20 @@ public enum Side {
 	}
 
 	/**
-	 * Flip side.
+	 * Returns the opposite side
 	 *
-	 * @return the side
+	 * @return the opposite side
 	 */
 	public Side flip() {
-		return Side.WHITE.equals(this)
-			? Side.BLACK
-			: Side.WHITE;
+		return this == Side.WHITE ? Side.BLACK : Side.WHITE;
+	}
+
+	public boolean isWhite() {
+		return this == Side.WHITE;
+	}
+
+	public boolean isBlack() {
+		return this == Side.BLACK;
 	}
 
 }

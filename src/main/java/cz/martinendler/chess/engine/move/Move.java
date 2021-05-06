@@ -68,10 +68,15 @@ public class Move {
 		return promotion;
 	}
 
+	public boolean hasValidPromotion() {
+		// note: promotion == null should never happen
+		return promotion != null && promotion != Piece.NONE;
+	}
+
 	/**
 	 * Gets the king castle move
 	 *
-	 * @param side        the side
+	 * @param side          the side
 	 * @param castlingRight the castle right
 	 * @return king castle move
 	 */
@@ -119,9 +124,9 @@ public class Move {
 	}
 
 	/**
-	 * Is castle move boolean.
+	 * Checks if this move a castle move
 	 *
-	 * @return true if move is a castle one
+	 * @return {@code true} if this is a castle move, {@code false} otherwise
 	 */
 	public boolean isCastleMove() {
 		return this.equals(Constants.DEFAULT_WHITE_OO)
@@ -131,9 +136,9 @@ public class Move {
 	}
 
 	/**
-	 * is King side castle
+	 * Checks if this move a king side castle move
 	 *
-	 * @return boolean
+	 * @return {@code true} if this is a king side castle move, {@code false} otherwise
 	 */
 	public boolean isKingSideCastle() {
 		return this.equals(Constants.DEFAULT_WHITE_OO)
@@ -141,9 +146,9 @@ public class Move {
 	}
 
 	/**
-	 * is queen side castle
+	 * Checks if this move a queen side castle move
 	 *
-	 * @return boolean
+	 * @return {@code true} if this is a queen side castle move, {@code false} otherwise
 	 */
 	public boolean isQueenSideCastle() {
 		return this.equals(Constants.DEFAULT_WHITE_OOO)
@@ -151,17 +156,22 @@ public class Move {
 	}
 
 	/**
-	 * If castle move is a valid one
+	 * Checks if the required castle right for this move matches the given castle right
 	 *
 	 * @param castleRight the castle right
-	 * @return boolean
+	 * @return {@code true} if the required castle right for this move matches the given castle right
 	 */
 	public boolean hasCastleRight(final CastlingRight castleRight) {
+
+		// if this is not a castle move, no castle right is required
+		if (!isCastleMove()) {
+			return true;
+		}
+
 		return (CastlingRight.KING_AND_QUEEN_SIDE.equals(castleRight))
-			|| (this.equals(Constants.DEFAULT_WHITE_OO) && CastlingRight.KING_SIDE.equals(castleRight))
-			|| (this.equals(Constants.DEFAULT_BLACK_OO) && CastlingRight.KING_SIDE.equals(castleRight))
-			|| (this.equals(Constants.DEFAULT_WHITE_OOO) && CastlingRight.QUEEN_SIDE.equals(castleRight))
-			|| (this.equals(Constants.DEFAULT_BLACK_OOO) && CastlingRight.QUEEN_SIDE.equals(castleRight));
+			|| (isKingSideCastle() && CastlingRight.KING_SIDE.equals(castleRight))
+			|| (isQueenSideCastle() && CastlingRight.QUEEN_SIDE.equals(castleRight));
+
 	}
 
 	@Override
@@ -169,9 +179,9 @@ public class Move {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Move move = (Move) o;
-		return from == move.from &&
-			to == move.to &&
-			promotion == move.promotion;
+		return from == move.from
+			&& to == move.to
+			&& promotion == move.promotion;
 	}
 
 	@Override

@@ -5,60 +5,60 @@ import cz.martinendler.chess.engine.Side;
 import java.util.EnumMap;
 
 /**
- * The enum Piece.
+ * A chess piece
  */
 public enum Piece {
 
 	/**
-	 * White pawn piece.
+	 * White pawn piece
 	 */
 	WHITE_PAWN,
 	/**
-	 * White knight piece.
+	 * White knight piece
 	 */
 	WHITE_KNIGHT,
 	/**
-	 * White bishop piece.
+	 * White bishop piece
 	 */
 	WHITE_BISHOP,
 	/**
-	 * White rook piece.
+	 * White rook piece
 	 */
 	WHITE_ROOK,
 	/**
-	 * White queen piece.
+	 * White queen piece
 	 */
 	WHITE_QUEEN,
 	/**
-	 * White king piece.
+	 * White king piece
 	 */
 	WHITE_KING,
 	/**
-	 * Black pawn piece.
+	 * Black pawn piece
 	 */
 	BLACK_PAWN,
 	/**
-	 * Black knight piece.
+	 * Black knight piece
 	 */
 	BLACK_KNIGHT,
 	/**
-	 * Black bishop piece.
+	 * Black bishop piece
 	 */
 	BLACK_BISHOP,
 	/**
-	 * Black rook piece.
+	 * Black rook piece
 	 */
 	BLACK_ROOK,
 	/**
-	 * Black queen piece.
+	 * Black queen piece
 	 */
 	BLACK_QUEEN,
 	/**
-	 * Black king piece.
+	 * Black king piece
 	 */
 	BLACK_KING,
 	/**
-	 * None piece.
+	 * None piece
 	 */
 	NONE;
 
@@ -67,14 +67,13 @@ public enum Piece {
 	/**
 	 * The Piece type.
 	 */
-	static EnumMap<Piece, PieceType> pieceType =
-		new EnumMap<Piece, PieceType>(Piece.class);
+	static EnumMap<Piece, PieceType> pieceType = new EnumMap<>(Piece.class);
 	/**
 	 * The Piece side.
 	 */
-	static EnumMap<Piece, Side> pieceSide =
-		new EnumMap<Piece, Side>(Piece.class);
-	private static Piece[][] pieceMake = {
+	static EnumMap<Piece, Side> pieceSide = new EnumMap<>(Piece.class);
+
+	private static final Piece[][] pieceMake = {
 		{WHITE_PAWN, BLACK_PAWN},
 		{WHITE_KNIGHT, BLACK_KNIGHT},
 		{WHITE_BISHOP, BLACK_BISHOP},
@@ -85,6 +84,7 @@ public enum Piece {
 	};
 
 	static {
+
 		pieceType.put(Piece.WHITE_PAWN, PieceType.PAWN);
 		pieceType.put(Piece.WHITE_KNIGHT, PieceType.KNIGHT);
 		pieceType.put(Piece.WHITE_BISHOP, PieceType.BISHOP);
@@ -113,7 +113,6 @@ public enum Piece {
 		pieceSide.put(Piece.BLACK_QUEEN, Side.BLACK);
 		pieceSide.put(Piece.BLACK_KING, Side.BLACK);
 
-
 	}
 
 	/**
@@ -127,14 +126,13 @@ public enum Piece {
 	}
 
 	/**
-	 * Make piece.
+	 * Makes piece with the given parameters
 	 *
 	 * @param side the side
 	 * @param type the type
 	 * @return the piece
 	 */
 	public static Piece make(Side side, PieceType type) {
-		//return Piece.valueOf(side+"_"+type);
 		return pieceMake[type.ordinal()][side.ordinal()];
 	}
 
@@ -154,6 +152,10 @@ public enum Piece {
 	 */
 	public PieceType getPieceType() {
 		return pieceType.get(this);
+	}
+
+	public boolean isOfType(PieceType type) {
+		return getPieceType() == type;
 	}
 
 	/**
