@@ -319,7 +319,7 @@ public class Bitboard {
 	 * @param sq the square
 	 * @return the long
 	 */
-	static long sq2BB(Square sq) {
+	static long sq2BB(@NotNull Square sq) {
 		return sq.getBitboard();
 	}
 
@@ -330,7 +330,7 @@ public class Bitboard {
 	 * @param sq the square
 	 * @return the bitboard
 	 */
-	static long sq2RA(Square sq) {
+	static long sq2RA(@NotNull Square sq) {
 		return (rankBB[sq.getRank().ordinal()] ^ sq2BB(sq));
 	}
 
@@ -341,7 +341,7 @@ public class Bitboard {
 	 * @param sq the sq
 	 * @return the bitboard
 	 */
-	static long sq2FA(Square sq) {
+	static long sq2FA(@NotNull Square sq) {
 		return (fileBB[sq.getFile().ordinal()] ^ sq.getBitboard());
 	}
 
@@ -352,7 +352,7 @@ public class Bitboard {
 	 * @param sq the square
 	 * @return the bitboard
 	 */
-	static long sq2A1(Square sq) {
+	static long sq2A1(@NotNull Square sq) {
 		return (diagonalA1H8BB[squareToDiagonalA1H8[sq.ordinal()].ordinal()] ^ sq2BB(sq));
 	}
 
@@ -363,7 +363,7 @@ public class Bitboard {
 	 * @param sq the square
 	 * @return the bitboard
 	 */
-	static long sq2H1(Square sq) {
+	static long sq2H1(@NotNull Square sq) {
 		return (diagonalH1A8BB[squareToDiagonalH1A8[sq.ordinal()].ordinal()] ^ sq2BB(sq));
 	}
 
@@ -410,7 +410,7 @@ public class Bitboard {
 	 * @param bb the bitboard
 	 * @return the LSB of the the given bitboard
 	 */
-	public static long extractLSB(Long bb) {
+	public static long extractLSB(long bb) {
 		return bb & (bb - 1);
 	}
 
@@ -437,7 +437,7 @@ public class Bitboard {
 	 * @param sq the square
 	 * @return the bitboard for the given square
 	 */
-	public static long getBBTable(Square sq) {
+	public static long getBBTable(@NotNull Square sq) {
 		return 1L << sq.ordinal();
 	}
 
@@ -476,7 +476,7 @@ public class Bitboard {
 	 * @param square the square where the bishop currently is
 	 * @return bishop attacks
 	 */
-	public static long getBishopAttacks(long mask, Square square) {
+	public static long getBishopAttacks(long mask, @NotNull Square square) {
 		// rook is a sliding piece that can move along the diagonals and anti-diagonals
 		return (
 			getSliderAttacks(diagA1H8Attacks[square.ordinal()], mask, square.ordinal())
@@ -491,7 +491,7 @@ public class Bitboard {
 	 * @param square the square where the rook currently is
 	 * @return rook attacks
 	 */
-	public static long getRookAttacks(long mask, Square square) {
+	public static long getRookAttacks(long mask, @NotNull Square square) {
 		// rook is a sliding piece that can move along the ranks or files
 		return (
 			getSliderAttacks(fileAttacks[square.ordinal()], mask, square.ordinal())
@@ -506,7 +506,7 @@ public class Bitboard {
 	 * @param square the square where the queen currently is
 	 * @return queen attacks
 	 */
-	public static long getQueenAttacks(long mask, Square square) {
+	public static long getQueenAttacks(long mask, @NotNull Square square) {
 		// queen is a sliding piece that can move along the ranks, files, diagonals and anti-diagonals
 		return getRookAttacks(mask, square) | getBishopAttacks(mask, square);
 	}
@@ -518,7 +518,7 @@ public class Bitboard {
 	 * @param occupied the occupied
 	 * @return knight attacks
 	 */
-	public static long getKnightAttacks(Square square, long occupied) {
+	public static long getKnightAttacks(@NotNull Square square, long occupied) {
 		return knightAttacks[square.ordinal()] & occupied;
 	}
 
@@ -529,8 +529,8 @@ public class Bitboard {
 	 * @param square the square where the pawn currently is
 	 * @return the pawn attacks
 	 */
-	public static long getPawnAttacks(Side side, Square square) {
-		return side.equals(Side.WHITE)
+	public static long getPawnAttacks(@NotNull Side side, @NotNull Square square) {
+		return side.isWhite()
 			? whitePawnAttacks[square.ordinal()]
 			: blackPawnAttacks[square.ordinal()];
 	}
@@ -552,13 +552,13 @@ public class Bitboard {
 		@Nullable Square enPassant
 	) {
 
-		long pawnAttacks = side.equals(Side.WHITE)
+		long pawnAttacks = side.isWhite()
 			? whitePawnAttacks[square.ordinal()]
 			: blackPawnAttacks[square.ordinal()];
 
 		if (enPassant != null) {
 			long ep = enPassant.getBitboard();
-			occupied |= side.equals(Side.WHITE) ? ep << 8L : ep >> 8L;
+			occupied |= side.isWhite() ? ep << 8L : ep >> 8L;
 		}
 
 		return pawnAttacks & occupied;
@@ -575,7 +575,7 @@ public class Bitboard {
 	 * @param occupied the occupied
 	 * @return the pawn moves
 	 */
-	public static long getPawnMoves(Side side, Square square, long occupied) {
+	public static long getPawnMoves(@NotNull Side side, @NotNull Square square, long occupied) {
 
 		long pawnMoves = side.equals(Side.WHITE)
 			? whitePawnMoves[square.ordinal()]
@@ -604,7 +604,7 @@ public class Bitboard {
 	 * @param occupied the occupied
 	 * @return the king attacks
 	 */
-	public static long getKingAttacks(Square square, long occupied) {
+	public static long getKingAttacks(@NotNull Square square, long occupied) {
 		return adjacentSquares[square.ordinal()] & occupied;
 	}
 
@@ -614,7 +614,7 @@ public class Bitboard {
 	 * @param pieces the pieces
 	 * @return List of Square
 	 */
-	public static List<Square> bbToSquareList(long pieces) {
+	public static @NotNull List<Square> bbToSquareList(long pieces) {
 		List<Square> squares = new LinkedList<>();
 		while (pieces != 0L) {
 			int sq = Bitboard.bitScanForward(pieces);
@@ -630,7 +630,7 @@ public class Bitboard {
 	 * @param squares the list of squares
 	 * @return the bitboard
 	 */
-	public static long squareListToBB(List<Square> squares) {
+	public static long squareListToBB(@NotNull List<Square> squares) {
 		long bb = 0L;
 		for (Square sq : squares) {
 			bb |= sq.getBitboard();
@@ -644,7 +644,7 @@ public class Bitboard {
 	 * @param pieces the pieces
 	 * @return array of squares
 	 */
-	public static Square[] bbToSquareArray(long pieces) {
+	public static @NotNull Square[] bbToSquareArray(long pieces) {
 		Square[] squares = new Square[Long.bitCount(pieces)];
 		int index = 0;
 		while (pieces != 0L) {
@@ -679,7 +679,7 @@ public class Bitboard {
 	 * @param sq the sq
 	 * @return the bitboard of the rank of the given square
 	 */
-	public static long getRankBB(Square sq) {
+	public static long getRankBB(@NotNull Square sq) {
 		return rankBB[sq.getRank().ordinal()];
 	}
 
@@ -689,7 +689,7 @@ public class Bitboard {
 	 * @param sq the sq
 	 * @return the bitboard of the file of the given square
 	 */
-	public static long getFileBB(Square sq) {
+	public static long getFileBB(@NotNull Square sq) {
 		return fileBB[sq.getFile().ordinal()];
 	}
 
@@ -699,7 +699,7 @@ public class Bitboard {
 	 * @param rank the rank
 	 * @return the bitboard of the given rank
 	 */
-	public static long getRankBB(Rank rank) {
+	public static long getRankBB(@NotNull Rank rank) {
 		return rankBB[rank.ordinal()];
 	}
 
@@ -709,7 +709,7 @@ public class Bitboard {
 	 * @param file the file
 	 * @return the bitboard of the given file
 	 */
-	public static long getFileBB(File file) {
+	public static long getFileBB(@NotNull File file) {
 		return fileBB[file.ordinal()];
 	}
 
@@ -721,7 +721,7 @@ public class Bitboard {
 	 * @param bb the bitboard
 	 * @return an 8-lines bit string
 	 */
-	public static String bbToString(long bb) {
+	public static @NotNull String bbToString(long bb) {
 
 		StringBuilder sb = new StringBuilder();
 
@@ -761,7 +761,7 @@ public class Bitboard {
 	 * @param includeNames {@code true} to also print files' and ranks' names
 	 * @return a pretty-printed ASCII chessboard string
 	 */
-	public static String bbToPrettyString(long bb, boolean includeNames) {
+	public static @NotNull String bbToPrettyString(long bb, boolean includeNames) {
 
 		StringBuilder sb = new StringBuilder();
 
@@ -805,7 +805,7 @@ public class Bitboard {
 
 	}
 
-	public static String bbToPrettyString(long bb) {
+	public static @NotNull String bbToPrettyString(long bb) {
 		return bbToPrettyString(bb, true);
 	}
 
