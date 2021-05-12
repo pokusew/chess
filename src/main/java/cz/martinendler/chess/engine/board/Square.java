@@ -13,6 +13,9 @@ import java.util.EnumMap;
  */
 public enum Square {
 
+	// note: the order in which the enum values are declared here MATTERS!
+	//       and the rest of the code depends on that order (via Square.ordinal())
+
 	/**
 	 * A 1 square (0)
 	 */
@@ -268,11 +271,7 @@ public enum Square {
 	/**
 	 * H 8 square (63)
 	 */
-	H8,
-	/**
-	 * None square (64) (used instead of null)
-	 */
-	NONE;
+	H8;
 
 	private static final Square[] allSquares = Square.values();
 	private static final Rank[] rankValues = Rank.values();
@@ -286,13 +285,6 @@ public enum Square {
 		// initialize bitboard and sideSquare static final variables
 
 		for (Square sq : allSquares) {
-
-			if (Square.NONE.equals(sq)) {
-				bitboard[sq.ordinal()] = 0L;
-				sideSquare.put(sq, new Square[]{});
-				continue;
-			}
-
 
 			bitboard[sq.ordinal()] = 1L << sq.ordinal();
 
@@ -330,29 +322,22 @@ public enum Square {
 	 * @param file the file
 	 * @return the square
 	 */
-	public static Square encode(@NotNull Rank rank, @NotNull File file) {
+	public static @NotNull Square encode(@NotNull Rank rank, @NotNull File file) {
 		return allSquares[rank.ordinal() * 8 + file.ordinal()];
 	}
 
 	/**
-	 * From value square.
+	 * Gets square by its ordinal number / index / id
 	 *
-	 * @param v the v
+	 * @param index the ordinal number of the required square [0, 63]
 	 * @return the square
+	 * @throws IllegalArgumentException when the given index is out of allowed range [0, 63]
 	 */
-	public static Square fromValue(String v) {
-		return valueOf(v);
-	}
-
-	/**
-	 * Gets square by its ordinal number (index, id)
-	 *
-	 * @param index the ordinal number of the required square [0-63]
-	 * @return the required square or {@link Square#NONE} when an invalid index is given
-	 */
-	public static Square squareAt(int index) {
+	public static @NotNull Square fromIndex(int index) {
 		if (index < 0 || index >= allSquares.length) {
-			return Square.NONE;
+			throw new IllegalArgumentException(
+				"Index value " + index + " is out of allowed range [0, " + allSquares.length + "]"
+			);
 		}
 		return allSquares[index];
 	}
@@ -362,12 +347,12 @@ public enum Square {
 	 *
 	 * @return an array of left-right-side neighbour squares (1 or 2)
 	 */
-	public Square[] getSideSquares() {
+	public @NotNull Square[] getSideSquares() {
 		return sideSquare.get(this);
 	}
 
 	/**
-	 * Gets rank in which this square is
+	 * Gets the rank in which this square is
 	 *
 	 * @return the rank of this square
 	 */
@@ -376,7 +361,7 @@ public enum Square {
 	}
 
 	/**
-	 * Gets file in which this square is
+	 * Gets the file in which this square is
 	 *
 	 * @return the file of this square
 	 */
@@ -385,16 +370,7 @@ public enum Square {
 	}
 
 	/**
-	 * Value string.
-	 *
-	 * @return the string
-	 */
-	public String value() {
-		return name();
-	}
-
-	/**
-	 * Gets bitboard
+	 * Gets the corresponding bitboard for this square
 	 *
 	 * @return the bitboard
 	 */

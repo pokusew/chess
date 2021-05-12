@@ -8,6 +8,9 @@ package cz.martinendler.chess.engine;
  */
 public enum Side {
 
+	// note: the order in which the enum values are declared here MATTERS!
+	//       and the rest of the code depends on that order (via Side.ordinal())
+
 	/**
 	 * White side
 	 */
@@ -16,27 +19,6 @@ public enum Side {
 	 * Black side
 	 */
 	BLACK;
-
-	public static Side[] allSides = values();
-
-	/**
-	 * From value side.
-	 *
-	 * @param v the v
-	 * @return the side
-	 */
-	public static Side fromValue(String v) {
-		return valueOf(v);
-	}
-
-	/**
-	 * Value string.
-	 *
-	 * @return the string
-	 */
-	public String value() {
-		return name();
-	}
 
 	/**
 	 * Returns the opposite side

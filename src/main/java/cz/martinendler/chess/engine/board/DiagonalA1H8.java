@@ -6,9 +6,12 @@ package cz.martinendler.chess.engine.board;
  * In total there is 15 such diagonals [idx 0-14] (including the Main Diagonal).
  *
  * @see <a href="https://www.chessprogramming.org/Diagonals">Diagonals on CPW</a>
- * @see <a href="https://www.chessprogramming.org/Diagonals">Diagonals on CPW</a>
  */
 public enum DiagonalA1H8 {
+
+	// note: the order in which the enum values are declared here MATTERS!
+	//       and the rest of the code depends on that order (via DiagonalA1H8.ordinal())
+
 	/**
 	 * The diagonal from A8 to A8 (1 square, light) (idx 0)
 	 */
@@ -68,5 +71,6 @@ public enum DiagonalA1H8 {
 	/**
 	 * The diagonal from H1 to H1 (1 square, light) (idx 14)
 	 */
-	H1_H1
+	H1_H1;
+
 }

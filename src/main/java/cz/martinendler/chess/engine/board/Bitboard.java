@@ -1,6 +1,8 @@
 package cz.martinendler.chess.engine.board;
 
 import cz.martinendler.chess.engine.Side;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -543,13 +545,18 @@ public class Bitboard {
 	 * @param enPassant the en passant
 	 * @return the pawn captures
 	 */
-	public static long getPawnCaptures(Side side, Square square, long occupied, Square enPassant) {
+	public static long getPawnCaptures(
+		@NotNull Side side,
+		@NotNull Square square,
+		long occupied,
+		@Nullable Square enPassant
+	) {
 
 		long pawnAttacks = side.equals(Side.WHITE)
 			? whitePawnAttacks[square.ordinal()]
 			: blackPawnAttacks[square.ordinal()];
 
-		if (!enPassant.equals(Square.NONE)) {
+		if (enPassant != null) {
 			long ep = enPassant.getBitboard();
 			occupied |= side.equals(Side.WHITE) ? ep << 8L : ep >> 8L;
 		}
@@ -612,7 +619,7 @@ public class Bitboard {
 		while (pieces != 0L) {
 			int sq = Bitboard.bitScanForward(pieces);
 			pieces = Bitboard.extractLSB(pieces);
-			squares.add(Square.squareAt(sq));
+			squares.add(Square.fromIndex(sq));
 		}
 		return squares;
 	}
@@ -643,7 +650,7 @@ public class Bitboard {
 		while (pieces != 0L) {
 			int sq = bitScanForward(pieces);
 			pieces = extractLSB(pieces);
-			squares[index++] = Square.squareAt(sq);
+			squares[index++] = Square.fromIndex(sq);
 		}
 		return squares;
 	}
@@ -804,8 +811,9 @@ public class Bitboard {
 
 	/**
 	 * Check if all required squares (bits set to 1 in the given mask) are empty
+	 *
 	 * @param occupied bitboard where each bit is set to 0 iff is empty
-	 * @param mask bitboard of the required squares
+	 * @param mask     bitboard of the required squares
 	 * @return {@code true} iff all required squares are empty
 	 */
 	public static boolean areSquaresFree(long occupied, long mask) {

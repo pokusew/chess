@@ -1,7 +1,7 @@
 package cz.martinendler.chess.engine.board;
 
 /**
- * A anti-diagonals in the same direction as the Main Anti-Diagonal on the chessboard
+ * A anti-diagonal in the same direction as the Main Anti-Diagonal on the chessboard
  * <p>
  * In total there is 15 such diagonals [idx 0-14] (including the Main Anti-Diagonal).
  *
@@ -9,6 +9,10 @@ package cz.martinendler.chess.engine.board;
  * @see <a href="https://www.chessprogramming.org/Diagonals">Diagonals on CPW</a>
  */
 public enum DiagonalH1A8 {
+
+	// note: the order in which the enum values are declared here MATTERS!
+	//       and the rest of the code depends on that order (via DiagonalH1A8.ordinal())
+
 	/**
 	 * The diagonal from A1 to A1 (1 square, dark) (idx 0)
 	 */
@@ -68,5 +72,6 @@ public enum DiagonalH1A8 {
 	/**
 	 * The diagonal from H8 to H8 (1 square, dark) (idx 14)
 	 */
-	H8_H8
+	H8_H8;
+
 }

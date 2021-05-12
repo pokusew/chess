@@ -7,6 +7,9 @@ package cz.martinendler.chess.engine.board;
  */
 public enum File {
 
+	// note: the order in which the enum values are declared here MATTERS!
+	//       and the rest of the code depends on that order (via File.ordinal())
+
 	/**
 	 * File a file (0)
 	 */
@@ -38,13 +41,7 @@ public enum File {
 	/**
 	 * File h file (7)
 	 */
-	FILE_H("H"),
-	/**
-	 * None file (8) (used instead of null)
-	 */
-	NONE("");
-
-	public static File[] allFiles = values();
+	FILE_H("H");
 
 	/**
 	 * Notation
@@ -56,17 +53,7 @@ public enum File {
 	}
 
 	/**
-	 * From value file.
-	 *
-	 * @param v the v
-	 * @return the file
-	 */
-	public static File fromValue(String v) {
-		return valueOf(v);
-	}
-
-	/**
-	 * Gets notation.
+	 * Gets notation
 	 *
 	 * @return the notation
 	 */
@@ -74,14 +61,4 @@ public enum File {
 		return notation;
 	}
 
-	/**
-	 * Value string.
-	 *
-	 * @return the string
-	 */
-	public String value() {
-		return name();
-	}
-
 }
-

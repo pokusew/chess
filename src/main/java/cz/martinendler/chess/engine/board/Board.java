@@ -8,6 +8,9 @@ import cz.martinendler.chess.engine.move.Move;
 import cz.martinendler.chess.engine.pieces.Piece;
 import cz.martinendler.chess.engine.pieces.PieceType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -17,48 +20,54 @@ import java.util.List;
  */
 public class Board {
 
+	private static final Logger log = LoggerFactory.getLogger(Board.class);
+
 	// TODO: Should we use EnumMap or plain arrays
 	//       for bitboardOfSide, bitboardOfPiece and squareToPiece?
 	//       using EnumMap:
-	//         pros: maybe cleaner, easier to use
+	//         pros: maybe cleaner, easier to use (type checks)
 	//         cons: probably slower (although EnumMap is also backed by array,
 	//               the keys are validated thus it probably worsens access times)
 	//         cons: cannot be use with Arrays.fill(arr, val) (see Board.clear())
 
-	private final long[] bitboardOfSide;
-	private final long[] bitboardOfPiece;
-	private final Piece[] squareToPiece;
+	private final @NotNull long[] bitboardOfSide;
+	private final @NotNull long[] bitboardOfPiece;
+	private final @Nullable Piece[] squareToPiece;
 
-	private final EnumMap<Side, CastlingRight> castlingRights;
+	private final @NotNull EnumMap<Side, CastlingRight> castlingRights;
 
-	private Side sideToMove;
+	private @NotNull Side sideToMove;
 
-	private Square enPassantTarget;
-	private Square enPassant;
+	private @Nullable Square enPassantTarget;
+	private @Nullable Square enPassant;
 
+	// TODO: How exactly should moves be counted?
 	private int moveId;
 	private int halfMoveId;
 
 	public Board() {
 
-		bitboardOfSide = new long[Side.allSides.length];
-		bitboardOfPiece = new long[Piece.allPieces.length];
+		bitboardOfSide = new long[Side.values().length];
+		bitboardOfPiece = new long[Piece.values().length];
 		squareToPiece = new Piece[Square.values().length];
 		castlingRights = new EnumMap<>(Side.class);
+		castlingRights.put(Side.WHITE, CastlingRight.KING_AND_QUEEN_SIDE);
+		castlingRights.put(Side.BLACK, CastlingRight.KING_AND_QUEEN_SIDE);
 
-		// TODO:
-		// setSideToMove(Side.WHITE);
-		// setEnPassantTarget(Square.NONE);
-		// setEnPassant(Square.NONE);
-		// setMoveCounter(1);
-		// setHalfMoveCounter(0);
+		sideToMove = Side.WHITE;
+		enPassantTarget = null;
+		enPassant = null;
+
+		// TODO: How exactly should moves be counted?
+		moveId = 0; // 1?
+		halfMoveId = 0;
 
 	}
 
 	/**
 	 * Gets the global bitboard
 	 * <p>
-	 * 0b represents an empty square, 1b represents an occupied square (by either white or black piece)
+	 * 0b represents an empty square, 1b represents an occupied square (by either a white or a black piece)
 	 *
 	 * @return the global bitboard, 64-bits-long vector
 	 */
@@ -75,7 +84,7 @@ public class Board {
 	 * @param piece the piece
 	 * @return the bitboard of the given {@code piece}, 64-bits-long vector
 	 */
-	public long getBitboard(Piece piece) {
+	public long getBitboard(@NotNull Piece piece) {
 		return bitboardOfPiece[piece.ordinal()];
 	}
 
@@ -88,7 +97,7 @@ public class Board {
 	 * @param side the side
 	 * @return the bitboard of the given {@code side}, 64-bits-long vector
 	 */
-	public long getBitboard(Side side) {
+	public long getBitboard(@NotNull Side side) {
 		return bitboardOfSide[side.ordinal()];
 	}
 
@@ -96,9 +105,9 @@ public class Board {
 	 * Gets the piece on the given square
 	 *
 	 * @param square the square
-	 * @return the piece
+	 * @return the piece or {@code null} if there is no piece on the given square
 	 */
-	public Piece getPiece(Square square) {
+	public @Nullable Piece getPiece(@NotNull Square square) {
 		return squareToPiece[square.ordinal()];
 	}
 
@@ -109,7 +118,7 @@ public class Board {
 	 * @param location the location
 	 * @return boolean
 	 */
-	public boolean hasPiece(Piece piece, Square[] location) {
+	public boolean hasPiece(@NotNull Piece piece, @NotNull Square[] location) {
 		for (Square sq : location) {
 			if ((getBitboard(piece) & sq.getBitboard()) != 0L) {
 				return true;
@@ -123,7 +132,7 @@ public class Board {
 	 *
 	 * @return the side to move
 	 */
-	public Side getSideToMove() {
+	public @NotNull Side getSideToMove() {
 		return sideToMove;
 	}
 
@@ -132,7 +141,7 @@ public class Board {
 	 *
 	 * @return the en passant
 	 */
-	public Square getEnPassant() {
+	public @Nullable Square getEnPassant() {
 		return enPassant;
 	}
 
@@ -141,7 +150,7 @@ public class Board {
 	 *
 	 * @return the en passant target
 	 */
-	public Square getEnPassantTarget() {
+	public @Nullable Square getEnPassantTarget() {
 		return enPassantTarget;
 	}
 
@@ -151,118 +160,111 @@ public class Board {
 	 * @param side the side
 	 * @return the castleRight
 	 */
-	public CastlingRight getCastleRight(Side side) {
+	public @NotNull CastlingRight getCastleRight(@NotNull Side side) {
 		return castlingRights.get(side);
 	}
 
-	/**
-	 * Does the given move of the given side leads to the pawn promotion?
-	 *
-	 * @param side the side
-	 * @param move the move
-	 * @return true if the given move leads to the pawn promotion
-	 */
-	public static boolean doesMoveLeadsToPromotion(Side side, Move move) {
-		return (
-			(
-				side.isWhite() && move.getTo().getRank() == Rank.RANK_8
-			) || (
-				side.isBlack() && move.getTo().getRank() == Rank.RANK_1
-			)
-		);
-	}
+	// TODO: Javadoc
+	private static @Nullable Square findEnPassantTarget(@Nullable Square sq, @NotNull Side side) {
 
-	private static Square findEnPassantTarget(Square sq, Side side) {
-		Square ep = Square.NONE;
-		if (!Square.NONE.equals(sq)) {
-			ep = Side.WHITE.equals(side)
-				? Square.encode(Rank.RANK_5, sq.getFile())
-				: Square.encode(Rank.RANK_4, sq.getFile());
+		if (sq == null) {
+			return null;
 		}
-		return ep;
+
+		return side.isWhite()
+			? Square.encode(Rank.RANK_5, sq.getFile())
+			: Square.encode(Rank.RANK_4, sq.getFile());
+
 	}
 
-	private static Square findEnPassant(Square sq, Side side) {
-		Square ep = Square.NONE;
-		if (!Square.NONE.equals(sq)) {
-			ep = Side.WHITE.equals(side)
-				? Square.encode(Rank.RANK_3, sq.getFile())
-				: Square.encode(Rank.RANK_6, sq.getFile());
+	// TODO: Javadoc
+	private static @Nullable Square findEnPassant(@Nullable Square sq, @NotNull Side side) {
+
+		if (sq == null) {
+			return null;
 		}
-		return ep;
-	}
 
+		return side.isWhite()
+			? Square.encode(Rank.RANK_3, sq.getFile())
+			: Square.encode(Rank.RANK_6, sq.getFile());
+
+	}
 
 	/**
-	 * TODO
 	 * Adds a piece into a given square
 	 *
 	 * @param piece the piece
-	 * @param sq    the sq
+	 * @param sq    the square
 	 */
-	public void setPiece(Piece piece, Square sq) {
+	public void addPiece(@NotNull Piece piece, @NotNull Square sq) {
 		bitboardOfPiece[piece.ordinal()] |= sq.getBitboard();
 		bitboardOfSide[piece.getPieceSide().ordinal()] |= sq.getBitboard();
 		squareToPiece[sq.ordinal()] = piece;
 	}
 
 	/**
-	 * TODO
 	 * Removes a piece from a given square
 	 *
 	 * @param piece the piece
-	 * @param sq    the sq
+	 * @param sq    the square
 	 */
-	public void unsetPiece(Piece piece, Square sq) {
+	public void removePiece(@NotNull Piece piece, @NotNull Square sq) {
 		bitboardOfPiece[piece.ordinal()] ^= sq.getBitboard();
 		bitboardOfSide[piece.getPieceSide().ordinal()] ^= sq.getBitboard();
-		squareToPiece[sq.ordinal()] = Piece.NONE;
+		squareToPiece[sq.ordinal()] = null;
 	}
 
-	/*
-	 * Move a piece
-	 * @param move
-	 * @return
+	/**
+	 * Moves a piece as described by the given move
+	 *
+	 * @param move the move
+	 * @return a captured piece if any, otherwise {@code null}
 	 */
-	protected Piece movePiece(Move move) {
+	protected @Nullable Piece movePiece(@NotNull Move move) {
 		return movePiece(move.getFrom(), move.getTo(), move.getPromotion());
 	}
 
 	/**
-	 * Move piece piece.
+	 * Moves a piece as described the given arguments
 	 *
 	 * @param from      the from
 	 * @param to        the to
 	 * @param promotion the promotion
-	 * @return the piece
+	 * @return a captured piece if any, otherwise {@code null}
 	 */
-	protected Piece movePiece(Square from, Square to, Piece promotion) {
+	protected Piece movePiece(@NotNull Square from, @NotNull Square to, @Nullable Piece promotion) {
 
 		Piece movingPiece = getPiece(from);
 
+		if (movingPiece == null) {
+			throw new IllegalArgumentException("There is no piece on the from square.");
+		}
+
 		Piece capturedPiece = getPiece(to);
 
-		unsetPiece(movingPiece, from);
+		removePiece(movingPiece, from);
 
-		if (!Piece.NONE.equals(capturedPiece)) {
-			unsetPiece(capturedPiece, to);
+		// captured piece MUST be explicitly removed before adding any piece to the destination (to) square
+		if (capturedPiece != null) {
+			removePiece(capturedPiece, to);
 		}
 
-		if (!Piece.NONE.equals(promotion)) {
-			setPiece(promotion, to);
-		} else {
-			setPiece(movingPiece, to);
-		}
+		// if there is a promotion, add the promoted piece to the destination (to) square
+		// otherwise add the moving piece to the destination (to) square
+		addPiece(promotion != null ? promotion : movingPiece, to);
 
+		// handle en passant
 		if (
-			PieceType.PAWN.equals(movingPiece.getPieceType())
-				&& !Square.NONE.equals(getEnPassantTarget())
-				&& !to.getFile().equals(from.getFile())
-				&& Piece.NONE.equals(capturedPiece)
+			// TODO: test
+			// TODO: Is this really correct? (where is set the enPassantTarget)
+			movingPiece.isOfType(PieceType.PAWN) // moving piece is a pawn
+				&& getEnPassantTarget() != null // en passant target is NOT null
+				&& from.getFile() != to.getFile() // from and to files (columns) are different
+				&& capturedPiece == null // NO piece was captured on the destination (to) square
 		) {
-
+			log.info("movePiece: did a en passant capture");
+			// set the captured piece that was captured during en passant
 			capturedPiece = getPiece(getEnPassantTarget());
-
 		}
 
 		return capturedPiece;
@@ -270,94 +272,121 @@ public class Board {
 	}
 
 	/**
-	 * Returns if the the bitboard with pieces which can attack the given square
+	 * Checks if the given side's pieces can attack the given square
 	 *
 	 * @param square the square
 	 * @param side   the side
-	 * @return true if the square is attacked
+	 * @return {@code 0L} iff the square is NOT attacked by the given side
 	 */
-	public long squareAttackedBy(Square square, Side side) {
+	public long squareAttackedBy(@NotNull Square square, @NotNull Side side) {
 		return squareAttackedBy(square, side, getBitboard());
 	}
 
 	/**
-	 * Returns if the the bitboard with pieces which can attack the given square
+	 * Checks if the given side's pieces can attack the given square
 	 *
-	 * @param square          the square
-	 * @param side            the side
-	 * @param occupiedSquares occupied squares
-	 * @return true if the square is attacked
+	 * @param square   the square
+	 * @param side     the side
+	 * @param occupied occupied squares (all pieces on the board)
+	 * @return {@code 0L} iff the square is NOT attacked by the given side
 	 */
-	public long squareAttackedBy(Square square, Side side, long occupiedSquares) {
+	public long squareAttackedBy(@NotNull Square square, @NotNull Side side, long occupied) {
 
-		long result;
+		long result = 0L;
 
-		result = Bitboard.getPawnAttacks(side.flip(), square) & getBitboard(Piece.make(side, PieceType.PAWN)) & occupiedSquares;
+		result |=
+			// this gets the required positions of the pawns
+			// that cloud attack the given square
+			// note: the reason for using side.flip() is that
+			//       the pawn attacks are not symmetrical (unlike all other piece types attacks)
+			Bitboard.getPawnAttacks(side.flip(), square)
+				// filter by the really available pawns
+				& getBitboard(Piece.make(side, PieceType.PAWN))
+				// TODO: Why we use occupied here?
+				& occupied;
 
-		result |= Bitboard.getKnightAttacks(square, occupiedSquares) & getBitboard(Piece.make(side, PieceType.KNIGHT));
-		result |= Bitboard.getBishopAttacks(occupiedSquares, square) & ((getBitboard(Piece.make(side, PieceType.BISHOP)) | getBitboard(Piece.make(side, PieceType.QUEEN))));
-		result |= Bitboard.getRookAttacks(occupiedSquares, square) & ((getBitboard(Piece.make(side, PieceType.ROOK)) | getBitboard(Piece.make(side, PieceType.QUEEN))));
-		result |= Bitboard.getKingAttacks(square, occupiedSquares) & getBitboard(Piece.make(side, PieceType.KING));
+		// knights
+		result |=
+			// this gets the required positions of the knights
+			// that cloud attack the given square
+			// TODO: Why we pass occupied here?
+			Bitboard.getKnightAttacks(square, occupied)
+				// filter by the really available knights
+				& getBitboard(Piece.make(side, PieceType.KNIGHT));
+
+		// bishops + queens bishops-like attacks
+		result |=
+			// this gets the required positions of the bishops + queens
+			// that cloud attack (bishops-like) the given square
+			Bitboard.getBishopAttacks(occupied, square)
+				// filter by the really available bishops + queens
+				& (getBitboard(Piece.make(side, PieceType.BISHOP)) | getBitboard(Piece.make(side, PieceType.QUEEN)));
+
+		// rooks + queens rooks-like attacks
+		result |=
+			// this gets the required positions of the rooks + queens
+			// that cloud attack (rooks-like) the given square
+			Bitboard.getRookAttacks(occupied, square)
+				// filter by the really available rooks + queens
+				& (getBitboard(Piece.make(side, PieceType.ROOK)) | getBitboard(Piece.make(side, PieceType.QUEEN)));
+
+		result |=
+			// this gets the required positions of the king
+			// that cloud attack the given square
+			// TODO: Why we pass occupied here?
+			Bitboard.getKingAttacks(square, occupied)
+				// filter by the really available king
+				& getBitboard(Piece.make(side, PieceType.KING));
 
 		return result;
 
 	}
 
 	/**
-	 * Get all squares attacked by the given piece (side + piece type)
+	 * Checks if the given side's pieces of the given type can attack the given square
 	 *
 	 * @param square the square
 	 * @param side   the side
 	 * @param type   the type
-	 * @return bitboard, 1b corresponds to the attacked squares
+	 * @return {@code 0L} iff the square is NOT attacked by the given side
 	 */
-	public long squareAttackedByPieceType(Square square, Side side, PieceType type) {
+	public long squareAttackedByPieceType(@NotNull Square square, @NotNull Side side, @NotNull PieceType type) {
 
-		long result = 0L;
+		long occupied = getBitboard();
 
-		long occ = getBitboard();
-
-		switch (type) {
-			case PAWN:
-				result = Bitboard.getPawnAttacks(side.flip(), square) &
-					getBitboard(Piece.make(side, PieceType.PAWN));
-				break;
-			case KNIGHT:
-				result = Bitboard.getKnightAttacks(square, occ) &
-					getBitboard(Piece.make(side, PieceType.KNIGHT));
-				break;
-			case BISHOP:
-				result = Bitboard.getBishopAttacks(occ, square) &
-					getBitboard(Piece.make(side, PieceType.BISHOP));
-				break;
-			case ROOK:
-				result = Bitboard.getRookAttacks(occ, square) &
-					getBitboard(Piece.make(side, PieceType.ROOK));
-				break;
-			case QUEEN:
-				result = Bitboard.getQueenAttacks(occ, square) &
-					getBitboard(Piece.make(side, PieceType.QUEEN));
-				break;
-			case KING:
-				result |= Bitboard.getKingAttacks(square, occ) &
-					getBitboard(Piece.make(side, PieceType.KING));
-				break;
-			default:
-				break;
-		}
-
-		return result;
+		return switch (type) {
+			case PAWN -> (
+				Bitboard.getPawnAttacks(side.flip(), square) & getBitboard(Piece.make(side, PieceType.PAWN))
+			);
+			case KNIGHT -> (
+				// TODO: Why we pass occupied here?
+				Bitboard.getKnightAttacks(square, occupied) & getBitboard(Piece.make(side, PieceType.KNIGHT))
+			);
+			case BISHOP -> (
+				Bitboard.getBishopAttacks(occupied, square) & getBitboard(Piece.make(side, PieceType.BISHOP))
+			);
+			case ROOK -> (
+				Bitboard.getRookAttacks(occupied, square) & getBitboard(Piece.make(side, PieceType.ROOK))
+			);
+			case QUEEN -> (
+				Bitboard.getQueenAttacks(occupied, square) & getBitboard(Piece.make(side, PieceType.QUEEN))
+			);
+			case KING -> (
+				// TODO: Why we pass occupied here?
+				Bitboard.getKingAttacks(square, occupied) & getBitboard(Piece.make(side, PieceType.KING))
+			);
+		};
 
 	}
 
 	/**
-	 * set of squares attacked by
+	 * Checks if the given side's pieces can attack any of the given squares
 	 *
 	 * @param squares the squares
 	 * @param side    the side
-	 * @return boolean
+	 * @return {@code true} if any of the given squares is attacked by the given side, {@code false} otherwise
 	 */
-	public boolean isSquareAttackedBy(List<Square> squares, Side side) {
+	public boolean isSquareAttackedBy(@NotNull List<Square> squares, @NotNull Side side) {
 		for (Square sq : squares) {
 			if (squareAttackedBy(sq, side) != 0L) {
 				return true;
@@ -372,18 +401,16 @@ public class Board {
 	 * @param side the side
 	 * @return the given side's king square
 	 */
-	public Square getKingSquare(Side side) {
-
-		Square result = Square.NONE;
+	public @Nullable Square getKingSquare(@NotNull Side side) {
 
 		long piece = getBitboard(Piece.make(side, PieceType.KING));
 
 		if (piece != 0L) {
 			int square = Bitboard.bitScanForward(piece);
-			return Square.squareAt(square);
+			return Square.fromIndex(square);
 		}
 
-		return result;
+		return null;
 
 	}
 
@@ -393,11 +420,21 @@ public class Board {
 	 * @return boolean {@code true} when the side-to-move's king is attacked, false otherwise
 	 */
 	public boolean isKingAttacked() {
-		return squareAttackedBy(getKingSquare(getSideToMove()), getSideToMove().flip()) != 0;
+
+		Square kingSquare = getKingSquare(getSideToMove());
+
+		if (kingSquare == null) {
+			// side-to-move's king is not on the board
+			// should we rather throw an exception
+			return false;
+		}
+
+		return squareAttackedBy(kingSquare, getSideToMove().flip()) != 0L;
+
 	}
 
 	/**
-	 * Verify if the move to be played leaves the resulting board in a legal position
+	 * Verifies if the move to be played leaves the resulting board in a legal position
 	 *
 	 * @param move           the move
 	 * @param fullValidation performs a full validation on the move, not only if it leaves own king on check, but also if
@@ -405,30 +442,53 @@ public class Board {
 	 *                       e.g.: Occupancy of source square by a piece that belongs to playing side, etc.
 	 * @return {@code true} iff the move is legal
 	 */
-	public boolean isMoveLegal(@NotNull Move move, boolean fullValidation) {
+	public boolean isMoveLegal(final @NotNull Move move, final boolean fullValidation) {
 
 		final Piece fromPiece = getPiece(move.getFrom());
+
+		// there is no piece on the from square
+		if (fromPiece == null) {
+			log.debug(
+				"isMoveLegal({}): false (there is no piece on the from square)",
+				move.toDebugString()
+			);
+			return false;
+		}
+
 		final Side side = getSideToMove();
+		final Side otherSide = side.flip();
 		final PieceType fromType = fromPiece.getPieceType();
 		final Piece capturedPiece = getPiece(move.getTo());
 
 		if (fullValidation) {
 
-			// player cannot capture their own pieces
-			if (fromPiece.getPieceSide() == capturedPiece.getPieceSide()) {
-				return false;
-			}
-
 			// player tries to move the opponent's piece
 			if (side != fromPiece.getPieceSide()) {
+				log.debug(
+					"isMoveLegal({}): false (player tries to move the opponent's piece)",
+					move.toDebugString()
+				);
 				return false;
 			}
 
-			boolean pawnPromoting = fromPiece.isOfType(PieceType.PAWN) && doesMoveLeadsToPromotion(side, move);
+			// player cannot capture their own pieces
+			if (capturedPiece != null && fromPiece.getPieceSide() == capturedPiece.getPieceSide()) {
+				log.debug(
+					"isMoveLegal({}): false (player cannot capture their own pieces)",
+					move.toDebugString()
+				);
+				return false;
+			}
 
-			if (move.hasValidPromotion() != pawnPromoting) {
-				// pawn should be promoted but the promotion NOT set on the move
-				// or pawn should NOT be promoted but the promotion is set on the move
+			boolean pawnPromoting = fromPiece.isOfType(PieceType.PAWN) && move.couldLeadToPromotion(side);
+
+			// pawn should be promoted but the promotion NOT set on the move
+			// or pawn should NOT be promoted but the promotion is set on the move
+			if (move.hasPromotion() != pawnPromoting) {
+				log.debug(
+					"isMoveLegal({}): false (move.hasPromotion() != pawnPromoting)",
+					move.toDebugString()
+				);
 				return false;
 			}
 
@@ -473,22 +533,36 @@ public class Board {
 
 		}
 
-		// king cannot be moved to a square that is currently under attack
-		if (fromType == PieceType.KING) {
-			if (squareAttackedBy(move.getTo(), side.flip()) != 0L) {
-				return false;
-			}
+		// king cannot be moved to a square that is currently under attack by the opposite side
+		if (fromType == PieceType.KING && squareAttackedBy(move.getTo(), otherSide) != 0L) {
+			log.debug(
+				"isMoveLegal({}): false (king cannot be moved to a square"
+					+ "that is currently under attack by the opposite side)",
+				move.toDebugString()
+			);
+			return false;
 		}
+
+		// the code below checks that the move would not leave the side's king in check
 
 		// the square of the side's king after this move
 		Square kingSq = fromType == PieceType.KING ? move.getTo() : getKingSquare(side);
-		Side otherSide = side.flip();
+
+		if (kingSq == null) {
+			throw new IllegalStateException(side.name() + "'s king not on board!");
+		}
 
 		long moveTo = move.getTo().getBitboard();
 		long moveFrom = move.getFrom().getBitboard();
 
-		// TODO: ep
-		long ep = getEnPassantTarget() != Square.NONE && move.getTo() == getEnPassant() && (fromType.equals(PieceType.PAWN)) ? getEnPassantTarget().getBitboard() : 0;
+		// en passant capture square
+		long ep = (
+			getEnPassantTarget() != null
+				&& move.getTo() == getEnPassant()
+				&& fromType == PieceType.PAWN
+		) ? getEnPassantTarget().getBitboard() : 0L;
+
+		// bitboard of all pieces after the move considering also en passant capture
 		long allPieces = (getBitboard() ^ moveFrom ^ ep) | moveTo;
 
 		long bishopsAndQueens = (
@@ -500,6 +574,11 @@ public class Board {
 
 		// after this move, the king would be attacked by some of the other side's bishops and/or queens (diagonals)
 		if (bishopsAndQueens != 0L && (Bitboard.getBishopAttacks(allPieces, kingSq) & bishopsAndQueens) != 0L) {
+			log.debug(
+				"isMoveLegal({}): false (after this move, the king would be attacked by some" +
+					"of the other side's bishops and/or queens (diagonals)",
+				move.toDebugString()
+			);
 			return false;
 		}
 
@@ -512,21 +591,35 @@ public class Board {
 
 		// after this move, the king would be attacked by some of the other side's bishops and/or queens (rank or files)
 		if (rooksAndQueens != 0L && (Bitboard.getRookAttacks(allPieces, kingSq) & rooksAndQueens) != 0L) {
+			log.debug(
+				"isMoveLegal({}): false (after this move, the king would be attacked by some" +
+					"of the other side's bishops and/or queens (rank or files)",
+				move.toDebugString()
+			);
 			return false;
 		}
 
-		long knights = (getBitboard(Piece.make(otherSide, PieceType.KNIGHT))) & ~moveTo;
+		long knights = getBitboard(Piece.make(otherSide, PieceType.KNIGHT)) & ~moveTo;
 
 		// after this move, the king would be attacked by some of the other side's knights
 		if (knights != 0L && (Bitboard.getKnightAttacks(kingSq, allPieces) & knights) != 0L) {
+			log.debug(
+				"isMoveLegal({}): false (after this move, the king would be attacked by some" +
+					"of the other side's knights",
+				move.toDebugString()
+			);
 			return false;
 		}
 
-		long pawns = (getBitboard(Piece.make(otherSide, PieceType.PAWN))) & ~moveTo & ~ep;
+		long pawns = getBitboard(Piece.make(otherSide, PieceType.PAWN)) & ~moveTo & ~ep;
 
 		// after this move, the king would be attacked by some of the other side's pawns
-		// noinspection RedundantIfStatement
 		if (pawns != 0L && (Bitboard.getPawnAttacks(side, kingSq) & pawns) == 0L) {
+			log.debug(
+				"isMoveLegal({}): false (after this move, the king would be attacked by some" +
+					"of the other side's pawns",
+				move.toDebugString()
+			);
 			return false;
 		}
 
@@ -542,7 +635,7 @@ public class Board {
 	 * @param fullValidation perform full validation
 	 * @return true if operation was successful
 	 */
-	public boolean doMove(final Move move, boolean fullValidation) {
+	public boolean doMove(final Move move, final boolean fullValidation) {
 
 		if (!isMoveLegal(move, fullValidation)) {
 			return false;
@@ -551,15 +644,10 @@ public class Board {
 		Piece movingPiece = getPiece(move.getFrom());
 		Side side = getSideToMove();
 
-		// MoveBackup backupMove = new MoveBackup(this, move);
 		final boolean isCastle = move.isCastleMove();
 
-		// incrementalHashKey ^= getSideKey(getSideToMove());
-		// if (getEnPassantTarget() != Square.NONE) {
-		// 	incrementalHashKey ^= getEnPassantKey(getEnPassantTarget());
-		// }
+		if (movingPiece.isOfType(PieceType.KING)) {
 
-		if (PieceType.KING.equals(movingPiece.getPieceType())) {
 			if (isCastle) {
 				if (move.hasCastleRight(getCastleRight(side))) {
 					CastlingRight c = move.isKingSideCastle() ? CastlingRight.KING_SIDE : CastlingRight.QUEEN_SIDE;
@@ -569,10 +657,11 @@ public class Board {
 					return false;
 				}
 			}
+
 			if (getCastleRight(side) != CastlingRight.NONE) {
-				// incrementalHashKey ^= getCastleRightKey(side);
 				castlingRights.put(side, CastlingRight.NONE);
 			}
+
 		} else if (PieceType.ROOK == movingPiece.getPieceType()
 			&& CastlingRight.NONE != getCastleRight(side)) {
 			final Move oo = Constants.getRookoo(side);
@@ -625,14 +714,14 @@ public class Board {
 			}
 		}
 
-		if (Piece.NONE == capturedPiece) {
+		if (capturedPiece == null) {
 			halfMoveId++;
 		} else {
 			halfMoveId = 0;
 		}
 
-		enPassantTarget = Square.NONE;
-		enPassant = Square.NONE;
+		enPassantTarget = null;
+		enPassant = null;
 
 		if (PieceType.PAWN == movingPiece.getPieceType()) {
 			if (Math.abs(move.getTo().getRank().ordinal() - move.getFrom().getRank().ordinal()) == 2) {
@@ -643,7 +732,6 @@ public class Board {
 						&& verifyNotPinnedPiece(side, getEnPassant(), move.getTo())
 				) {
 					enPassantTarget = move.getTo();
-					// incrementalHashKey ^= getEnPassantKey(getEnPassantTarget());
 				}
 			}
 			halfMoveId = 0;
@@ -654,19 +742,6 @@ public class Board {
 		}
 
 		sideToMove = side.flip();
-		// incrementalHashKey ^= getSideKey(getSideToMove());
-
-		// if (updateHistory) {
-		// 	getHistory().addLast(getIncrementalHashKey());
-		// }
-		//
-		// backup.add(backupMove);
-		// // call listeners
-		// if (isEnableEvents() && eventListener.get(BoardEventType.ON_MOVE).size() > 0) {
-		// 	for (BoardEventListener evl : eventListener.get(BoardEventType.ON_MOVE)) {
-		// 		evl.onEvent(move);
-		// 	}
-		// }
 
 		return true;
 

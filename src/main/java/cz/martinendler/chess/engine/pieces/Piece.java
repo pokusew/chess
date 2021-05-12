@@ -1,78 +1,68 @@
 package cz.martinendler.chess.engine.pieces;
 
 import cz.martinendler.chess.engine.Side;
-
-import java.util.EnumMap;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A chess piece
  */
 public enum Piece {
 
+	// note: the order in which the enum values are declared here MATTERS!
+	//       and the rest of the code depends on that order (via Piece.ordinal())
+
 	/**
 	 * White pawn piece
 	 */
-	WHITE_PAWN,
+	WHITE_PAWN(Side.WHITE, PieceType.PAWN),
 	/**
 	 * White knight piece
 	 */
-	WHITE_KNIGHT,
+	WHITE_KNIGHT(Side.WHITE, PieceType.KNIGHT),
 	/**
 	 * White bishop piece
 	 */
-	WHITE_BISHOP,
+	WHITE_BISHOP(Side.WHITE, PieceType.BISHOP),
 	/**
 	 * White rook piece
 	 */
-	WHITE_ROOK,
+	WHITE_ROOK(Side.WHITE, PieceType.ROOK),
 	/**
 	 * White queen piece
 	 */
-	WHITE_QUEEN,
+	WHITE_QUEEN(Side.WHITE, PieceType.QUEEN),
 	/**
 	 * White king piece
 	 */
-	WHITE_KING,
+	WHITE_KING(Side.WHITE, PieceType.KING),
 	/**
 	 * Black pawn piece
 	 */
-	BLACK_PAWN,
+	BLACK_PAWN(Side.BLACK, PieceType.PAWN),
 	/**
 	 * Black knight piece
 	 */
-	BLACK_KNIGHT,
+	BLACK_KNIGHT(Side.BLACK, PieceType.KNIGHT),
 	/**
 	 * Black bishop piece
 	 */
-	BLACK_BISHOP,
+	BLACK_BISHOP(Side.BLACK, PieceType.BISHOP),
 	/**
 	 * Black rook piece
 	 */
-	BLACK_ROOK,
+	BLACK_ROOK(Side.BLACK, PieceType.ROOK),
 	/**
 	 * Black queen piece
 	 */
-	BLACK_QUEEN,
+	BLACK_QUEEN(Side.BLACK, PieceType.QUEEN),
 	/**
 	 * Black king piece
 	 */
-	BLACK_KING,
-	/**
-	 * None piece
-	 */
-	NONE;
-
-	public static Piece[] allPieces = values();
+	BLACK_KING(Side.BLACK, PieceType.KING);
 
 	/**
-	 * The Piece type.
+	 * Mapping for pieceMake[type.ordinal()][side.ordinal()]
 	 */
-	static EnumMap<Piece, PieceType> pieceType = new EnumMap<>(Piece.class);
-	/**
-	 * The Piece side.
-	 */
-	static EnumMap<Piece, Side> pieceSide = new EnumMap<>(Piece.class);
-
 	private static final Piece[][] pieceMake = {
 		{WHITE_PAWN, BLACK_PAWN},
 		{WHITE_KNIGHT, BLACK_KNIGHT},
@@ -80,49 +70,14 @@ public enum Piece {
 		{WHITE_ROOK, BLACK_ROOK},
 		{WHITE_QUEEN, BLACK_QUEEN},
 		{WHITE_KING, BLACK_KING},
-		{NONE, NONE},
 	};
 
-	static {
+	private final Side side;
+	private final PieceType type;
 
-		pieceType.put(Piece.WHITE_PAWN, PieceType.PAWN);
-		pieceType.put(Piece.WHITE_KNIGHT, PieceType.KNIGHT);
-		pieceType.put(Piece.WHITE_BISHOP, PieceType.BISHOP);
-		pieceType.put(Piece.WHITE_ROOK, PieceType.ROOK);
-		pieceType.put(Piece.WHITE_QUEEN, PieceType.QUEEN);
-		pieceType.put(Piece.WHITE_KING, PieceType.KING);
-
-		pieceType.put(Piece.BLACK_PAWN, PieceType.PAWN);
-		pieceType.put(Piece.BLACK_KNIGHT, PieceType.KNIGHT);
-		pieceType.put(Piece.BLACK_BISHOP, PieceType.BISHOP);
-		pieceType.put(Piece.BLACK_ROOK, PieceType.ROOK);
-		pieceType.put(Piece.BLACK_QUEEN, PieceType.QUEEN);
-		pieceType.put(Piece.BLACK_KING, PieceType.KING);
-
-		pieceSide.put(Piece.WHITE_PAWN, Side.WHITE);
-		pieceSide.put(Piece.WHITE_KNIGHT, Side.WHITE);
-		pieceSide.put(Piece.WHITE_BISHOP, Side.WHITE);
-		pieceSide.put(Piece.WHITE_ROOK, Side.WHITE);
-		pieceSide.put(Piece.WHITE_QUEEN, Side.WHITE);
-		pieceSide.put(Piece.WHITE_KING, Side.WHITE);
-
-		pieceSide.put(Piece.BLACK_PAWN, Side.BLACK);
-		pieceSide.put(Piece.BLACK_KNIGHT, Side.BLACK);
-		pieceSide.put(Piece.BLACK_BISHOP, Side.BLACK);
-		pieceSide.put(Piece.BLACK_ROOK, Side.BLACK);
-		pieceSide.put(Piece.BLACK_QUEEN, Side.BLACK);
-		pieceSide.put(Piece.BLACK_KING, Side.BLACK);
-
-	}
-
-	/**
-	 * From value piece.
-	 *
-	 * @param v the v
-	 * @return the piece
-	 */
-	public static Piece fromValue(String v) {
-		return valueOf(v);
+	Piece(@NotNull Side side, @NotNull PieceType type) {
+		this.side = side;
+		this.type = type;
 	}
 
 	/**
@@ -132,39 +87,36 @@ public enum Piece {
 	 * @param type the type
 	 * @return the piece
 	 */
-	public static Piece make(Side side, PieceType type) {
+	public static @NotNull Piece make(@NotNull Side side, @NotNull PieceType type) {
 		return pieceMake[type.ordinal()][side.ordinal()];
 	}
 
 	/**
-	 * Value string.
-	 *
-	 * @return the string
-	 */
-	public String value() {
-		return name();
-	}
-
-	/**
-	 * Gets piece type.
-	 *
-	 * @return the piece type
-	 */
-	public PieceType getPieceType() {
-		return pieceType.get(this);
-	}
-
-	public boolean isOfType(PieceType type) {
-		return getPieceType() == type;
-	}
-
-	/**
-	 * Gets piece side.
+	 * Gets piece side
 	 *
 	 * @return the piece side
 	 */
-	public Side getPieceSide() {
-		return pieceSide.get(this);
+	public @NotNull Side getPieceSide() {
+		return side;
+	}
+
+	/**
+	 * Gets piece type
+	 *
+	 * @return the piece type
+	 */
+	public @NotNull PieceType getPieceType() {
+		return type;
+	}
+
+	/**
+	 * Checks if this piece is of the given type
+	 *
+	 * @param type piece type
+	 * @return {@code true} if this piece is of the given type
+	 */
+	public boolean isOfType(@NotNull PieceType type) {
+		return getPieceType() == type;
 	}
 
 }

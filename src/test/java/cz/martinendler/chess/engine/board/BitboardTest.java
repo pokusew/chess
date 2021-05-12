@@ -182,6 +182,18 @@ class BitboardTest {
 	}
 
 	@Test
+	void testPawnAttacks() {
+
+		for (int i = 0; i < Bitboard.blackPawnAttacks.length; i++) {
+			System.out.printf(
+				"Bitboard.blackPawnAttacks[%d]:%n%s%n", i,
+				Bitboard.bbToPrettyString(Bitboard.blackPawnAttacks[i])
+			);
+		}
+
+	}
+
+	@Test
 	void testKnightAttacks() {
 
 		for (int i = 0; i < Bitboard.knightAttacks.length; i++) {
@@ -284,10 +296,6 @@ class BitboardTest {
 	void testGetBBTable() {
 
 		for (Square sq: Square.values()) {
-
-			if (Square.NONE.equals(sq)) {
-				continue;
-			}
 
 			assertEquals(sq.getBitboard(), Bitboard.getBBTable(sq));
 

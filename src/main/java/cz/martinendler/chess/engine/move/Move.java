@@ -3,19 +3,25 @@ package cz.martinendler.chess.engine.move;
 import cz.martinendler.chess.engine.CastlingRight;
 import cz.martinendler.chess.engine.Constants;
 import cz.martinendler.chess.engine.Side;
+import cz.martinendler.chess.engine.board.Rank;
 import cz.martinendler.chess.engine.board.Square;
 import cz.martinendler.chess.engine.pieces.Piece;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.text.MessageFormat;
 import java.util.Objects;
 
 /**
- * TODO
+ * A description of a possible move intention (may be illegal)
  */
 public class Move {
 
+	@NotNull
 	private final Square from;
+	@NotNull
 	private final Square to;
+	@Nullable
 	private final Piece promotion;
 
 	/**
@@ -25,7 +31,7 @@ public class Move {
 	 * @param to        the to
 	 * @param promotion the promotion
 	 */
-	public Move(@NotNull Square from, @NotNull Square to, @NotNull Piece promotion) {
+	public Move(@NotNull Square from, @NotNull Square to, @Nullable Piece promotion) {
 		this.from = from;
 		this.to = to;
 		this.promotion = promotion;
@@ -38,7 +44,7 @@ public class Move {
 	 * @param to   the to
 	 */
 	public Move(@NotNull Square from, @NotNull Square to) {
-		this(from, to, Piece.NONE);
+		this(from, to, null);
 	}
 
 	/**
@@ -46,7 +52,7 @@ public class Move {
 	 *
 	 * @return the from
 	 */
-	public Square getFrom() {
+	public @NotNull Square getFrom() {
 		return from;
 	}
 
@@ -55,7 +61,7 @@ public class Move {
 	 *
 	 * @return the to
 	 */
-	public Square getTo() {
+	public @NotNull Square getTo() {
 		return to;
 	}
 
@@ -64,13 +70,29 @@ public class Move {
 	 *
 	 * @return the promotion
 	 */
-	public Piece getPromotion() {
+	public @Nullable Piece getPromotion() {
 		return promotion;
 	}
 
-	public boolean hasValidPromotion() {
-		// note: promotion == null should never happen
-		return promotion != null && promotion != Piece.NONE;
+	public boolean hasPromotion() {
+		return promotion != null;
+	}
+
+	/**
+	 * Check if this move could lead to a pawn promotion
+	 * (if it was played by the given side and a pawn was the moving piece)
+	 *
+	 * @param side the side
+	 * @return {@code true} if this leads to a pawn promotion for the given side
+	 */
+	public boolean couldLeadToPromotion(@NotNull Side side) {
+		return (
+			(
+				side.isWhite() && to.getRank() == Rank.RANK_8
+			) || (
+				side.isBlack() && to.getRank() == Rank.RANK_1
+			)
+		);
 	}
 
 	/**
@@ -179,14 +201,21 @@ public class Move {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Move move = (Move) o;
-		return from == move.from
-			&& to == move.to
-			&& promotion == move.promotion;
+		return from == move.from &&
+			to == move.to &&
+			promotion == move.promotion;
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(from, to, promotion);
+	}
+
+	public @NotNull String toDebugString() {
+		return MessageFormat.format(
+			"{0} -> {1} P: {2}",
+			from.name(), to.name(), promotion != null ? promotion.name() : "(none)"
+		);
 	}
 
 }

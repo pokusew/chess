@@ -162,8 +162,6 @@ public class Constants {
 	 */
 	public static final Map<String, Piece> pieceNotationR = new HashMap<>(12);
 
-	public static final Move emptyMove = new Move(Square.NONE, Square.NONE);
-
 	static {
 
 		pieceNotation.put(Piece.WHITE_PAWN, "P");

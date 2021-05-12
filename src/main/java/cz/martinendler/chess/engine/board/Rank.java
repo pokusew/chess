@@ -7,6 +7,9 @@ package cz.martinendler.chess.engine.board;
  */
 public enum Rank {
 
+	// note: the order in which the enum values are declared here MATTERS!
+	//       and the rest of the code depends on that order (via Rank.ordinal())
+
 	/**
 	 * Rank 1 rank (0)
 	 */
@@ -38,13 +41,7 @@ public enum Rank {
 	/**
 	 * Rank 8 rank (7)
 	 */
-	RANK_8("8"),
-	/**
-	 * None rank (8) (used instead of null)
-	 */
-	NONE("");
-
-	public static Rank[] allRanks = values();
+	RANK_8("8");
 
 	/**
 	 * Notation
@@ -56,31 +53,12 @@ public enum Rank {
 	}
 
 	/**
-	 * From value rank.
-	 *
-	 * @param v the v
-	 * @return the rank
-	 */
-	public static Rank fromValue(String v) {
-		return valueOf(v);
-	}
-
-	/**
-	 * Gets notation.
+	 * Gets notation
 	 *
 	 * @return the notation
 	 */
 	public String getNotation() {
 		return notation;
-	}
-
-	/**
-	 * Value string.
-	 *
-	 * @return the string
-	 */
-	public String value() {
-		return name();
 	}
 
 }
