@@ -38,12 +38,28 @@ public class Board {
 
 	private @NotNull Side sideToMove;
 
+	/**
+	 * The square of the pawn that could be captured via en passant
+	 * if the the other side's pawn moves to the {@link Board#enPassant} square
+	 * in the next immediate move.
+	 */
 	private @Nullable Square enPassantTarget;
+	/**
+	 * If the side-to-move's pawn moves to this square then the other side's pawn
+	 * that is on the {@link Board#enPassantTarget} square is captured via en passant.
+	 */
 	private @Nullable Square enPassant;
 
-	// TODO: How exactly should moves be counted?
-	private int moveId;
-	private int halfMoveId;
+	/**
+	 * Move counter counts full-moves (1 full-move = WHITE's move + BLACK's move)
+	 */
+	private int moveCounter;
+	/**
+	 * Half-move counter takes care of enforcing the fifty-move rule
+	 *
+	 * @see <a href="https://www.chessprogramming.org/Halfmove_Clock">Halfmove Clock on CPW</a>
+	 */
+	private int halfMoveCounter;
 
 	public Board() {
 
@@ -58,9 +74,8 @@ public class Board {
 		enPassantTarget = null;
 		enPassant = null;
 
-		// TODO: How exactly should moves be counted?
-		moveId = 0; // 1?
-		halfMoveId = 0;
+		moveCounter = 0;
+		halfMoveCounter = 0;
 
 	}
 
@@ -137,21 +152,28 @@ public class Board {
 	}
 
 	/**
-	 * Gets en passant
+	 * Gets enPassantTarget square
+	 * <p>
+	 * The square of the pawn that could be captured via en passant
+	 * if the the other side's pawn moves to the {@link Board#enPassant} square
+	 * in the next immediate move.
 	 *
-	 * @return the en passant
-	 */
-	public @Nullable Square getEnPassant() {
-		return enPassant;
-	}
-
-	/**
-	 * Gets en passant target
-	 *
-	 * @return the en passant target
+	 * @return the enPassantTarget square
 	 */
 	public @Nullable Square getEnPassantTarget() {
 		return enPassantTarget;
+	}
+
+	/**
+	 * Gets enPassant square
+	 * <p>
+	 * If the side-to-move's pawn moves to this square then the other side's pawn
+	 * that is on the {@link Board#enPassantTarget} square is captured via en passant.
+	 *
+	 * @return the enPassant square
+	 */
+	public @Nullable Square getEnPassant() {
+		return enPassant;
 	}
 
 	/**
@@ -162,6 +184,29 @@ public class Board {
 	 */
 	public @NotNull CastlingRight getCastleRight(@NotNull Side side) {
 		return castlingRights.get(side);
+	}
+
+	/**
+	 * Gets the current value of the full-move counter
+	 * <p>
+	 * Move counter counts full-moves (1 full-move = WHITE's move + BLACK's move).
+	 *
+	 * @return non-negative integer
+	 */
+	public int getMoveCounter() {
+		return moveCounter;
+	}
+
+	/**
+	 * Gets the current value of the half-move counter
+	 * <p>
+	 * Half-move counter takes care of enforcing the fifty-move rule
+	 *
+	 * @return non-negative integer
+	 * @see <a href="https://www.chessprogramming.org/Halfmove_Clock">Halfmove Clock on CPW</a>
+	 */
+	public int getHalfMoveCounter() {
+		return halfMoveCounter;
 	}
 
 	// TODO: Javadoc
@@ -177,8 +222,14 @@ public class Board {
 
 	}
 
-	// TODO: Javadoc
-	private static @Nullable Square findEnPassant(@Nullable Square sq, @NotNull Side side) {
+	/**
+	 * Computes en passant square from the current square of a pawn that advanced two squares forward
+	 *
+	 * @param sq   the current square of a pawn that advanced two squares forward
+	 * @param side the side of the pawn
+	 * @return the destination square as if the pawn advanced only one square forward
+	 */
+	public static @Nullable Square findEnPassant(@Nullable Square sq, @NotNull Side side) {
 
 		if (sq == null) {
 			return null;
@@ -642,13 +693,18 @@ public class Board {
 		}
 
 		Piece movingPiece = getPiece(move.getFrom());
+
+		if (movingPiece == null) {
+			// that should never happen
+			throw new IllegalStateException("movingPiece in doMove is null after isMoveLegal returned true");
+		}
+
 		Side side = getSideToMove();
 
-		final boolean isCastle = move.isCastleMove();
-
+		// castling rules
 		if (movingPiece.isOfType(PieceType.KING)) {
 
-			if (isCastle) {
+			if (move.isCastleMove()) {
 				if (move.hasCastleRight(getCastleRight(side))) {
 					CastlingRight c = move.isKingSideCastle() ? CastlingRight.KING_SIDE : CastlingRight.QUEEN_SIDE;
 					Move rookMove = Constants.getRookCastleMove(side, c);
@@ -658,87 +714,99 @@ public class Board {
 				}
 			}
 
+			// after the king's move the player looses castling right (if they has still any)
 			if (getCastleRight(side) != CastlingRight.NONE) {
 				castlingRights.put(side, CastlingRight.NONE);
 			}
 
-		} else if (PieceType.ROOK == movingPiece.getPieceType()
-			&& CastlingRight.NONE != getCastleRight(side)) {
+		} else if (movingPiece.isOfType(PieceType.ROOK) && CastlingRight.NONE != getCastleRight(side)) {
+
 			final Move oo = Constants.getRookoo(side);
 			final Move ooo = Constants.getRookooo(side);
 
 			if (move.getFrom() == oo.getFrom()) {
+				// update castling right (kingside no longer possible)
 				if (CastlingRight.KING_AND_QUEEN_SIDE == getCastleRight(side)) {
-					// incrementalHashKey ^= getCastleRightKey(side);
 					castlingRights.put(side, CastlingRight.QUEEN_SIDE);
-					// incrementalHashKey ^= getCastleRightKey(side);
 				} else if (CastlingRight.KING_SIDE == getCastleRight(side)) {
-					// incrementalHashKey ^= getCastleRightKey(side);
 					castlingRights.put(side, CastlingRight.NONE);
 				}
 			} else if (move.getFrom() == ooo.getFrom()) {
+				// update castling right (queenside no longer possible)
 				if (CastlingRight.KING_AND_QUEEN_SIDE == getCastleRight(side)) {
-					// incrementalHashKey ^= getCastleRightKey(side);
 					castlingRights.put(side, CastlingRight.KING_SIDE);
-					// incrementalHashKey ^= getCastleRightKey(side);
 				} else if (CastlingRight.QUEEN_SIDE == getCastleRight(side)) {
-					// incrementalHashKey ^= getCastleRightKey(side);
 					castlingRights.put(side, CastlingRight.NONE);
 				}
 			}
+
 		}
 
 		Piece capturedPiece = movePiece(move);
 
-		if (PieceType.ROOK == capturedPiece.getPieceType()) {
+		// if the side captured the other side's rook
+		// it might be needed to update the other side's castling right
+		if (capturedPiece != null && capturedPiece.isOfType(PieceType.ROOK)) {
+
 			final Move oo = Constants.getRookoo(side.flip());
 			final Move ooo = Constants.getRookooo(side.flip());
+
 			if (move.getTo() == oo.getFrom()) {
+				// update the other side's castling right (kingside no longer possible)
 				if (CastlingRight.KING_AND_QUEEN_SIDE == getCastleRight(side.flip())) {
-					// incrementalHashKey ^= getCastleRightKey(side.flip());
 					castlingRights.put(side.flip(), CastlingRight.QUEEN_SIDE);
-					// incrementalHashKey ^= getCastleRightKey(side.flip());
 				} else if (CastlingRight.KING_SIDE == getCastleRight(side.flip())) {
-					// incrementalHashKey ^= getCastleRightKey(side.flip());
 					castlingRights.put(side.flip(), CastlingRight.NONE);
 				}
 			} else if (move.getTo() == ooo.getFrom()) {
+				// update the other side's castling right (queenside no longer possible)
 				if (CastlingRight.KING_AND_QUEEN_SIDE == getCastleRight(side.flip())) {
-					// incrementalHashKey ^= getCastleRightKey(side.flip());
 					castlingRights.put(side.flip(), CastlingRight.KING_SIDE);
-					// incrementalHashKey ^= getCastleRightKey(side.flip());
 				} else if (CastlingRight.QUEEN_SIDE == getCastleRight(side.flip())) {
-					// incrementalHashKey ^= getCastleRightKey(side.flip());
 					castlingRights.put(side.flip(), CastlingRight.NONE);
 				}
 			}
+
 		}
 
 		if (capturedPiece == null) {
-			halfMoveId++;
+			// half-move counter is incremented if there is no capture
+			halfMoveCounter++;
 		} else {
-			halfMoveId = 0;
+			// half-move counter is reset after captures
+			halfMoveCounter = 0;
 		}
 
+		// reset en passant
 		enPassantTarget = null;
 		enPassant = null;
 
-		if (PieceType.PAWN == movingPiece.getPieceType()) {
+		if (movingPiece.isOfType(PieceType.PAWN)) {
+
+			// compute information about possible en passant in the next immediate move
+			// if the pawn advanced two squares
 			if (Math.abs(move.getTo().getRank().ordinal() - move.getFrom().getRank().ordinal()) == 2) {
 				Piece otherPawn = Piece.make(side.flip(), PieceType.PAWN);
+				// en passant square would be the destination (to) square if the pawn advanced only one square
 				enPassant = findEnPassant(move.getTo(), side);
 				if (
+					// if the opposite side has any pawns on the side-adjacent (side-neighbour) squares
 					hasPiece(otherPawn, move.getTo().getSideSquares())
+						// TODO: What does verifyNotPinnedPiece check?
 						&& verifyNotPinnedPiece(side, getEnPassant(), move.getTo())
 				) {
 					enPassantTarget = move.getTo();
 				}
 			}
-			halfMoveId = 0;
+
+			// half-move counter is reset after pawn moves
+			halfMoveCounter = 0;
+
 		}
 
 		if (side == Side.BLACK) {
-			moveId++;
+			// full-move completed
+			moveCounter++;
 		}
 
 		sideToMove = side.flip();
@@ -760,11 +828,11 @@ public class Board {
 	}
 
 	// TODO
-	private boolean verifyNotPinnedPiece(Side side, Square enPassant, Square target) {
+	private boolean verifyNotPinnedPiece(@NotNull Side side, @NotNull Square enPassant, @NotNull Square target) {
 
 		long pawns = Bitboard.getPawnAttacks(side, enPassant) & getBitboard(Piece.make(side.flip(), PieceType.PAWN));
 
-		return pawns != 0 && verifyAllPins(pawns, side, enPassant, target);
+		return pawns != 0L && verifyAllPins(pawns, side, enPassant, target);
 
 	}
 
