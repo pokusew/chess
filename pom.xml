@@ -25,7 +25,8 @@
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
 			<version>20.1.0</version>
-			<scope>provided</scope>
+			<!-- with scope=provided compilation outside IntelliJ IDEA does NOT work -->
+			<!-- <scope>provided</scope> -->
 		</dependency>
 
 		<!-- Logging -->
@@ -135,6 +136,18 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+
+			<!-- Apache Maven Javadoc Plugin -->
+			<!-- see https://maven.apache.org/plugins/maven-javadoc-plugin/usage.html -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<show>private</show>
+				</configuration>
 			</plugin>
 
 		</plugins>

@@ -41,11 +41,17 @@ gradle.xml
 
 ### PROJECT
 
+# full project export
+/export/
+
 # Maven builds (in every module)
 target/
 
 # Generated JavaDoc output folder
-/docs/javadoc/
+/docs/javadoc/dist/
+
+# Netlify state
+/docs/javadoc/.netlify/
 
 # export.sh outputs
 /temp/
