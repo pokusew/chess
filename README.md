@@ -39,6 +39,7 @@ implementation of the [**Chess** board game](https://en.wikipedia.org/wiki/Chess
 * complete and correct implementation of all Chess rules
     (see Wikipedia's [Rules of chess](https://en.wikipedia.org/wiki/Rules_of_chess)
     or/and [FIDE Laws of Chess taking effect from 1 January 2018](https://handbook.fide.com/chapter/E012018))
+    * except fifty-move rule, insufficient material rule,  threefold repetition rule
 * platform independent desktop application (support for macOS, Linux, Windows)
 * GUI
 * game modes
@@ -46,7 +47,6 @@ implementation of the [**Chess** board game](https://en.wikipedia.org/wiki/Chess
 		* human vs human
 		* preparation for human vs computer
 		    * idea: implement [UCI (Universal Chess Interface)](https://www.shredderchess.com/chess-features/uci-universal-chess-interface.html)
-	* online, network, two-player game
 * saving and loading of the game state
     * including the support for [PGN](https://en.wikipedia.org/wiki/Portable_Game_Notation) chess standard format
 * possibility of manually placing the chess pieces before starting the game (game editor)

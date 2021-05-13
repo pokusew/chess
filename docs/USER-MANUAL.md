@@ -34,6 +34,9 @@ The app offers several game modes:
 * **Complete and correct implementation of all Chess rules**
     * [FIDE Laws of Chess taking effect from 1 January 2018](https://handbook.fide.com/chapter/E012018)
     * Wikipedia's [Rules of chess](https://en.wikipedia.org/wiki/Rules_of_chess)
+    * Note! The following rules are not implemented:
+      fifty-move rule, insufficient material rule, threefold repetition rule.
+
 * **Initiative chessboard**
     * Two **possibilities for moving pieces** on the board:
         1. **Drag-And-Drop**
