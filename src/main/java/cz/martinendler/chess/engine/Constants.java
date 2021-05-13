@@ -3,12 +3,8 @@ package cz.martinendler.chess.engine;
 import cz.martinendler.chess.engine.board.Bitboard;
 import cz.martinendler.chess.engine.board.Square;
 import cz.martinendler.chess.engine.move.Move;
-import cz.martinendler.chess.engine.pieces.Piece;
 
-import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Chess game constants (such as starting positions, castings, pieces' notation, ...)
@@ -153,66 +149,8 @@ public class Constants {
 		Constants.DEFAULT_BLACK_OOO_ALL_SQUARES
 	);
 
-	/**
-	 * The constant pieceNotation.
-	 */
-	public static final EnumMap<Piece, String> pieceNotation = new EnumMap<>(Piece.class);
-	/**
-	 * The constant pieceNotationR.
-	 */
-	public static final Map<String, Piece> pieceNotationR = new HashMap<>(12);
-
-	static {
-
-		pieceNotation.put(Piece.WHITE_PAWN, "P");
-		pieceNotation.put(Piece.WHITE_KNIGHT, "N");
-		pieceNotation.put(Piece.WHITE_BISHOP, "B");
-		pieceNotation.put(Piece.WHITE_ROOK, "R");
-		pieceNotation.put(Piece.WHITE_QUEEN, "Q");
-		pieceNotation.put(Piece.WHITE_KING, "K");
-		pieceNotation.put(Piece.BLACK_PAWN, "p");
-		pieceNotation.put(Piece.BLACK_KNIGHT, "n");
-		pieceNotation.put(Piece.BLACK_BISHOP, "b");
-		pieceNotation.put(Piece.BLACK_ROOK, "r");
-		pieceNotation.put(Piece.BLACK_QUEEN, "q");
-		pieceNotation.put(Piece.BLACK_KING, "k");
-
-		pieceNotationR.put("P", Piece.WHITE_PAWN);
-		pieceNotationR.put("N", Piece.WHITE_KNIGHT);
-		pieceNotationR.put("B", Piece.WHITE_BISHOP);
-		pieceNotationR.put("R", Piece.WHITE_ROOK);
-		pieceNotationR.put("Q", Piece.WHITE_QUEEN);
-		pieceNotationR.put("K", Piece.WHITE_KING);
-		pieceNotationR.put("p", Piece.BLACK_PAWN);
-		pieceNotationR.put("n", Piece.BLACK_KNIGHT);
-		pieceNotationR.put("b", Piece.BLACK_BISHOP);
-		pieceNotationR.put("r", Piece.BLACK_ROOK);
-		pieceNotationR.put("q", Piece.BLACK_QUEEN);
-		pieceNotationR.put("k", Piece.BLACK_KING);
-	}
-
 	private Constants() {
 		// we do not want Constants to be instantiable
-	}
-
-	/**
-	 * Gets the notation of a piece
-	 *
-	 * @param piece the piece
-	 * @return piece notation
-	 */
-	public static String getPieceNotation(Piece piece) {
-		return pieceNotation.get(piece);
-	}
-
-	/**
-	 * Gets the piece by its notation
-	 *
-	 * @param notation the notation
-	 * @return piece by notation
-	 */
-	public static Piece getPieceByNotation(String notation) {
-		return pieceNotationR.get(notation);
 	}
 
 	public static long getOOAllSquaresBB(Side side) {
