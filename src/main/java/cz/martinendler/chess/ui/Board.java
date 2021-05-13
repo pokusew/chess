@@ -19,7 +19,7 @@ public class Board extends Region {
 
 	private static final Logger log = LoggerFactory.getLogger(Board.class);
 
-	private final static Background COLOR_BROWN = new Background(
+	private static final Background COLOR_BROWN = new Background(
 		new BackgroundFill(Color.web("7E4D38"), null, null)
 	);
 

@@ -17,15 +17,15 @@ public class Square extends StackPane {
 
 	private static final Logger log = LoggerFactory.getLogger(Square.class);
 
-	private final static Background COLOR_WHITE = new Background(
+	private static final Background COLOR_WHITE = new Background(
 		new BackgroundFill(Color.WHITESMOKE, null, null)
 	);
 
-	private final static Background COLOR_BLACK = new Background(
+	private static final Background COLOR_BLACK = new Background(
 		new BackgroundFill(Color.BLACK, null, null)
 	);
 
-	private final static Background COLOR_TARGET = new Background(
+	private static final Background COLOR_TARGET = new Background(
 		new BackgroundFill(Color.LIGHTYELLOW, null, null)
 	);
 
