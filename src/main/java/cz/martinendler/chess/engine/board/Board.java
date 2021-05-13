@@ -51,7 +51,8 @@ public class Board {
 	private @Nullable Square enPassant;
 
 	/**
-	 * Move counter counts full-moves (1 full-move = WHITE's move + BLACK's move)
+	 * Move counter counts full-moves (1 full-move = WHITE's move + BLACK's move).
+	 * It starts from 1. After the first full-move, it is incremented by 1 (so the value is 2).
 	 */
 	private int moveCounter;
 	/**
@@ -74,7 +75,7 @@ public class Board {
 		enPassantTarget = null;
 		enPassant = null;
 
-		moveCounter = 0;
+		moveCounter = 1;
 		halfMoveCounter = 0;
 
 	}
@@ -190,8 +191,9 @@ public class Board {
 	 * Gets the current value of the full-move counter
 	 * <p>
 	 * Move counter counts full-moves (1 full-move = WHITE's move + BLACK's move).
+	 * It starts from 1. After the first full-move, it is incremented by 1 (so the value is 2).
 	 *
-	 * @return non-negative integer
+	 * @return positive integer
 	 */
 	public int getMoveCounter() {
 		return moveCounter;
