@@ -33,6 +33,16 @@ public enum PieceType {
 	 */
 	KING(0);
 
+	/**
+	 * Integer that expresses value of this piece type
+	 * <p>
+	 * Positive integer if the piece type has a value, {@code 0} otherwise (king has no measurable value).
+	 * <p>
+	 * NOTE: currently not used, may be used in the future for chess positions ranking
+	 *
+	 * @see <a href="https://www.chessprogramming.org/Point_Value">Point Value on CPW</a>
+	 * @see <a href="http://www.chessfornovices.com/chesspiecevalues.html">Chess Piece Values</a>
+	 */
 	private final int value;
 
 	PieceType(int value) {
@@ -42,11 +52,12 @@ public enum PieceType {
 	/**
 	 * Gets value of this piece type
 	 *
-	 * @return positive integer if the piece type has a value, {@code 0} otherwise (king has no measurable value)
+	 * @return positive integer if the piece type has a value, {@code 0} otherwise ({@link PieceType#KING} has no measurable value)
 	 * @see <a href="https://www.chessprogramming.org/Point_Value">Point Value on CPW</a>
 	 * @see <a href="http://www.chessfornovices.com/chesspiecevalues.html">Chess Piece Values</a>
 	 */
 	public int getValue() {
 		return value;
 	}
+
 }

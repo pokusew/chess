@@ -1,5 +1,7 @@
 package cz.martinendler.chess.engine.board;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A file (i.e. column) on a chessboard
  *
@@ -43,12 +45,15 @@ public enum File {
 	 */
 	FILE_H("H");
 
+	// see https://stackoverflow.com/questions/19303511/enum-values-method-efficiency
+	private static final @NotNull File[] values = values();
+
 	/**
 	 * Notation
 	 */
-	String notation;
+	private final @NotNull String notation;
 
-	File(String notation) {
+	File(@NotNull String notation) {
 		this.notation = notation;
 	}
 
@@ -57,8 +62,19 @@ public enum File {
 	 *
 	 * @return the notation
 	 */
-	public String getNotation() {
+	public @NotNull String getNotation() {
 		return notation;
+	}
+
+	/**
+	 * Gets the corresponding file for the given index
+	 *
+	 * @param index file index in range [0, 7]
+	 * @return the corresponding file for the given index
+	 * @throws ArrayIndexOutOfBoundsException when an invalid index is given
+	 */
+	public static @NotNull File fromIndex(int index) {
+		return values[index];
 	}
 
 }

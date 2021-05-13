@@ -1,5 +1,7 @@
 package cz.martinendler.chess.engine.board;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A rank (i.e. row) on a chessboard
  *
@@ -43,12 +45,15 @@ public enum Rank {
 	 */
 	RANK_8("8");
 
+	// see https://stackoverflow.com/questions/19303511/enum-values-method-efficiency
+	private static final @NotNull Rank[] values = values();
+
 	/**
 	 * Notation
 	 */
-	String notation;
+	private final @NotNull String notation;
 
-	Rank(String notation) {
+	Rank(@NotNull String notation) {
 		this.notation = notation;
 	}
 
@@ -57,8 +62,19 @@ public enum Rank {
 	 *
 	 * @return the notation
 	 */
-	public String getNotation() {
+	public @NotNull String getNotation() {
 		return notation;
+	}
+
+	/**
+	 * Gets the corresponding rank for the given index
+	 *
+	 * @param index rank index in range [0, 7]
+	 * @return the corresponding rank for the given index
+	 * @throws ArrayIndexOutOfBoundsException when an invalid index is given
+	 */
+	public static @NotNull Rank fromIndex(int index) {
+		return values[index];
 	}
 
 }

@@ -1,6 +1,7 @@
 package cz.martinendler.chess.engine.board;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 
@@ -273,6 +274,8 @@ public enum Square {
 	 */
 	H8;
 
+	private final @NotNull String notation;
+
 	private static final Square[] allSquares = Square.values();
 	private static final Rank[] rankValues = Rank.values();
 	private static final File[] fileValues = File.values();
@@ -313,6 +316,10 @@ public enum Square {
 
 		}
 
+	}
+
+	Square() {
+		this.notation = name().toLowerCase();
 	}
 
 	/**
@@ -385,6 +392,30 @@ public enum Square {
 	 */
 	public boolean isLightSquare() {
 		return (getBitboard() & Bitboard.lightSquaresBB) != 0L;
+	}
+
+	/**
+	 * Gets square notation for usage in SAN/FEN
+	 *
+	 * @return the square notation for usage in SAN/FEN
+	 */
+	public @NotNull String getNotation() {
+		return notation;
+	}
+
+	/**
+	 * Creates a square from the square notation as used in SAN/FEN
+	 *
+	 * @param notation the square notation as used in SAN/FEN
+	 * @return {@link Square} or {@code null} if there is no square for the given notation
+	 * @see Square#getNotation()
+	 */
+	public static @Nullable Square fromNotation(@NotNull String notation) {
+		try {
+			return valueOf(notation.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
 	}
 
 }

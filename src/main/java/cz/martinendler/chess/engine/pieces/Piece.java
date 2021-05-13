@@ -79,24 +79,30 @@ public enum Piece {
 
 	// see https://stackoverflow.com/questions/507602/how-can-i-initialise-a-static-map
 
-	private static final Map<String, Piece> fenNotationToPiece = Arrays.stream(values())
-		.collect(Collectors.toMap(Piece::getFenNotation, p -> p));
+	private static final Map<String, Piece> notationToPiece = Arrays.stream(values())
+		.collect(Collectors.toMap(Piece::getNotation, p -> p));
 
 	private static final Map<String, Piece> unicodeSymbolToPiece = Arrays.stream(values())
 		.collect(Collectors.toMap(Piece::getUnicodeSymbol, p -> p));
 
 	private final @NotNull Side side;
 	private final @NotNull PieceType type;
-	private final @NotNull String fenNotation;
+	/**
+	 * One letter notation for usage in SAN/FEN
+	 * <p>
+	 * {@link Side#WHITE} pieces: P N B R Q K (uppercase letters)
+	 * {@link Side#BLACK} pieces: p n b r q k (lowercase letters)
+	 */
+	private final @NotNull String notation;
 	/**
 	 * @see <a href="https://en.wikipedia.org/wiki/Chess_symbols_in_Unicode">Chess symbols in Unicode on Wikipedia</a>
 	 */
 	private final @NotNull String unicodeSymbol;
 
-	Piece(@NotNull Side side, @NotNull PieceType type, @NotNull String fenNotation, @NotNull String unicodeSymbol) {
+	Piece(@NotNull Side side, @NotNull PieceType type, @NotNull String notation, @NotNull String unicodeSymbol) {
 		this.side = side;
 		this.type = type;
-		this.fenNotation = fenNotation;
+		this.notation = notation;
 		this.unicodeSymbol = unicodeSymbol;
 	}
 
@@ -130,13 +136,16 @@ public enum Piece {
 	}
 
 	/**
-	 * Gets piece notation for usage in FEN
+	 * Gets piece one letter notation for usage in SAN/FEN
+	 * <p>
+	 * {@link Side#WHITE} pieces: P N B R Q K (uppercase letters)
+	 * {@link Side#BLACK} pieces: p n b r q k (lowercase letters)
 	 *
-	 * @return the piece piece notation for usage in FEN
-	 * @see Piece#fromFenNotation(String fenNotation)
+	 * @return the piece one letter notation for usage in SAN/FEN
+	 * @see Piece#fromNotation(String notation)
 	 */
-	public @NotNull String getFenNotation() {
-		return fenNotation;
+	public @NotNull String getNotation() {
+		return notation;
 	}
 
 	/**
@@ -161,20 +170,20 @@ public enum Piece {
 	}
 
 	/**
-	 * Creates a piece from the piece notation as used in FEN
+	 * Creates a piece from the piece notation as used in SAN/FEN
 	 *
-	 * @param fenNotation the piece notation as used in FEN
-	 * @return {@link Piece} or {@code null} if there is no piece for the given fenNotation
-	 * @see Piece#getFenNotation()
+	 * @param notation the piece notation as used in SAN/FEN
+	 * @return {@link Piece} or {@code null} if there is no piece for the given notation
+	 * @see Piece#getNotation()
 	 */
-	public static @Nullable Piece fromFenNotation(@NotNull String fenNotation) {
-		return fenNotationToPiece.get(fenNotation);
+	public static @Nullable Piece fromNotation(@NotNull String notation) {
+		return notationToPiece.get(notation);
 	}
 
 	/**
 	 * Creates a piece from the its Unicode symbol
 	 *
-	 * @param unicodeSymbol the piece notation as used in FEN
+	 * @param unicodeSymbol the piece notation as used in SAN/FEN
 	 * @return {@link Piece} or {@code null} if there is no piece for the given unicodeSymbol
 	 * @see Piece#getUnicodeSymbol()
 	 */
