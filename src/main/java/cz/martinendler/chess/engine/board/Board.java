@@ -862,4 +862,150 @@ public class Board {
 		return (getBitboard() ^ pieces ^ target.getBitboard()) | enPassant.getBitboard();
 	}
 
+	/**
+	 * Generates the FEN representation of this board
+	 *
+	 * @return the FEN representation of this board
+	 */
+	public String getFen() {
+		return getFen(true);
+	}
+
+	/**
+	 * Generates the FEN representation of this board
+	 * <p>
+	 * TODO: Consider moving to separate static method (to separate class) and pass Board as the first argument.
+	 * It is possible, because this method uses only public methods of the Board instance.
+	 *
+	 * @param includeCounters if {@code true} then the FEN includes values
+	 *                        of {@link Board#getHalfMoveCounter()} and {@link Board#getMoveCounter()} counters
+	 * @return the FEN representation of this board
+	 * @see <a href="https://www.chessprogramming.org/Forsyth-Edwards_Notation">Forsyth–Edwards Notation on CPW</a>
+	 * @see <a href="http://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm#c16.1">FEN in the PGN standard (Section 16.1)</a>
+	 * @see <a href="https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation">Forsyth–Edwards Notation on Wikipedia</a>
+	 */
+	public String getFen(boolean includeCounters) {
+
+		StringBuilder fen = new StringBuilder();
+
+		// the board contents are specified starting
+		// with the eighth rank and ending with the first rank
+		for (int ri = 7; ri >= 0; ri--) {
+
+			Rank r = Rank.fromIndex(ri);
+
+			// Empty squares are represented by the digits one through eight;
+			// the digit used represents the count of contiguous empty squares along a rank.
+			int contiguousEmptySquaresCount = 0;
+
+			// for each rank, the squares are specified from file A (0) to file H (7)
+			for (int fi = 0; fi <= 7; fi++) {
+
+				File f = File.fromIndex(fi);
+
+				Square sq = Square.encode(r, f);
+
+				Piece piece = getPiece(sq);
+
+				if (piece != null) {
+
+					// before adding the piece representation
+					// add number of preceding contiguousEmptySquares in the current rank
+					if (contiguousEmptySquaresCount > 0) {
+						fen.append(contiguousEmptySquaresCount);
+						contiguousEmptySquaresCount = 0;
+					}
+
+					// add the piece representation
+					fen.append(piece.getNotation());
+
+				} else {
+					// otherwise increment contiguousEmptySquaresCount for the current rank
+					contiguousEmptySquaresCount++;
+				}
+
+			}
+
+			// before going to the next rank
+			// add number of preceding contiguousEmptySquares in the current rank
+			if (contiguousEmptySquaresCount > 0) {
+				fen.append(contiguousEmptySquaresCount);
+				// no need to reset here as it is declared per-rank iteration
+				// contiguousEmptySquaresCount = 0;
+			}
+
+			// A solidus character "/" is used to separate data of adjacent ranks.
+			// (i.e.: After each rank BUT the last there is "/".)
+			if (ri != 0) {
+				fen.append("/");
+			}
+
+		}
+
+		// side to move
+		fen.append(" ");
+		fen.append(getSideToMove().getNotation());
+
+		// castling rights
+		// TODO: refactor (simplify)
+		String rights = "";
+		if (CastlingRight.KING_AND_QUEEN_SIDE.
+			equals(getCastleRight(Side.WHITE))) {
+			rights += "KQ";
+		} else if (CastlingRight.KING_SIDE.
+			equals(getCastleRight(Side.WHITE))) {
+			rights += "K";
+		} else if (CastlingRight.QUEEN_SIDE.
+			equals(getCastleRight(Side.WHITE))) {
+			rights += "Q";
+		}
+		if (CastlingRight.KING_AND_QUEEN_SIDE.
+			equals(getCastleRight(Side.BLACK))) {
+			rights += "kq";
+		} else if (CastlingRight.KING_SIDE.
+			equals(getCastleRight(Side.BLACK))) {
+			rights += "k";
+		} else if (CastlingRight.QUEEN_SIDE.
+			equals(getCastleRight(Side.BLACK))) {
+			rights += "q";
+		}
+		if (rights.equals("")) {
+			fen.append(" -");
+		} else {
+			fen.append(" ");
+			fen.append(rights);
+		}
+
+		// en passant
+		if (getEnPassant() == null) {
+			fen.append(" -");
+		} else {
+			fen.append(" ");
+			// TODO: Are we in in accordance with the standard?
+			//   Section 16.1.3.4, http://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm#c16.1.3):
+			//     An en passant target square is given if and only if the last move was
+			//     a pawn advance of two squares. Therefore, an en passant target square
+			//     field may have a square name even if there is no pawn of the opposing side
+			//     that may immediately execute the en passant capture.
+			fen.append(getEnPassant().getNotation());
+		}
+
+		// counters
+		if (includeCounters) {
+			fen.append(" ");
+			// The fifth field is a non-negative integer representing the halfmove clock.
+			// This number is the count of half-moves (or ply) since the last pawn advance
+			// or capturing move. This value is used for the fifty move draw rule.
+			fen.append(getHalfMoveCounter());
+			fen.append(" ");
+			// The sixth and last field is a positive integer that gives the full-move number.
+			// This will have the value "1" for the first move of a game for both White and Black.
+			// It is incremented by one immediately after each move by Black.
+			fen.append(getMoveCounter());
+		}
+
+		return fen.toString();
+
+	}
+
 }
