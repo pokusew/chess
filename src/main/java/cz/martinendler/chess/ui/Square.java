@@ -2,6 +2,8 @@ package cz.martinendler.chess.ui;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.input.MouseDragEvent;
@@ -118,7 +120,7 @@ public class Square extends StackPane {
 					return;
 				}
 
-				log.info("r={} c={} setOnMouseDragReleased {}-->", row, column, movingPiece.id);
+				log.info("r={} c={} onMouseDragReleased: piece {} released here", row, column, movingPiece.id);
 				movingPiece.stopDragging();
 
 				// TODO: this is temp solution
@@ -174,9 +176,46 @@ public class Square extends StackPane {
 	@Override
 	public void resize(double width, double height) {
 		super.resize(width, height);
-		moveHint.setRadius(width / 6);
+		moveHint.setRadius(width / 6); // cca 1/3
 		captureHint.resize(width, height);
 		dragReleaseHint.resize(width, height);
+	}
+
+	public @Nullable Piece getPiece() {
+
+		if (getChildren().size() <= 3) {
+			return null;
+		}
+
+		int lastIndex = getChildren().size() - 1;
+
+		Node lastChild = getChildren().get(lastIndex);
+
+		if (!(lastChild instanceof Piece)) {
+			return null;
+		}
+
+		return (Piece) lastChild;
+
+	}
+
+	public @Nullable Piece removePiece() {
+
+		if (getChildren().size() <= 3) {
+			return null;
+		}
+
+		int lastIndex = getChildren().size() - 1;
+
+		Node lastChild = getChildren().get(lastIndex);
+
+		if (!(lastChild instanceof Piece)) {
+			return null;
+		}
+
+		getChildren().remove(lastChild);
+		return (Piece) lastChild;
+
 	}
 
 }

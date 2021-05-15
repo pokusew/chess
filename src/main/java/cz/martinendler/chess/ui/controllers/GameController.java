@@ -1,6 +1,8 @@
 package cz.martinendler.chess.ui.controllers;
 
 import cz.martinendler.chess.App;
+import cz.martinendler.chess.engine.Game;
+import cz.martinendler.chess.engine.board.Square;
 import cz.martinendler.chess.ui.Board;
 import cz.martinendler.chess.ui.Piece;
 import javafx.event.ActionEvent;
@@ -50,9 +52,14 @@ public class GameController extends AppAwareController implements Initializable,
 	@FXML
 	private ScrollPane moveLog;
 
+	private Game game;
+
 	public GameController(App app) {
 		super(app);
 		log.info("constructor");
+
+		game = new Game();
+
 	}
 
 	protected void addMenusToMenuBar() {
@@ -172,6 +179,8 @@ public class GameController extends AppAwareController implements Initializable,
 		moveLog.setOnMouseClicked((MouseEvent event) -> {
 			log.info("onMouseClicked: target " + event.getTarget().toString());
 		});
+
+		// game.getBoard().getPiece(Square.fromIndex(1))
 
 		board.getSquareAt(3, 2).getChildren().setAll(knight0);
 		board.getSquareAt(5, 2).getChildren().setAll(knight1);
