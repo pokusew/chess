@@ -2,25 +2,23 @@ package cz.martinendler.chess.ui.controllers;
 
 import cz.martinendler.chess.App;
 import cz.martinendler.chess.engine.Game;
-import cz.martinendler.chess.engine.board.Square;
 import cz.martinendler.chess.ui.Board;
 import cz.martinendler.chess.ui.Piece;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -75,6 +73,7 @@ public class GameController extends AppAwareController implements Initializable,
 		));
 		newGame.setOnAction((ActionEvent event) -> {
 			log.info("menu: New Game");
+			newGame();
 		});
 
 		MenuItem open = new MenuItem("Open...");
@@ -84,6 +83,7 @@ public class GameController extends AppAwareController implements Initializable,
 		));
 		open.setOnAction((ActionEvent event) -> {
 			log.info("menu: Open");
+			openGame();
 		});
 
 		MenuItem save = new MenuItem("Save");
@@ -161,7 +161,7 @@ public class GameController extends AppAwareController implements Initializable,
 		// add menus to the menu bar
 		menuBar.getMenus().addAll(fileMenu, editMenu, helpMenu);
 
-		log.info("menuBar classes: "+ String.join(",", menuBar.getStyleClass()));
+		log.info("menuBar classes: " + String.join(",", menuBar.getStyleClass()));
 
 	}
 
@@ -195,5 +195,44 @@ public class GameController extends AppAwareController implements Initializable,
 	public void unload() {
 		log.info("unload");
 	}
+
+	private void newGame() {
+
+	}
+
+	private void openGame() {
+
+		showOpenDialog();
+
+	}
+
+	private void showOpenDialog() {
+
+		FileChooser fileChooser = new FileChooser();
+
+		fileChooser.setTitle("Open Game");
+
+		fileChooser.getExtensionFilters().addAll(
+			new FileChooser.ExtensionFilter("Portable Game Notation Files", "*.pgn"),
+			new FileChooser.ExtensionFilter("All Files", "*.*")
+		);
+
+		File selectedFile = fileChooser.showOpenDialog(app.getPrimaryStage());
+
+		log.info("showOpenDialog: " + selectedFile);
+
+	}
+
+	private void showAlert() {
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.initOwner(app.getPrimaryStage());
+		alert.setTitle("Invalid input");
+		alert.setHeaderText("Invalid data entered");
+		alert.setContentText("Something must be different.");
+		alert.showAndWait();
+	}
+
+	// TODO: new game dialog
+	// TODO: edit time dialog
 
 }
