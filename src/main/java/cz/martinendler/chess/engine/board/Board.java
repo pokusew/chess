@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -62,14 +63,27 @@ public class Board {
 	 */
 	private int halfMoveCounter;
 
+	/**
+	 * Instantiates a new instance of {@link Board}
+	 * <p>
+	 * The returned board:
+	 * - has no pieces (all squares are empty)
+	 * - both of the sides has no castling right
+	 * - side to move is white
+	 * - en passant an en passant rather are null
+	 * - move counter set to 1
+	 * - half move counter set to 0
+	 * <p>
+	 * You can use {@link Board#loadFromFen(String fen)} to load a chess position.
+	 */
 	public Board() {
 
 		bitboardOfSide = new long[Side.values().length];
 		bitboardOfPiece = new long[Piece.values().length];
 		squareToPiece = new Piece[Square.values().length];
 		castlingRights = new EnumMap<>(Side.class);
-		castlingRights.put(Side.WHITE, CastlingRight.KING_AND_QUEEN_SIDE);
-		castlingRights.put(Side.BLACK, CastlingRight.KING_AND_QUEEN_SIDE);
+		castlingRights.put(Side.WHITE, CastlingRight.NONE);
+		castlingRights.put(Side.BLACK, CastlingRight.NONE);
 
 		sideToMove = Side.WHITE;
 		enPassantTarget = null;
@@ -77,6 +91,31 @@ public class Board {
 
 		moveCounter = 1;
 		halfMoveCounter = 0;
+
+	}
+
+	/**
+	 * Instantiates a new instance as a copy of another {@link Board} instance
+	 *
+	 * @param anotherBoard board to copy
+	 */
+	public Board(Board anotherBoard) {
+
+		// see Java Cloning: Copy Constructors vs. Cloning
+		//   https://dzone.com/articles/java-cloning-copy-constructor-vs-cloning
+
+
+		bitboardOfSide = anotherBoard.bitboardOfSide.clone();
+		bitboardOfPiece = anotherBoard.bitboardOfPiece.clone();
+		squareToPiece = anotherBoard.squareToPiece.clone();
+		castlingRights = anotherBoard.castlingRights.clone();
+
+		sideToMove = anotherBoard.sideToMove;
+		enPassantTarget = anotherBoard.enPassantTarget;
+		enPassant = anotherBoard.enPassant;
+
+		moveCounter = anotherBoard.moveCounter;
+		halfMoveCounter = anotherBoard.halfMoveCounter;
 
 	}
 
@@ -125,6 +164,17 @@ public class Board {
 	 */
 	public @Nullable Piece getPiece(@NotNull Square square) {
 		return squareToPiece[square.ordinal()];
+	}
+
+	/**
+	 * Checks if the given piece is on the the given square
+	 *
+	 * @param piece  the piece
+	 * @param square the square
+	 * @return boolean {@code true} iff the given piece is on the the given square
+	 */
+	public boolean hasPiece(@NotNull Piece piece, @NotNull Square square) {
+		return (getBitboard(piece) & square.getBitboard()) != 0L;
 	}
 
 	/**
@@ -211,35 +261,48 @@ public class Board {
 		return halfMoveCounter;
 	}
 
-	// TODO: Javadoc
-	private static @Nullable Square findEnPassantTarget(@Nullable Square sq, @NotNull Side side) {
+	/**
+	 * Computes en passant target square from the en passant square
+	 *
+	 * @param enPassant the en passant square
+	 * @param side      the side of the pawn
+	 * @return the en passant target square
+	 * @see Board#findEnPassant(Square enPassantTarget, Side side) the reverse method is findEnPassant
+	 * @see Board#enPassantTarget
+	 * @see Board#enPassant
+	 */
+	public static @Nullable Square findEnPassantTarget(@Nullable Square enPassant, @NotNull Side side) {
 
-		if (sq == null) {
+		if (enPassant == null) {
 			return null;
 		}
 
 		return side.isWhite()
-			? Square.encode(Rank.RANK_5, sq.getFile())
-			: Square.encode(Rank.RANK_4, sq.getFile());
+			? Square.encode(Rank.RANK_5, enPassant.getFile())
+			: Square.encode(Rank.RANK_4, enPassant.getFile());
 
 	}
 
 	/**
-	 * Computes en passant square from the current square of a pawn that advanced two squares forward
+	 * Computes en passant square from en passant target square
+	 * (that is the current square of a pawn that advanced two squares forward)
 	 *
-	 * @param sq   the current square of a pawn that advanced two squares forward
-	 * @param side the side of the pawn
+	 * @param enPassantTarget the current square of a pawn that advanced two squares forward
+	 * @param side            the side of the pawn that advanced two squares forward
 	 * @return the destination square as if the pawn advanced only one square forward
+	 * @see Board#findEnPassantTarget(Square enPassant, Side side) the reverse method is findEnPassantTarget
+	 * @see Board#enPassantTarget
+	 * @see Board#enPassant
 	 */
-	public static @Nullable Square findEnPassant(@Nullable Square sq, @NotNull Side side) {
+	public static @Nullable Square findEnPassant(@Nullable Square enPassantTarget, @NotNull Side side) {
 
-		if (sq == null) {
+		if (enPassantTarget == null) {
 			return null;
 		}
 
 		return side.isWhite()
-			? Square.encode(Rank.RANK_3, sq.getFile())
-			: Square.encode(Rank.RANK_6, sq.getFile());
+			? Square.encode(Rank.RANK_3, enPassantTarget.getFile())
+			: Square.encode(Rank.RANK_6, enPassantTarget.getFile());
 
 	}
 
@@ -249,7 +312,7 @@ public class Board {
 	 * @param piece the piece
 	 * @param sq    the square
 	 */
-	public void addPiece(@NotNull Piece piece, @NotNull Square sq) {
+	private void addPiece(@NotNull Piece piece, @NotNull Square sq) {
 		bitboardOfPiece[piece.ordinal()] |= sq.getBitboard();
 		bitboardOfSide[piece.getPieceSide().ordinal()] |= sq.getBitboard();
 		squareToPiece[sq.ordinal()] = piece;
@@ -261,7 +324,7 @@ public class Board {
 	 * @param piece the piece
 	 * @param sq    the square
 	 */
-	public void removePiece(@NotNull Piece piece, @NotNull Square sq) {
+	private void removePiece(@NotNull Piece piece, @NotNull Square sq) {
 		bitboardOfPiece[piece.ordinal()] ^= sq.getBitboard();
 		bitboardOfSide[piece.getPieceSide().ordinal()] ^= sq.getBitboard();
 		squareToPiece[sq.ordinal()] = null;
@@ -273,7 +336,7 @@ public class Board {
 	 * @param move the move
 	 * @return a captured piece if any, otherwise {@code null}
 	 */
-	protected @Nullable Piece movePiece(@NotNull Move move) {
+	private @Nullable Piece movePiece(@NotNull Move move) {
 		return movePiece(move.getFrom(), move.getTo(), move.getPromotion());
 	}
 
@@ -285,7 +348,7 @@ public class Board {
 	 * @param promotion the promotion
 	 * @return a captured piece if any, otherwise {@code null}
 	 */
-	protected Piece movePiece(@NotNull Square from, @NotNull Square to, @Nullable Piece promotion) {
+	private Piece movePiece(@NotNull Square from, @NotNull Square to, @Nullable Piece promotion) {
 
 		Piece movingPiece = getPiece(from);
 
@@ -817,16 +880,24 @@ public class Board {
 
 	}
 
+	/**
+	 * Resets the board state
+	 */
 	public void clear() {
-		// TODO
-		// setSideToMove(Side.WHITE);
-		// setEnPassantTarget(Square.NONE);
-		// setEnPassant(Square.NONE);
-		// setMoveCounter(0);
-		// setHalfMoveCounter(0);
-		// Arrays.fill(bitboard, 0L);
-		// Arrays.fill(bbSide, 0L);
-		// Arrays.fill(occupation, Piece.NONE);
+
+		Arrays.fill(bitboardOfSide, 0L);
+		Arrays.fill(bitboardOfPiece, 0L);
+		Arrays.fill(squareToPiece, null);
+		castlingRights.put(Side.WHITE, CastlingRight.NONE);
+		castlingRights.put(Side.BLACK, CastlingRight.NONE);
+
+		sideToMove = Side.WHITE;
+		enPassantTarget = null;
+		enPassant = null;
+
+		moveCounter = 1;
+		halfMoveCounter = 0;
+
 	}
 
 	// TODO
@@ -917,7 +988,7 @@ public class Board {
 					}
 
 					// add the piece representation
-					fen.append(piece.getNotation());
+					fen.append(piece.getFenNotation());
 
 				} else {
 					// otherwise increment contiguousEmptySquaresCount for the current rank
@@ -1005,6 +1076,88 @@ public class Board {
 		}
 
 		return fen.toString();
+
+	}
+
+	/**
+	 * Loads a specific chess position using FEN notation to this board
+	 * <p>
+	 * An example FEN: {@code rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1}
+	 *
+	 * @param fen a specific chess position in FEN notation
+	 */
+	public void loadFromFen(@NotNull String fen) {
+
+		// reset the board
+		clear();
+
+		String squares = fen.substring(0, fen.indexOf(' '));
+		String state = fen.substring(fen.indexOf(' ') + 1);
+
+		String[] ranks = squares.split("/");
+		int file;
+		int rank = 7;
+		for (String r : ranks) {
+			file = 0;
+			for (int i = 0; i < r.length(); i++) {
+				char c = r.charAt(i);
+				if (Character.isDigit(c)) {
+					file += Integer.parseInt(c + "");
+				} else {
+					Square sq = Square.encode(Rank.fromIndex(rank), File.fromIndex(file));
+					// addPiece(Constants.getPieceByNotation(c + ""), sq);
+					addPiece(Piece.fromFenNotation(c + ""), sq);
+					file++;
+				}
+			}
+			rank--;
+		}
+
+		sideToMove = state.toLowerCase().charAt(0) == 'w' ? Side.WHITE : Side.BLACK;
+
+		if (state.contains("KQ")) {
+			castlingRights.put(Side.WHITE, CastlingRight.KING_AND_QUEEN_SIDE);
+		} else if (state.contains("K")) {
+			castlingRights.put(Side.WHITE, CastlingRight.KING_SIDE);
+		} else if (state.contains("Q")) {
+			castlingRights.put(Side.WHITE, CastlingRight.QUEEN_SIDE);
+		} else {
+			castlingRights.put(Side.WHITE, CastlingRight.NONE);
+		}
+
+		if (state.contains("kq")) {
+			castlingRights.put(Side.BLACK, CastlingRight.KING_AND_QUEEN_SIDE);
+		} else if (state.contains("k")) {
+			castlingRights.put(Side.BLACK, CastlingRight.KING_SIDE);
+		} else if (state.contains("q")) {
+			castlingRights.put(Side.BLACK, CastlingRight.QUEEN_SIDE);
+		} else {
+			castlingRights.put(Side.BLACK, CastlingRight.NONE);
+		}
+
+		String[] flags = state.split(" ");
+
+		if (flags.length >= 3) {
+			String s = flags[2].toUpperCase().trim();
+			if (!s.equals("-")) {
+				Square ep = Square.valueOf(s);
+				enPassant = ep;
+				enPassantTarget = findEnPassantTarget(ep, sideToMove);
+				if (!(squareAttackedByPieceType(getEnPassant(), getSideToMove(), PieceType.PAWN) != 0 &&
+					verifyNotPinnedPiece(getSideToMove().flip(), getEnPassant(), getEnPassantTarget()))) {
+					enPassantTarget = null;
+				}
+			} else {
+				enPassant = null;
+				enPassantTarget = null;
+			}
+			if (flags.length >= 4) {
+				halfMoveCounter = Integer.parseInt(flags[3]);
+				if (flags.length >= 5) {
+					moveCounter = Integer.parseInt(flags[4]);
+				}
+			}
+		}
 
 	}
 

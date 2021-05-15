@@ -30,21 +30,21 @@ class PieceTest {
 	@Test
 	void testFromFenNotation() {
 
-		assertEquals(Piece.WHITE_PAWN, Piece.fromNotation("P"));
-		assertEquals(Piece.WHITE_KNIGHT, Piece.fromNotation("N"));
-		assertEquals(Piece.WHITE_BISHOP, Piece.fromNotation("B"));
-		assertEquals(Piece.WHITE_ROOK, Piece.fromNotation("R"));
-		assertEquals(Piece.WHITE_QUEEN, Piece.fromNotation("Q"));
-		assertEquals(Piece.WHITE_KING, Piece.fromNotation("K"));
+		assertEquals(Piece.WHITE_PAWN, Piece.fromFenNotation("P"));
+		assertEquals(Piece.WHITE_KNIGHT, Piece.fromFenNotation("N"));
+		assertEquals(Piece.WHITE_BISHOP, Piece.fromFenNotation("B"));
+		assertEquals(Piece.WHITE_ROOK, Piece.fromFenNotation("R"));
+		assertEquals(Piece.WHITE_QUEEN, Piece.fromFenNotation("Q"));
+		assertEquals(Piece.WHITE_KING, Piece.fromFenNotation("K"));
 
-		assertEquals(Piece.BLACK_PAWN, Piece.fromNotation("p"));
-		assertEquals(Piece.BLACK_KNIGHT, Piece.fromNotation("n"));
-		assertEquals(Piece.BLACK_BISHOP, Piece.fromNotation("b"));
-		assertEquals(Piece.BLACK_ROOK, Piece.fromNotation("r"));
-		assertEquals(Piece.BLACK_QUEEN, Piece.fromNotation("q"));
-		assertEquals(Piece.BLACK_KING, Piece.fromNotation("k"));
+		assertEquals(Piece.BLACK_PAWN, Piece.fromFenNotation("p"));
+		assertEquals(Piece.BLACK_KNIGHT, Piece.fromFenNotation("n"));
+		assertEquals(Piece.BLACK_BISHOP, Piece.fromFenNotation("b"));
+		assertEquals(Piece.BLACK_ROOK, Piece.fromFenNotation("r"));
+		assertEquals(Piece.BLACK_QUEEN, Piece.fromFenNotation("q"));
+		assertEquals(Piece.BLACK_KING, Piece.fromFenNotation("k"));
 
-		assertNull(Piece.fromNotation("x"));
+		assertNull(Piece.fromFenNotation("x"));
 
 	}
 

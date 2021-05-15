@@ -1,5 +1,12 @@
 package cz.martinendler.chess.engine.pieces;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * A type of a chess piece {@link Piece}
  */
@@ -11,27 +18,39 @@ public enum PieceType {
 	/**
 	 * Pawn piece type
 	 */
-	PAWN(1),
+	PAWN("P", 1),
 	/**
 	 * Knight piece type
 	 */
-	KNIGHT(3),
+	KNIGHT("N", 3),
 	/**
 	 * Bishop piece type
 	 */
-	BISHOP(3),
+	BISHOP("B", 3),
 	/**
 	 * Rook piece type
 	 */
-	ROOK(5),
+	ROOK("R", 5),
 	/**
 	 * Queen piece type
 	 */
-	QUEEN(9),
+	QUEEN("Q", 9),
 	/**
 	 * King piece type
 	 */
-	KING(0);
+	KING("K", 0);
+
+	// see https://stackoverflow.com/questions/507602/how-can-i-initialise-a-static-map
+
+	private static final Map<String, PieceType> sanNotationToPiece = Arrays.stream(values())
+		.collect(Collectors.toMap(PieceType::getSanNotation, p -> p));
+
+	/**
+	 * One letter notation for usage in SAN
+	 * <p>
+	 * Pieces: P N B R Q K (uppercase letters)
+	 */
+	private final @NotNull String sanNotation;
 
 	/**
 	 * Integer that expresses value of this piece type
@@ -45,8 +64,32 @@ public enum PieceType {
 	 */
 	private final int value;
 
-	PieceType(int value) {
+	PieceType(@NotNull String sanNotation, int value) {
+		this.sanNotation = sanNotation;
 		this.value = value;
+	}
+
+	/**
+	 * Gets piece type one letter notation for usage in SAN
+	 * <p>
+	 * Pieces: P N B R Q K (UPPERCASE letters)
+	 *
+	 * @return the piece type one letter notation for usage in SAN
+	 * @see PieceType#fromSanNotation(String sanNotation)
+	 */
+	public @NotNull String getSanNotation() {
+		return sanNotation;
+	}
+
+	/**
+	 * Creates a piece type from the piece type notation as used in SAN
+	 *
+	 * @param sanNotation the piece type notation as used in SAN
+	 * @return {@link Piece} or {@code null} if there is no piece for the given notation
+	 * @see PieceType#getSanNotation()
+	 */
+	public static @Nullable PieceType fromSanNotation(@NotNull String sanNotation) {
+		return sanNotationToPiece.get(sanNotation);
 	}
 
 	/**
