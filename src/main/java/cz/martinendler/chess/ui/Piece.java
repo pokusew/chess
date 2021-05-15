@@ -41,7 +41,7 @@ public class Piece extends Rectangle {
 
 			// log.info("ID={} onMouseDragged", id);
 
-			// event.setDragDetect(true);
+			// event.setDragDetect(true); // works well by default
 
 			if (dragging) {
 
@@ -107,6 +107,8 @@ public class Piece extends Rectangle {
 
 	// TODO: better
 	public void stopDragging() {
+
+		log.info("ID={} stopDragging", id);
 
 		setMouseTransparent(false);
 		getParent().setMouseTransparent(false);

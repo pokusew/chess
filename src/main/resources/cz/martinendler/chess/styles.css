@@ -4,25 +4,67 @@
 /* https://docs.oracle.com/javase/8/javafx/user-interface-tutorial/apply-css.htm */
 /* https://docs.oracle.com/javase/8/javafx/api/javafx/scene/doc-files/cssref.html */
 
-/*.root {*/
-/*	-fx-font-size: 16pt;*/
-/*	-fx-font-family: "Courier New";*/
-/*	-fx-base: rgb(132, 145, 47);*/
-/*	-fx-background: rgb(225, 228, 203);*/
-/*}*/
+.app--default {
+	/* TODO: use Looked-up Colors */
+}
 
-/*.button {*/
-/*	-fx-text-fill: blue;*/
-/*}*/
+.board {
+	/* -fx-background-color: #000000; */ /* useful for debugging custom sizing */
+	/* -fx-custom-arc-clip-relative: 100%; */
+	/* -fx-custom-arc-clip-absolute: 10px; */
+}
 
-/*.shape {*/
-/*	-fx-fill: red;*/
-/*}*/
+.border-segment {
+	-fx-alignment: center;
+}
 
-/*.rectangle {*/
-/*	-fx-fill: red;*/
-/*}*/
+.border-segment.border-segment--light {
+	-fx-background-color: #7E4D38;
+}
 
-/*.square {*/
-/*	-fx-fill: red;*/
-/*}*/
+.border-segment.border-segment--dark {
+	-fx-background-color: #803600;
+}
+
+.border-description-text {
+	-fx-fill: #ffffff;
+	-fx-font-family: 'Arial';
+	/* default font size */
+	/* -fx-font-size: 12px; */
+	/* TODO: system font does not support bold (at least on macOS)? */
+	-fx-font-weight: bold;
+	-fx-font-smoothing-type: lcd;
+}
+
+.square.square--light {
+	/*-fx-background-color: #f5f5f5;*/
+	-fx-background-color: #eeeed2;
+}
+
+.square {
+
+}
+
+.square.square--dark {
+	/*-fx-background-color: #000000;*/
+	-fx-background-color: #769656;
+}
+
+.square.square--light.square--origin {
+	/*-fx-background-color: #ffd700;*/
+	-fx-background-color: #f6f669;
+}
+
+.square.square--dark.square--origin {
+	/*-fx-background-color: #ffd700;*/
+	-fx-background-color: #baca2b;
+}
+
+.square.square--light.square--target {
+	-fx-background-color: #ffffe0;
+}
+
+.square.square--dark.square--target {
+	-fx-background-color: #ffffe0;
+}
+

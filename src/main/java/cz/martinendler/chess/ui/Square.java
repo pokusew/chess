@@ -1,12 +1,9 @@
 package cz.martinendler.chess.ui;
 
-import cz.martinendler.chess.engine.Side;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,27 +14,13 @@ public class Square extends StackPane {
 
 	private static final Logger log = LoggerFactory.getLogger(Square.class);
 
-	private static final Background COLOR_WHITE = new Background(
-		new BackgroundFill(Color.WHITESMOKE, null, null)
-	);
-
-	private static final Background COLOR_BLACK = new Background(
-		new BackgroundFill(Color.BLACK, null, null)
-	);
-
-	private static final Background COLOR_TARGET = new Background(
-		new BackgroundFill(Color.LIGHTYELLOW, null, null)
-	);
-
 	public final int row;
 	public final int column;
-	public final Side color;
-
-	private final Background normalBg;
+	public final boolean light;
 
 	// protected Piece piece;
 
-	public Square(int row, int column, Side color) {
+	public Square(int row, int column, boolean light) {
 		super();
 
 		// TODO: better approach
@@ -46,11 +29,15 @@ public class Square extends StackPane {
 
 		this.row = row;
 		this.column = column;
-		this.color = color;
+		this.light = light;
 
-		normalBg = color == Side.WHITE ? COLOR_WHITE : COLOR_BLACK;
+		getStyleClass().add("square");
 
-		setBackground(normalBg);
+		if (light) {
+			getStyleClass().add("square--light");
+		} else {
+			getStyleClass().add("square--dark");
+		}
 
 		setOnMouseClicked((MouseEvent event) -> {
 			log.info("r={} c={} clicked", row, column);
@@ -58,12 +45,12 @@ public class Square extends StackPane {
 
 		setOnMouseDragEntered((MouseDragEvent event) -> {
 			log.info("r={} c={} onMouseDragEntered", row, column);
-			setBackground(COLOR_TARGET);
+			getStyleClass().add("square--target");
 		});
 
 		setOnMouseDragExited((MouseDragEvent event) -> {
 			log.info("r={} c={} onMouseDragExited", row, column);
-			setBackground(normalBg);
+			getStyleClass().remove("square--target");
 		});
 
 		setOnMouseDragReleased((MouseDragEvent event) -> {

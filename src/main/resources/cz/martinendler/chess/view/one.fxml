@@ -1,14 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
 <?import cz.martinendler.chess.ui.Board?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
 
-<Board
-	xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane
+	xmlns:fx="http://javafx.com/fxml"
 	fx:controller="cz.martinendler.chess.ui.controllers.PageOneController"
-	minWidth="560"
-	minHeight="560"
-	fx:id="board"
 >
-
-</Board>
+	<HBox
+		AnchorPane.bottomAnchor="0.0"
+		AnchorPane.leftAnchor="0.0"
+		AnchorPane.rightAnchor="0.0"
+		AnchorPane.topAnchor="0.0"
+	>
+		<VBox
+			HBox.hgrow="ALWAYS"
+		>
+			<HBox>
+				<Text
+					HBox.hgrow="ALWAYS"
+				>
+					BLACK
+				</Text>
+				<Text>
+					10:00
+				</Text>
+			</HBox>
+			<Board
+				minWidth="560"
+				minHeight="560"
+				fx:id="board"
+				VBox.vgrow="ALWAYS"
+			/>
+		</VBox>
+		<Board
+			minWidth="560"
+			minHeight="560"
+			fx:id="board2"
+			HBox.hgrow="ALWAYS"
+		/>
+	</HBox>
+</AnchorPane>
