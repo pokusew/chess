@@ -13,6 +13,10 @@ public class Game {
 
 	}
 
+	public Board getBoard() {
+		return board;
+	}
+
 	// TODO
 	public boolean isCheck() {
 		return false;

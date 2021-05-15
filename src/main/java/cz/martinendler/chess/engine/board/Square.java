@@ -325,6 +325,17 @@ public enum Square {
 	/**
 	 * Gets square by its rank and file
 	 *
+	 * @param rank the rank [0, 7]
+	 * @param file the file [0, 7]
+	 * @return the square
+	 */
+	public static @NotNull Square encode(int rank, int file) {
+		return allSquares[rank * 8 + file];
+	}
+
+	/**
+	 * Gets square by its rank and file
+	 *
 	 * @param rank the rank
 	 * @param file the file
 	 * @return the square
