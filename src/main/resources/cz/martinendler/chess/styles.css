@@ -7,28 +7,91 @@
  * see https://docs.oracle.com/javase/8/javafx/user-interface-tutorial/apply-css.htm
  */
 
-.app--default {
-	/* TODO: use Looked-up Colors */
+.app-theme-default {
+	/* Looked-up Colors definitions: */
+	-fx-custom-menu-color: rgb(34, 32, 29);
+	-fx-custom-menu-color-highlighted: #0096C9;
+	-fx-custom-menu-font-color: #bfbeba;
+	-fx-custom-menu-font-color-highlighted: #ffffff;
+	/* TODO: use Looked-up Colors also for the rest of the colors */
 }
 
-Text {
+.app-root {
+	-fx-background-color: #312e2b;
+}
+
+.app-root Text {
 	-fx-fill: #000000;
 	-fx-font-family: 'sans-serif';
 	-fx-font-smoothing-type: lcd;
 	/* TODO: JavaFX default font on macOS does not support bold? */
 }
 
-.game-screen {
+.app-menu {
+	-fx-background-color: -fx-custom-menu-color;
+}
+
+.app-menu > .container > .menu-button {
+	/*-fx-background-color: -fx-custom-menu-color;*/
+}
+
+.app-menu > .container > .menu-button > .label {
+	-fx-text-fill: -fx-custom-menu-font-color;
+}
+
+.app-menu > .container > .menu-button > .label:disabled {
+	/*-fx-opacity: 1.0;*/
+}
+
+.app-menu > .container > .menu-button:hover,
+.app-menu > .container > .menu-button:focused,
+.app-menu > .container > .menu-button:showing {
+	-fx-background-color: -fx-custom-menu-color-highlighted;
+}
+
+.app-menu > .container > .menu-button:hover > .label,
+.app-menu > .container > .menu-button:focused > .label,
+.app-menu > .container > .menu-button:showing > .label {
+	-fx-text-fill: -fx-custom-menu-font-color-highlighted;
+}
+
+.app-menu .menu-item {
+	-fx-background-color: -fx-custom-menu-color;
+}
+
+.app-menu .menu-item .label {
+	-fx-text-fill: -fx-custom-menu-font-color;
+}
+
+.app-menu .menu-item .label:disabled {
+	/*-fx-opacity: 1.0;*/
+}
+
+.app-menu .menu-item:focused,
+.app-menu .menu-item:hover {
+	-fx-background-color: -fx-custom-menu-color-highlighted;
+}
+
+.app-menu .menu-item:focused .label,
+.app-menu .menu-item:hover .label {
+	-fx-text-fill: -fx-custom-menu-font-color-highlighted;
+}
+
+.app-menu .context-menu {
+	-fx-background-color: -fx-custom-menu-color;
+}
+
+.app-menu-container {
+
+}
+
+.app-container {
 	-fx-padding: 10px 10px 10px 10px;
-	-fx-background-color: #312e2b;
-}
-
-.game-screen Text {
-	-fx-fill: #bfbeba;
-}
-
-.container {
 	-fx-spacing: 10px;
+}
+
+.app-container Text {
+	-fx-fill: #bfbeba;
 }
 
 .left-view {
@@ -274,7 +337,9 @@ Text {
 	-fx-background-color: rgba(255, 255, 255, 0.02);
 }
 
-.move-log-entry .counter, .move-log-entry .white-move, .move-log-entry .black-move {
+.move-log-entry .counter,
+.move-log-entry .white-move,
+.move-log-entry .black-move {
 	-fx-alignment: center-left;
 }
 

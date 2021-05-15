@@ -5,548 +5,561 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.control.MenuBar?>
 
 <AnchorPane
 	xmlns:fx="http://javafx.com/fxml"
 	fx:controller="cz.martinendler.chess.ui.controllers.GameController"
-	styleClass="game-screen"
+	styleClass="app-root,app-theme-default"
 >
-	<HBox
-		styleClass="container"
+	<VBox
+		styleClass="app-menu-container"
 		AnchorPane.bottomAnchor="0.0"
 		AnchorPane.leftAnchor="0.0"
 		AnchorPane.rightAnchor="0.0"
 		AnchorPane.topAnchor="0.0"
 	>
-		<VBox
-			styleClass="left-view"
-			HBox.hgrow="ALWAYS"
+		<!-- TODO: useSystemMenuBar="true" -->
+		<!-- NOTE: useSystemMenuBar="true" on macOS has limitations -->
+		<MenuBar
+			fx:id="menuBar"
+			styleClass="app-menu"
+			useSystemMenuBar="false"
+		/>
+		<HBox
+			styleClass="app-container"
+			VBox.vgrow="ALWAYS"
 		>
-			<fx:include
-				fx:id="blackInfo"
-				source="side-info-box.fxml"
-				styleClass="side-info-box--black"
-			/>
-			<Region styleClass="spacer"/>
-			<Board
-				minWidth="560"
-				minHeight="560"
-				fx:id="board"
-				VBox.vgrow="ALWAYS"
-			/>
-			<Region styleClass="spacer"/>
-			<fx:include
-				fx:id="whiteInfo"
-				source="side-info-box.fxml"
-				styleClass="side-info-box--white, side-info-box--active"
-			/>
-		</VBox>
-		<AnchorPane
-			styleClass="right-view"
-			HBox.hgrow="ALWAYS"
-		>
-			<HBox
-				styleClass="message-box"
-				AnchorPane.topAnchor="0.0"
-				AnchorPane.leftAnchor="0.0"
-				AnchorPane.rightAnchor="0.0"
-				minHeight="100"
-				maxHeight="100"
+			<VBox
+				styleClass="left-view"
+				HBox.hgrow="ALWAYS"
 			>
-				<Rectangle
-					width="60"
-					height="60"
-					arcWidth="5"
-					arcHeight="5"
-					fill="white"
+				<fx:include
+					fx:id="blackInfo"
+					source="side-info-box.fxml"
+					styleClass="side-info-box--black"
 				/>
-				<VBox
-					styleClass="bubble"
-					HBox.hgrow="ALWAYS"
-				>
-					<Text>
-						There will be a useful message
-					</Text>
-				</VBox>
-
-			</HBox>
-			<ScrollPane
-				styleClass="move-log"
-				VBox.vgrow="NEVER"
-				hbarPolicy="NEVER"
-				AnchorPane.topAnchor="100.0"
-				AnchorPane.bottomAnchor="0.0"
-				AnchorPane.leftAnchor="0.0"
-				AnchorPane.rightAnchor="0.0"
-				fitToWidth="true"
-				fx:id="moveLog"
+				<Region styleClass="spacer"/>
+				<Board
+					minWidth="560"
+					minHeight="560"
+					fx:id="board"
+					VBox.vgrow="ALWAYS"
+				/>
+				<Region styleClass="spacer"/>
+				<fx:include
+					fx:id="whiteInfo"
+					source="side-info-box.fxml"
+					styleClass="side-info-box--white, side-info-box--active"
+				/>
+			</VBox>
+			<AnchorPane
+				styleClass="right-view"
+				HBox.hgrow="ALWAYS"
 			>
-				<VBox
-					styleClass="move-log-content"
+				<HBox
+					styleClass="message-box"
+					AnchorPane.topAnchor="0.0"
+					AnchorPane.leftAnchor="0.0"
+					AnchorPane.rightAnchor="0.0"
+					minHeight="100"
+					maxHeight="100"
 				>
-
-					<HBox
-						styleClass="move-log-entry"
+					<Rectangle
+						width="60"
+						height="60"
+						arcWidth="5"
+						arcHeight="5"
+						fill="white"
+					/>
+					<VBox
+						styleClass="bubble"
+						HBox.hgrow="ALWAYS"
 					>
-						<HBox
-							styleClass="counter"
-						>
-							<Text>1.</Text>
-						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
+						<Text fx:id="messageBubbleText">
+							There will be a useful message
+						</Text>
+					</VBox>
 
-					<HBox
-						styleClass="move-log-entry, move-log-entry--even"
+				</HBox>
+				<ScrollPane
+					styleClass="move-log"
+					VBox.vgrow="NEVER"
+					hbarPolicy="NEVER"
+					AnchorPane.topAnchor="100.0"
+					AnchorPane.bottomAnchor="0.0"
+					AnchorPane.leftAnchor="0.0"
+					AnchorPane.rightAnchor="0.0"
+					fitToWidth="true"
+					fx:id="moveLog"
+				>
+					<VBox
+						styleClass="move-log-content"
 					>
-						<HBox
-							styleClass="counter"
-						>
-							<Text>2.</Text>
-						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry"
 						>
-							<Text>3.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>1.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry, move-log-entry--even"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry, move-log-entry--even"
 						>
-							<Text>2.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>2.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry"
 						>
-							<Text>3.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>3.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry, move-log-entry--even"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry, move-log-entry--even"
 						>
-							<Text>2.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>2.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry"
 						>
-							<Text>3.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>3.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry, move-log-entry--even"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry, move-log-entry--even"
 						>
-							<Text>2.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>2.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry"
 						>
-							<Text>3.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>3.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry, move-log-entry--even"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry, move-log-entry--even"
 						>
-							<Text>2.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>2.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry"
 						>
-							<Text>3.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>3.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry, move-log-entry--even"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry, move-log-entry--even"
 						>
-							<Text>2.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>2.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry"
 						>
-							<Text>3.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>3.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry, move-log-entry--even"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry, move-log-entry--even"
 						>
-							<Text>2.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>2.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry"
 						>
-							<Text>3.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>3.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry, move-log-entry--even"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry, move-log-entry--even"
 						>
-							<Text>2.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>2.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry"
 						>
-							<Text>3.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>3.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry, move-log-entry--even"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry, move-log-entry--even"
 						>
-							<Text>2.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>2.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry"
 						>
-							<Text>3.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>3.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry, move-log-entry--even"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry, move-log-entry--even"
 						>
-							<Text>2.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>2.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry"
 						>
-							<Text>3.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>3.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry, move-log-entry--even"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry, move-log-entry--even"
 						>
-							<Text>2.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>2.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-					<HBox
-						styleClass="move-log-entry"
-					>
 						<HBox
-							styleClass="counter"
+							styleClass="move-log-entry"
 						>
-							<Text>3.</Text>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>3.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
 						</HBox>
-						<HBox
-							styleClass="white-move"
-						>
-							<Text>special</Text>
-						</HBox>
-						<HBox
-							styleClass="black-move"
-						>
-							<Text>e7</Text>
-						</HBox>
-					</HBox>
 
-				</VBox>
-			</ScrollPane>
-		</AnchorPane>
-	</HBox>
+						<HBox
+							styleClass="move-log-entry, move-log-entry--even"
+						>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>2.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
+						</HBox>
+
+						<HBox
+							styleClass="move-log-entry"
+						>
+							<HBox
+								styleClass="counter"
+							>
+								<Text>3.</Text>
+							</HBox>
+							<HBox
+								styleClass="white-move"
+							>
+								<Text>special</Text>
+							</HBox>
+							<HBox
+								styleClass="black-move"
+							>
+								<Text>e7</Text>
+							</HBox>
+						</HBox>
+
+					</VBox>
+				</ScrollPane>
+			</AnchorPane>
+		</HBox>
+	</VBox>
 </AnchorPane>

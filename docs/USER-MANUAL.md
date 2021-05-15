@@ -62,20 +62,21 @@ The app offers several game modes:
 
 ### App menu
 
-The app has one global app menu. Its position depends on the platform (e.g. on macOS standard system top-screen menu is used).
+The app has one global app menu. Its position depends on the platform
+(e.g. on macOS standard system top-screen menu is used).
 
-The menu offers the following options:
-* Help (on macOS the option is named Chess)
+The menu offers the following options _(corresponding keyboard shortcuts are in parentheses)_:
+* File
+    * New Game... _(Ctrl-N / Cmd-M)_
+    * Open...  _(Ctrl-O / Cmd-O)_
+    * Save  _(Ctrl-S / Cmd-S)_
+    * Save As... _(Ctrl-Shift-S / Cmd-Shift-S)_
+* Edit
+    * Undo Move _(Ctrl-Z / Cmd-Z)_
+    * Redo Move _(Ctrl-Y / Cmd-Y)_
+* Help
     * About Chess
     * Preferences
-* File
-    * New Game...
-    * Open...
-    * Save
-    * Save As...
-* Edit
-    * Undo Move
-    * Redo Move 
 
 
 ### Startup screen
@@ -126,7 +127,7 @@ If no game file that is associated with the game, then the option behaves as _Sa
 and the chosen game file is then associated with the game. 
 
 
-### Option: File > Save As
+### Option: File > Save As...
 
 The user is presented with a standard system file dialog to choose where to save the game.
 
