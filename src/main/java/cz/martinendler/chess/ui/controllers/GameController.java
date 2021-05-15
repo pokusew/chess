@@ -170,12 +170,12 @@ public class GameController extends AppAwareController implements Initializable,
 		Piece knight2 = new Piece(2);
 
 		moveLog.setOnMouseClicked((MouseEvent event) -> {
-			log.info("mouse");
+			log.info("onMouseClicked: target " + event.getTarget().toString());
 		});
 
-		// board.getSquareAt(3, 2).getChildren().setAll(knight0);
-		// board.getSquareAt(5, 2).getChildren().setAll(knight1);
-		// board.getSquareAt(3, 7).getChildren().setAll(knight2);
+		board.getSquareAt(3, 2).getChildren().setAll(knight0);
+		board.getSquareAt(5, 2).getChildren().setAll(knight1);
+		board.getSquareAt(3, 7).getChildren().setAll(knight2);
 
 	}
 

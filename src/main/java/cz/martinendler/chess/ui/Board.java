@@ -4,12 +4,14 @@ import cz.martinendler.chess.engine.board.File;
 import cz.martinendler.chess.engine.board.Rank;
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.css.*;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,6 +138,10 @@ public class Board extends Region {
 	protected double clipArcRel = 0.0;
 	protected double clipArcAbs = 0.0;
 
+	private final @NotNull SimpleObjectProperty<Square> moveOrigin = new SimpleObjectProperty<>(
+		null, "moveOrigin"
+	);
+
 	public Board() {
 		super();
 
@@ -156,13 +162,7 @@ public class Board extends Region {
 		initChildren();
 
 		setOnMouseClicked((MouseEvent event) -> {
-			log.info("board clicked");
-		});
-
-		setOnDragDetected((MouseEvent event) -> {
-
-			log.info("setOnDragDetected");
-
+			log.info("onMouseClicked: source = {}, target = {}", event.getSource(), event.getTarget());
 		});
 
 		customArcClipRelative.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
@@ -185,6 +185,19 @@ public class Board extends Region {
 
 		});
 
+	}
+
+	public @NotNull SimpleObjectProperty<Square> moveOriginProperty() {
+		return moveOrigin;
+	}
+
+	public @Nullable Square getMoveOrigin() {
+		return moveOrigin.get();
+	}
+
+	public void setMoveOrigin(@Nullable Square moveOrigin) {
+		log.info("setMoveOrigin: {}", moveOrigin);
+		this.moveOrigin.set(moveOrigin);
 	}
 
 	protected boolean areInitialSizesComputed() {
@@ -261,6 +274,12 @@ public class Board extends Region {
 
 	protected void recomputeSizes(double width, double height) {
 
+		availableSize = Double.min(width, height);
+		unitSize = availableSize / 70;
+		borderSize = Math.floor(3 * unitSize);
+		squareSize = Math.floor(64 * unitSize / NUM);
+		boardSize = (2 * borderSize) + (NUM * squareSize);
+
 		log.info(
 			"recomputeSizes: w = {}, h = {}," +
 				" cw = {}, ch = {}," +
@@ -279,12 +298,6 @@ public class Board extends Region {
 			boardSize,
 			clipSupported
 		);
-
-		availableSize = Double.min(width, height);
-		unitSize = availableSize / 70;
-		borderSize = Math.floor(3 * unitSize);
-		squareSize = Math.floor(64 * unitSize / NUM);
-		boardSize = (2 * borderSize) + (NUM * squareSize);
 
 	}
 
@@ -353,70 +366,12 @@ public class Board extends Region {
 			}
 		}
 
-		// previous version:
-		// TODO: remove
-		// List<Node> children = getManagedChildren();
-		//
-		// for (int i = 0; i < children.size(); i++) {
-		//
-		// 	final Node child = children.get(i);
-		//
-		// 	int row = i / 8;
-		// 	int column = i % 8;
-		//
-		// 	child.resizeRelocate(
-		// 		row * squareSize, column * squareSize,
-		// 		squareSize, squareSize
-		// 	);
-		//
-		// }
-
 	}
 
 	public Square getSquareAt(int r, int c) {
 		// TODO: assert
 		return squares[r][c];
 	}
-
-	// @Override
-	// protected double computeMinWidth(double height) {
-	// 	final double width = getInsets().getLeft() + getInsets().getRight();
-	// 	log.info(
-	// 		"computeMinWidth: w = {}, h = {}",
-	// 		width, height
-	// 	);
-	// 	return Double.min(width, height);
-	// }
-	//
-	// @Override
-	// protected double computeMinHeight(double width) {
-	// 	final double height = getInsets().getTop() + getInsets().getBottom();
-	// 	log.info(
-	// 		"computeMinHeight: w = {}, h = {}",
-	// 		width, height
-	// 	);
-	// 	return Double.min(width, height);
-	// }
-	//
-	//
-	// @Override
-	// protected double computePrefWidth(double height) {
-	// 	log.info(
-	// 		"computePrefWidth: h = {}",
-	// 		height
-	// 	);
-	// 	return super.computePrefWidth(height);
-	// }
-	//
-	//
-	// @Override
-	// protected double computePrefHeight(double width) {
-	// 	log.info(
-	// 		"computePrefWidth: w = {}",
-	// 		width
-	// 	);
-	// 	return super.computePrefHeight(width);
-	// }
 
 	@Override
 	public void resize(double width, double height) {

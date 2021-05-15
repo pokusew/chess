@@ -3,8 +3,10 @@ package cz.martinendler.chess.ui;
 import cz.martinendler.chess.App;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.ImagePattern;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,10 @@ public class Piece extends ResponsiveRectangle {
 		// https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/input/MouseEvent.html
 		// https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/input/MouseDragEvent.html
 
+		setOnMouseClicked((MouseEvent event) -> {
+			log.info("ID={} onMouseClicked: source = {}, target = {}", id, event.getSource(), event.getTarget());
+		});
+
 		setOnMouseDragged((MouseEvent event) -> {
 
 			// log.info("ID={} onMouseDragged", id);
@@ -62,7 +68,7 @@ public class Piece extends ResponsiveRectangle {
 
 		setOnDragDetected((MouseEvent event) -> {
 
-			log.info("ID={} setOnDragDetected", id);
+			log.info("ID={} onDragDetected", id);
 
 			startFullDrag();
 
@@ -83,17 +89,22 @@ public class Piece extends ResponsiveRectangle {
 			// prevSceneX = event.getSceneX() - event.getX() + getWidth() / 2;
 			// prevSceneY = event.getSceneY() - event.getY() + getHeight() / 2;
 
-			getParent().setViewOrder(-1);
-			dragging = true;
+			startDragging();
+
+		});
+
+		setOnMouseDragReleased((MouseDragEvent event) -> {
+
+			log.info(
+				"ID={} setOnMouseDragReleased:  source = {}, target = {}",
+				id, event.getSource(), event.getTarget()
+			);
 
 		});
 
 		setOnMousePressed((MouseEvent event) -> {
 
 			log.info("ID={} onMousePressed", id);
-
-			setMouseTransparent(true);
-			getParent().setMouseTransparent(true);
 
 		});
 
@@ -107,24 +118,32 @@ public class Piece extends ResponsiveRectangle {
 
 	}
 
-	// TODO: better
+	private void startDragging() {
+
+		setSquareAsMoveOrigin();
+
+		getParent().setViewOrder(-1);
+		setMouseTransparent(true);
+		getParent().setMouseTransparent(true);
+		dragging = true;
+
+	}
+
 	public void stopDragging() {
 
-		log.info("ID={} stopDragging", id);
-
-		setMouseTransparent(false);
-		getParent().setMouseTransparent(false);
-
 		if (dragging) {
+			log.info("ID={} stopDragging", id);
 			dragging = false;
 			getParent().setViewOrder(0);
+			setMouseTransparent(false);
+			getParent().setMouseTransparent(false);
 			setTranslateX(0);
 			setTranslateY(0);
 		}
 
 	}
 
-	public Square getCurrentSquare() {
+	public @Nullable Square getParentSquare() {
 
 		Parent parent = getParent();
 
@@ -133,6 +152,24 @@ public class Piece extends ResponsiveRectangle {
 		}
 
 		return null;
+
+	}
+
+	public void setSquareAsMoveOrigin() {
+
+		Square square = getParentSquare();
+
+		if (square == null) {
+			return;
+		}
+
+		Board board = square.getParentBoard();
+
+		if (board == null) {
+			return;
+		}
+
+		board.setMoveOrigin(square);
 
 	}
 

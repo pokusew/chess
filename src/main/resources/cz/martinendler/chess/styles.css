@@ -14,6 +14,11 @@
 	-fx-custom-menu-font-color: #bfbeba;
 	-fx-custom-menu-font-color-highlighted: #ffffff;
 	/* TODO: use Looked-up Colors also for the rest of the colors */
+	-fx-chess-square-light-color: #eeeed2;
+	-fx-chess-square-dark-color: #769656;
+	-fx-chess-sqaure-highlight-color: rgba(255, 255, 0, 0.5);
+	-fx-chess-move-hint-color: rgba(0, 0, 0, 0.1);
+	-fx-chess-drag-release-hint-color: rgba(255, 255, 255, 0.65);
 }
 
 .app-root {
@@ -157,18 +162,36 @@
 	-fx-font-smoothing-type: lcd;
 }
 
-.square.square--light {
-	/*-fx-background-color: #f5f5f5;*/
-	-fx-background-color: #eeeed2;
+.square {
+	-fx-alignment: center;
 }
 
-.square {
+.square .move-hint {
+	-fx-fill: -fx-chess-move-hint-color;
+	visibility: hidden;
+}
 
+.square .capture-hint {
+	-fx-border-color: -fx-chess-move-hint-color;
+	-fx-border-width: 6px;
+	-fx-border-radius: 50%;
+	visibility: hidden;
+}
+
+.square .drag-release-hint {
+	-fx-border-color: -fx-chess-drag-release-hint-color;
+	-fx-border-width: 4px;
+	visibility: hidden;
+}
+
+.square.square--light {
+	/*-fx-background-color: #f5f5f5;*/
+	-fx-background-color: -fx-chess-square-light-color;
 }
 
 .square.square--dark {
 	/*-fx-background-color: #000000;*/
-	-fx-background-color: #769656;
+	-fx-background-color: -fx-chess-square-dark-color;
 }
 
 .square.square--light.square--origin {
@@ -181,12 +204,16 @@
 	-fx-background-color: #baca2b;
 }
 
-.square.square--light.square--target {
-	-fx-background-color: #ffffe0;
+.square.square--target .drag-release-hint {
+	visibility: visible;
 }
 
-.square.square--dark.square--target {
-	-fx-background-color: #ffffe0;
+.piece {
+	-fx-cursor: open-hand;
+}
+
+.piece:pressed {
+	-fx-cursor: closed-hand;
 }
 
 .side-info-box {
