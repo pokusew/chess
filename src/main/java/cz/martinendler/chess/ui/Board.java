@@ -88,7 +88,7 @@ public class Board extends Region {
 		);
 
 		// create arraylist with suitable capacity
-		List<CssMetaData<? extends Styleable, ?>> own = new ArrayList(parent.size() + additional.size());
+		List<CssMetaData<? extends Styleable, ?>> own = new ArrayList<>(parent.size() + additional.size());
 
 		// fill list with old and new metadata
 		own.addAll(parent);

@@ -1,16 +1,74 @@
 /**
- * Global app styles
+ * Global app styles (added in App.initRootLayout())
+ *
+ * JavaFX CSS docs:
+ * see https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/doc-files/cssref.html
+ * see https://docs.oracle.com/javase/8/javafx/api/javafx/scene/doc-files/cssref.html
+ * see https://docs.oracle.com/javase/8/javafx/user-interface-tutorial/apply-css.htm
  */
-/* https://docs.oracle.com/javase/8/javafx/user-interface-tutorial/apply-css.htm */
-/* https://docs.oracle.com/javase/8/javafx/api/javafx/scene/doc-files/cssref.html */
 
 .app--default {
 	/* TODO: use Looked-up Colors */
 }
 
+Text {
+	-fx-fill: #000000;
+	-fx-font-family: 'sans-serif';
+	-fx-font-smoothing-type: lcd;
+	/* TODO: JavaFX default font on macOS does not support bold? */
+}
+
+.game-screen {
+	-fx-padding: 10px 10px 10px 10px;
+	-fx-background-color: #312e2b;
+}
+
+.game-screen Text {
+	-fx-fill: #bfbeba;
+}
+
+.container {
+	-fx-spacing: 10px;
+}
+
+.left-view {
+	-fx-alignment: center;
+}
+
+.spacer {
+	-fx-min-height: 10px;
+	-fx-max-height: 10px;
+}
+
+.right-view {
+	-fx-background-color: rgba(0, 0, 0, 0.2);
+	-fx-background-radius: 5px;
+	-fx-min-width: 350px;
+	-fx-max-width: 400px;
+	-fx-min-height: 0;
+	-fx-pref-height: 0;
+}
+
+.message-box {
+	-fx-background-color: rgba(0, 0, 0, 0.14);
+	-fx-alignment: center;
+	-fx-padding: 20px 20px 20px 20px;
+	-fx-spacing: 20px;
+}
+
+.message-box .bubble {
+	-fx-background-color: rgba(255, 255, 255, 0.08);
+	-fx-background-radius: 10px;
+	-fx-alignment: center;
+}
+
+.message-box Text {
+	-fx-font-size: 14px;
+}
+
 .board {
 	/* -fx-background-color: #000000; */ /* useful for debugging custom sizing */
-	/* -fx-custom-arc-clip-relative: 100%; */
+	-fx-custom-arc-clip-relative: 100%;
 	/* -fx-custom-arc-clip-absolute: 10px; */
 }
 
@@ -26,9 +84,9 @@
 	-fx-background-color: #803600;
 }
 
-.border-description-text {
+.border-description Text {
 	-fx-fill: #ffffff;
-	-fx-font-family: 'Arial';
+	/*-fx-font-family: 'Arial';*/
 	/* default font size */
 	/* -fx-font-size: 12px; */
 	/* TODO: system font does not support bold (at least on macOS)? */
@@ -68,3 +126,174 @@
 	-fx-background-color: #ffffe0;
 }
 
+.side-info-box {
+	/*-fx-background-color: #ff0000;*/
+}
+
+.player-box {
+	/*-fx-background-color: #ffc0cb;*/
+	-fx-alignment: center-left;
+}
+
+.player-box Text {
+	-fx-font-size: 14px;
+	-fx-font-weight: bold;
+}
+
+.time-box {
+	-fx-background-radius: 10px;
+	-fx-alignment: center;
+	-fx-opacity: .5;
+	-fx-pref-width: 100px;
+	-fx-pref-height: 40px;
+}
+
+.time-box Text {
+	-fx-font-family: 'monospace';
+	-fx-font-size: 18px;
+	-fx-font-weight: bold;
+}
+
+.side-info-box--white .time-box {
+	-fx-background-color: #ffffff;
+}
+
+.side-info-box--white .time-box Text {
+	-fx-fill: #26211b;
+}
+
+.side-info-box--black .time-box {
+	-fx-background-color: #26211b;
+}
+
+.side-info-box--black .time-box Text {
+	-fx-fill: #ffffff;
+}
+
+.side-info-box--active .time-box {
+	-fx-opacity: 1;
+}
+
+.move-log {
+	-fx-background-color: transparent;
+}
+
+.move-log > .viewport {
+	-fx-background-color: transparent;
+}
+
+/* The main scrollbar CSS class of ListView */
+.move-log .scroll-bar:horizontal,
+.move-log .scroll-bar:vertical {
+	-fx-background-color: transparent;
+}
+
+/* The main scrollbar **track** CSS class  */
+.move-log .scroll-bar:horizontal .track,
+.move-log .scroll-bar:vertical .track {
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;
+	-fx-background-radius: 0em;
+	-fx-border-radius: 2em;
+}
+
+/* The increment and decrement button CSS class of scrollbar */
+.move-log .scroll-bar:horizontal .increment-button,
+.move-log .scroll-bar:horizontal .decrement-button {
+	-fx-background-color: transparent;
+	-fx-background-radius: 0em;
+	-fx-padding: 0 0 10 0;
+}
+
+/* The increment and decrement button CSS class of scrollbar */
+.move-log .scroll-bar:vertical .increment-button,
+.move-log .scroll-bar:vertical .decrement-button {
+	-fx-background-color: transparent;
+	-fx-background-radius: 0em;
+	-fx-padding: 0 10 0 0;
+}
+
+.move-log .scroll-bar .increment-arrow,
+.move-log .scroll-bar .decrement-arrow {
+	-fx-shape: " ";
+	-fx-padding: 0;
+}
+
+/* The main scrollbar **thumb** CSS class which we drag every time (movable) */
+.move-log .scroll-bar:horizontal .thumb,
+.move-log .scroll-bar:vertical .thumb {
+	-fx-background-color: derive(black, 50%);
+	-fx-background-insets: 2, 0, 0;
+	-fx-background-radius: 2em;
+}
+
+/*!* The main scrollbar **track** CSS class on event of "hover" and "pressed" *!*/
+.move-log .scroll-bar:horizontal:hover .track,
+.move-log .scroll-bar:horizontal:pressed .track,
+.move-log .scroll-bar:vertical:hover .track,
+.move-log .scroll-bar:vertical:pressed .track {
+	-fx-background-color: transparent;
+	-fx-opacity: 1;
+	-fx-border-color: transparent;
+	-fx-background-radius: 0em;
+
+}
+
+/* The main scrollbar **thumb** CSS class on event of "hover" and "pressed" */
+.move-log .scroll-bar .thumb:hover,
+.move-log .scroll-bar .thumb:pressed {
+	-fx-background-color: derive(black, 90%);
+}
+
+.move-log .increment-button:hover, .move-log .decrement-button:hover {
+	-fx-background-color: derive(gray, 100%);
+	-fx-border-color: derive(gray, 80%);
+	-fx-padding: 10px;
+}
+
+.move-log-content {
+	-fx-background-color: transparent;
+}
+
+.move-log-entry {
+	-fx-background-color: transparent;
+	-fx-min-height: 28px;
+	-fx-pref-height: 28px;
+	-fx-max-height: 28px;
+	-fx-spacing: 20px;
+}
+
+.move-log-entry Text {
+	-fx-fill: rgba(255, 255, 255, 0.65);
+	-fx-font-size: 14px;
+	-fx-font-weight: bold;
+}
+
+.move-log-entry.move-log-entry--even {
+	/* -fx-background-color: yellow; */
+	-fx-background-color: rgba(255, 255, 255, 0.02);
+}
+
+.move-log-entry .counter, .move-log-entry .white-move, .move-log-entry .black-move {
+	-fx-alignment: center-left;
+}
+
+.move-log-entry .counter {
+	/* -fx-background-color: green; */
+	-fx-pref-width: 50px;
+	-fx-alignment: center-right;
+}
+
+.move-log-entry .counter Text {
+	-fx-fill: rgba(255, 255, 255, 0.4);
+}
+
+.move-log-entry .white-move {
+	/* -fx-background-color: orange; */
+	-fx-pref-width: 100px;
+}
+
+.move-log-entry .black-move {
+	/* -fx-background-color: pink; */
+	-fx-pref-width: 100px;
+}

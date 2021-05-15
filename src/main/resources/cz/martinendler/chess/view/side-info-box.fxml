@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+
+<HBox
+	xmlns:fx="http://javafx.com/fxml"
+	fx:controller="cz.martinendler.chess.ui.controllers.SideInfoBoxController"
+	styleClass="side-info-box"
+>
+	<HBox
+		styleClass="player-box"
+		HBox.hgrow="ALWAYS"
+	>
+		<Text>Smart Computer</Text>
+	</HBox>
+	<HBox
+		styleClass="time-box"
+	>
+		<Text>00:00</Text>
+	</HBox>
+</HBox>

@@ -3,7 +3,6 @@ package cz.martinendler.chess.ui;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +22,7 @@ public class Square extends StackPane {
 	public Square(int row, int column, boolean light) {
 		super();
 
-		// TODO: better approach
+		// TODO: cleaner/correct solution (without these initial sizes it does not work)
 		setWidth(40);
 		setHeight(40);
 

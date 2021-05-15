@@ -5,14 +5,13 @@ import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A chess piece that can be placed on a {@link Square}
  */
-public class Piece extends Rectangle {
+public class Piece extends ResponsiveRectangle {
 
 	private static final Logger log = LoggerFactory.getLogger(Piece.class);
 
@@ -24,9 +23,12 @@ public class Piece extends Rectangle {
 
 	public Piece(int id) {
 		super();
+
 		this.id = id;
 		setWidth(40);
 		setHeight(40);
+
+		getStyleClass().add("piece");
 
 		String url = App.class.getResource("images/white_knight.png").toString();
 		log.info("ID={} url = " + url);
@@ -132,38 +134,6 @@ public class Piece extends Rectangle {
 
 		return null;
 
-	}
-
-	@Override
-	public double minWidth(double height) {
-		return 0.0;
-	}
-
-	@Override
-	public double minHeight(double width) {
-		return 0.0;
-	}
-
-	@Override
-	public double maxWidth(double height) {
-		return Double.POSITIVE_INFINITY;
-	}
-
-	@Override
-	public double maxHeight(double width) {
-		return Double.POSITIVE_INFINITY;
-	}
-
-	@Override
-	public boolean isResizable() {
-		return true;
-	}
-
-	@Override
-	public void resize(double width, double height) {
-		// log.info(MessageFormat.format("width = {0}, height = {1}", width, height));
-		setWidth(width);
-		setHeight(height);
 	}
 
 }

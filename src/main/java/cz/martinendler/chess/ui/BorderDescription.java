@@ -14,8 +14,6 @@ public class BorderDescription extends BorderSegment {
 
 		Text textNode = new Text(text);
 
-		textNode.getStyleClass().add("border-description-text");
-
 		getChildren().add(textNode);
 
 	}

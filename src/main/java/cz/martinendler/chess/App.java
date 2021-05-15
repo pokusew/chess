@@ -86,7 +86,7 @@ public class App extends Application {
 
 	private void initRootLayout() {
 
-		Pair<Parent, AppAwareController> root = loadFXML("view/one");
+		Pair<Parent, AppAwareController> root = loadFXML("view/game");
 
 		Scene scene = new Scene(root.getKey());
 
