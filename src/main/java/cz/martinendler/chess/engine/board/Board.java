@@ -912,7 +912,7 @@ public class Board {
 	// TODO
 	private boolean verifyAllPins(long pawns, Side side, Square enPassant, Square target) {
 
-		long onePawn = Bitboard.extractLSB(pawns);
+		long onePawn = Bitboard.removeLSB(pawns);
 		long otherPawn = pawns ^ onePawn;
 
 		if (onePawn != 0L && verifyKingIsNotAttackedWithoutPin(side, enPassant, target, onePawn)) {

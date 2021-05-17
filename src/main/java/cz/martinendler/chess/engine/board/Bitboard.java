@@ -402,15 +402,13 @@ public class Bitboard {
 	}
 
 	/**
-	 * Extracts the least significant bit (LSB) of the given bitboard
-	 * <p>
-	 * TODO: improve description, because it it not clear what it actually does
-	 * TODO: cover with meaningful unit tests
+	 * Removes the least significant bit (LSB) of the given bitboard
 	 *
 	 * @param bb the bitboard
-	 * @return the LSB of the the given bitboard
+	 * @return the bitboard without the LSB
+	 * @see <a href="https://www.chessprogramming.org/General_Setwise_Operations#Reset">Least Significant One Reset on CPW</a>
 	 */
-	public static long extractLSB(long bb) {
+	public static long removeLSB(long bb) {
 		return bb & (bb - 1);
 	}
 
@@ -423,10 +421,12 @@ public class Bitboard {
 	 * @return {@code true} iff the given long has only 1bit in its two's complement binary representation
 	 */
 	public static boolean hasOnly1Bit(long bb) {
-		return Long.bitCount(bb) == 1;
-		// original implementation that fails for (1L << 36)
-		// TODO: file bug in the original library?
+		return bb != 0L && removeLSB(bb) == 0L;
+		// original implementation that fails for (1L << 63)
+		//   TODO: file bug in the original library?
 		// return bb > 0L && extractLSB(bb) == 0L;
+		// alternative implementation:
+		// return Long.bitCount(bb) == 1;
 	}
 
 	/**
@@ -618,7 +618,7 @@ public class Bitboard {
 		List<Square> squares = new LinkedList<>();
 		while (pieces != 0L) {
 			int sq = Bitboard.bitScanForward(pieces);
-			pieces = Bitboard.extractLSB(pieces);
+			pieces = Bitboard.removeLSB(pieces);
 			squares.add(Square.fromIndex(sq));
 		}
 		return squares;
@@ -649,7 +649,7 @@ public class Bitboard {
 		int index = 0;
 		while (pieces != 0L) {
 			int sq = bitScanForward(pieces);
-			pieces = extractLSB(pieces);
+			pieces = removeLSB(pieces);
 			squares[index++] = Square.fromIndex(sq);
 		}
 		return squares;

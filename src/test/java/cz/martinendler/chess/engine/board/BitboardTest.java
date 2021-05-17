@@ -228,15 +228,6 @@ class BitboardTest {
 			assertEquals(Bitboard.bitScanReverse(1L << x), x);
 		}
 
-		long t = (1L << 10) | (1L << 20);
-		long lsb = Bitboard.extractLSB(t);
-
-		assertEquals(1L << 20, lsb);
-
-		lsb = Bitboard.extractLSB(0L);
-
-		assertEquals(0L, lsb);
-
 		long ba = Bitboard.getBishopAttacks(0L, Square.D5);
 
 		assertEquals(
@@ -295,10 +286,34 @@ class BitboardTest {
 	@Test
 	void testGetBBTable() {
 
-		for (Square sq: Square.values()) {
+		for (Square sq : Square.values()) {
 
 			assertEquals(sq.getBitboard(), Bitboard.getBBTable(sq));
 
+		}
+
+	}
+
+	@Test
+	void testExtractLSB() {
+
+		long[][] testcases = new long[][]{
+			{
+				/*  IN: */ (1L << 10) | (1L << 20),
+				/* OUT: */ (1L << 20),
+			},
+			{
+				/*  IN: */ 0b1000_0000_0000_0010_0000_0100_0000_0010_0010_0100_0010_0000_0000_0000_0000_1000L,
+				/* OUT: */ 0b1000_0000_0000_0010_0000_0100_0000_0010_0010_0100_0010_0000_0000_0000_0000_0000L,
+			},
+			{
+				/*  IN: */ 0L,
+				/* OUT: */ 0L,
+			},
+		};
+
+		for (long[] testcase : testcases) {
+			assertEquals(testcase[1], Bitboard.removeLSB(testcase[0]));
 		}
 
 	}
