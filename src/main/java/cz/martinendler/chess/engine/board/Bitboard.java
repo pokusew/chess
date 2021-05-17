@@ -536,28 +536,31 @@ public class Bitboard {
 	}
 
 	/**
-	 * TODO
 	 * Gets a bitboard with move squares by the pawn in the given square
 	 *
-	 * @param side      the side
-	 * @param square    the square
-	 * @param occupied  the occupied
-	 * @param enPassant the en passant
+	 * @param side            the side of the pawn
+	 * @param square          the square of the pawn
+	 * @param occupied        all occupied squares on the board
+	 * @param enPassantTarget the en passant target square (the square of the opposite side's pawn
+	 *                        that could be captured via en passant by this pawn)
 	 * @return the pawn captures
 	 */
 	public static long getPawnCaptures(
 		@NotNull Side side,
 		@NotNull Square square,
 		long occupied,
-		@Nullable Square enPassant
+		@Nullable Square enPassantTarget
 	) {
 
 		long pawnAttacks = side.isWhite()
 			? whitePawnAttacks[square.ordinal()]
 			: blackPawnAttacks[square.ordinal()];
 
-		if (enPassant != null) {
-			long ep = enPassant.getBitboard();
+		if (enPassantTarget != null) {
+			long ep = enPassantTarget.getBitboard();
+			// compute the en passant square - if the side's pawn moves to this square
+			// then the other side's pawn (that is on the enPassantTarget square) is captured via en passant
+			// merge it with occupied bitboard so the pawnAttacks & occupied works correctly
 			occupied |= side.isWhite() ? ep << 8L : ep >> 8L;
 		}
 
@@ -565,14 +568,12 @@ public class Bitboard {
 
 	}
 
-
 	/**
-	 * TODO
 	 * Gets a bitboard with move squares by the pawn in the given square
 	 *
-	 * @param side     the side
-	 * @param square   the square
-	 * @param occupied the occupied
+	 * @param side     the side of the pawn
+	 * @param square   the square of the pawn
+	 * @param occupied all occupied squares on the board
 	 * @return the pawn moves
 	 */
 	public static long getPawnMoves(@NotNull Side side, @NotNull Square square, long occupied) {
@@ -583,16 +584,24 @@ public class Bitboard {
 
 		long occ = occupied;
 
-		if (square.getRank().equals(Rank.RANK_2) && side.equals(Side.WHITE)) {
+		// handle double moves:
+		//   the whitePawnMoves/blackPawnMoves already correctly defines double moves
+		//   BUT we have to ensure that pawn is NOT jumping over any occupied squares
+		if (square.getRank() == Rank.RANK_2 && side.isWhite()) {
 			if ((square.getBitboard() << 8 & occ) != 0L) {
-				occ |= square.getBitboard() << 16; // double move
+				// prevent double move if the square the pawn would jumping over is NOT empty
+				// (we simply mark the double move target square as occupied)
+				occ |= square.getBitboard() << 16;
 			}
-		} else if (square.getRank().equals(Rank.RANK_7) && side.equals(Side.BLACK)) {
+		} else if (square.getRank() == Rank.RANK_7 && side.isBlack()) {
 			if ((square.getBitboard() >> 8 & occ) != 0L) {
-				occ |= square.getBitboard() >> 16; // double move
+				// prevent double move if the square the pawn would jumping over is NOT empty
+				// (we simply mark the double move target square as occupied)
+				occ |= square.getBitboard() >> 16;
 			}
 		}
 
+		// the pawn cannot move to the squares that are occupied
 		return pawnMoves & ~occ;
 
 	}

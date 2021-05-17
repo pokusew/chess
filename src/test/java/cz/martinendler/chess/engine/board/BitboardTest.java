@@ -194,6 +194,18 @@ class BitboardTest {
 	}
 
 	@Test
+	void testPawnMoves() {
+
+		for (int i = 0; i < Bitboard.blackPawnMoves.length; i++) {
+			System.out.printf(
+				"Bitboard.blackPawnMoves[%d]:%n%s%n", i,
+				Bitboard.bbToPrettyString(Bitboard.blackPawnMoves[i])
+			);
+		}
+
+	}
+
+	@Test
 	void testKnightAttacks() {
 
 		for (int i = 0; i < Bitboard.knightAttacks.length; i++) {
