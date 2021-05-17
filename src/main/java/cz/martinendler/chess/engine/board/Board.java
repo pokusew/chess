@@ -1,7 +1,7 @@
 package cz.martinendler.chess.engine.board;
 
+import cz.martinendler.chess.engine.Castling;
 import cz.martinendler.chess.engine.CastlingRight;
-import cz.martinendler.chess.engine.Constants;
 import cz.martinendler.chess.engine.Game;
 import cz.martinendler.chess.engine.Side;
 import cz.martinendler.chess.engine.move.Move;
@@ -23,6 +23,9 @@ public class Board {
 
 	private static final Logger log = LoggerFactory.getLogger(Board.class);
 
+	public static final String STANDARD_STARTING_POSITION_FEN =
+		"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
 	// TODO: Should we use EnumMap or plain arrays
 	//       for bitboardOfSide, bitboardOfPiece and squareToPiece?
 	//       using EnumMap:
@@ -35,7 +38,7 @@ public class Board {
 	private final @NotNull long[] bitboardOfPiece;
 	private final @Nullable Piece[] squareToPiece;
 
-	private final @NotNull EnumMap<Side, CastlingRight> castlingRights;
+	private final @NotNull EnumMap<@NotNull Side, @NotNull CastlingRight> castlingRights;
 
 	private @NotNull Side sideToMove;
 
@@ -231,9 +234,9 @@ public class Board {
 	 * Gets castling right of the given side
 	 *
 	 * @param side the side
-	 * @return the castleRight
+	 * @return the castling right of the given side
 	 */
-	public @NotNull CastlingRight getCastleRight(@NotNull Side side) {
+	public @NotNull CastlingRight getCastlingRight(@NotNull Side side) {
 		return castlingRights.get(side);
 	}
 
@@ -612,36 +615,24 @@ public class Board {
 			// we need to check if this move is a (valid) attempt for a castling
 			if (fromType == PieceType.KING) {
 
-				// player does not have castle right for the attempted castle move
-				if (!move.hasCastleRight(getCastleRight(side))) {
-					return false;
-				}
+				Castling castling = move.getCastling();
 
-				if (move.isKingSideCastle()) {
+				// only if this move is a castling
+				if (castling != null) {
 
-					// some squares between the king and the rook are not empty
-					if (!Bitboard.areSquaresFree(getBitboard(), Constants.getOOAllSquaresBB(side))) {
+					// player does not have castling right for the attempted castling move
+					if (!move.isAllowedBy(getCastlingRight(side))) {
 						return false;
 					}
 
-					// if no squares (required for the castling) are attacked
-					// then this move is valid
-					// TODO: Shouldn't we check all squares?
-					return !isSquareAttackedBy(Constants.getOOSquares(side), side.flip());
-
-				}
-
-				if (move.isQueenSideCastle()) {
-
 					// some squares between the king and the rook are not empty
-					if (!Bitboard.areSquaresFree(getBitboard(), Constants.getOOOAllSquaresBB(side))) {
+					if (!Bitboard.areSquaresFree(getBitboard(), castling.getAllSquaresBB(side))) {
 						return false;
 					}
 
-					// if no squares (required for the castling) are attacked
-					// then this move is valid
-					// TODO: Shouldn't we check all squares?
-					return !isSquareAttackedBy(Constants.getOOOSquares(side), side.flip());
+					// if no squares (trough which the king moves during the castling) are attacked
+					// then this move is valid (no further checks are needed)
+					return !isSquareAttackedBy(castling.getSquares(side), side.flip());
 
 				}
 
@@ -769,38 +760,42 @@ public class Board {
 		// castling rules
 		if (movingPiece.isOfType(PieceType.KING)) {
 
-			if (move.isCastleMove()) {
-				if (move.hasCastleRight(getCastleRight(side))) {
-					CastlingRight c = move.isKingSideCastle() ? CastlingRight.KING_SIDE : CastlingRight.QUEEN_SIDE;
-					Move rookMove = Constants.getRookCastleMove(side, c);
-					movePiece(rookMove);
+			Castling castling = move.getCastling();
+
+			// this move is a castling
+			if (castling != null) {
+
+				if (move.isAllowedBy(getCastlingRight(side))) {
+					movePiece(castling.getRookMove(side));
 				} else {
+					// this could happen if fullValidation == false
 					return false;
 				}
+
 			}
 
 			// after the king's move the player looses castling right (if they has still any)
-			if (getCastleRight(side) != CastlingRight.NONE) {
+			if (getCastlingRight(side) != CastlingRight.NONE) {
 				castlingRights.put(side, CastlingRight.NONE);
 			}
 
-		} else if (movingPiece.isOfType(PieceType.ROOK) && CastlingRight.NONE != getCastleRight(side)) {
+		} else if (movingPiece.isOfType(PieceType.ROOK) && CastlingRight.NONE != getCastlingRight(side)) {
 
-			final Move oo = Constants.getRookoo(side);
-			final Move ooo = Constants.getRookooo(side);
+			final Move oo = Castling.KING_SIDE.getRookMove(side);
+			final Move ooo = Castling.QUEEN_SIDE.getRookMove(side);
 
 			if (move.getFrom() == oo.getFrom()) {
 				// update castling right (kingside no longer possible)
-				if (CastlingRight.KING_AND_QUEEN_SIDE == getCastleRight(side)) {
+				if (CastlingRight.KING_AND_QUEEN_SIDE == getCastlingRight(side)) {
 					castlingRights.put(side, CastlingRight.QUEEN_SIDE);
-				} else if (CastlingRight.KING_SIDE == getCastleRight(side)) {
+				} else if (CastlingRight.KING_SIDE == getCastlingRight(side)) {
 					castlingRights.put(side, CastlingRight.NONE);
 				}
 			} else if (move.getFrom() == ooo.getFrom()) {
 				// update castling right (queenside no longer possible)
-				if (CastlingRight.KING_AND_QUEEN_SIDE == getCastleRight(side)) {
+				if (CastlingRight.KING_AND_QUEEN_SIDE == getCastlingRight(side)) {
 					castlingRights.put(side, CastlingRight.KING_SIDE);
-				} else if (CastlingRight.QUEEN_SIDE == getCastleRight(side)) {
+				} else if (CastlingRight.QUEEN_SIDE == getCastlingRight(side)) {
 					castlingRights.put(side, CastlingRight.NONE);
 				}
 			}
@@ -813,21 +808,21 @@ public class Board {
 		// it might be needed to update the other side's castling right
 		if (capturedPiece != null && capturedPiece.isOfType(PieceType.ROOK)) {
 
-			final Move oo = Constants.getRookoo(side.flip());
-			final Move ooo = Constants.getRookooo(side.flip());
+			final Move oo = Castling.KING_SIDE.getRookMove(side.flip());
+			final Move ooo = Castling.QUEEN_SIDE.getRookMove(side.flip());
 
 			if (move.getTo() == oo.getFrom()) {
 				// update the other side's castling right (kingside no longer possible)
-				if (CastlingRight.KING_AND_QUEEN_SIDE == getCastleRight(side.flip())) {
+				if (CastlingRight.KING_AND_QUEEN_SIDE == getCastlingRight(side.flip())) {
 					castlingRights.put(side.flip(), CastlingRight.QUEEN_SIDE);
-				} else if (CastlingRight.KING_SIDE == getCastleRight(side.flip())) {
+				} else if (CastlingRight.KING_SIDE == getCastlingRight(side.flip())) {
 					castlingRights.put(side.flip(), CastlingRight.NONE);
 				}
 			} else if (move.getTo() == ooo.getFrom()) {
 				// update the other side's castling right (queenside no longer possible)
-				if (CastlingRight.KING_AND_QUEEN_SIDE == getCastleRight(side.flip())) {
+				if (CastlingRight.KING_AND_QUEEN_SIDE == getCastlingRight(side.flip())) {
 					castlingRights.put(side.flip(), CastlingRight.KING_SIDE);
-				} else if (CastlingRight.QUEEN_SIDE == getCastleRight(side.flip())) {
+				} else if (CastlingRight.QUEEN_SIDE == getCastlingRight(side.flip())) {
 					castlingRights.put(side.flip(), CastlingRight.NONE);
 				}
 			}
@@ -1017,29 +1012,10 @@ public class Board {
 		fen.append(" ");
 		fen.append(getSideToMove().getNotation());
 
-		// castling rights
-		// TODO: refactor (simplify)
-		String rights = "";
-		if (CastlingRight.KING_AND_QUEEN_SIDE.
-			equals(getCastleRight(Side.WHITE))) {
-			rights += "KQ";
-		} else if (CastlingRight.KING_SIDE.
-			equals(getCastleRight(Side.WHITE))) {
-			rights += "K";
-		} else if (CastlingRight.QUEEN_SIDE.
-			equals(getCastleRight(Side.WHITE))) {
-			rights += "Q";
-		}
-		if (CastlingRight.KING_AND_QUEEN_SIDE.
-			equals(getCastleRight(Side.BLACK))) {
-			rights += "kq";
-		} else if (CastlingRight.KING_SIDE.
-			equals(getCastleRight(Side.BLACK))) {
-			rights += "k";
-		} else if (CastlingRight.QUEEN_SIDE.
-			equals(getCastleRight(Side.BLACK))) {
-			rights += "q";
-		}
+		// castling rights (first WHITE, then BLACK side)
+		String rights = ""
+			+ getCastlingRight(Side.WHITE).getFenNotation(Side.WHITE)
+			+ getCastlingRight(Side.BLACK).getFenNotation(Side.BLACK);
 		if (rights.equals("")) {
 			fen.append(" -");
 		} else {

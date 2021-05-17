@@ -388,7 +388,7 @@ public class MoveGenerator {
 
 		if (
 			// has the needed castling right
-			board.getCastleRight(side).allows(castling)
+			board.getCastlingRight(side).allows(castling)
 				// all squares in the path are empty
 				&& (board.getBitboard() & castling.getAllSquaresBB(side)) == 0L
 				// none of the king squares are attacked

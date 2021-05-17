@@ -1,7 +1,7 @@
 package cz.martinendler.chess.engine.move;
 
+import cz.martinendler.chess.engine.Castling;
 import cz.martinendler.chess.engine.CastlingRight;
-import cz.martinendler.chess.engine.Constants;
 import cz.martinendler.chess.engine.Side;
 import cz.martinendler.chess.engine.board.Rank;
 import cz.martinendler.chess.engine.board.Square;
@@ -96,103 +96,75 @@ public class Move {
 	}
 
 	/**
-	 * Gets the king castle move
+	 * Checks if this move is a castling
 	 *
-	 * @param side          the side
-	 * @param castlingRight the castle right
-	 * @return king castle move
+	 * @return {@code true} if this move is a castling, {@code false} otherwise
 	 */
-	public static Move getKingCastleMove(Side side, CastlingRight castlingRight) {
-		Move move = null;
-		if (Side.WHITE.equals(side)) {
-			if (CastlingRight.KING_SIDE.equals(castlingRight)) {
-				move = Constants.DEFAULT_WHITE_OO;
-			} else if (CastlingRight.QUEEN_SIDE.equals(castlingRight)) {
-				move = Constants.DEFAULT_WHITE_OOO;
-			}
-		} else {
-			if (CastlingRight.KING_SIDE.equals(castlingRight)) {
-				move = Constants.DEFAULT_BLACK_OO;
-			} else if (CastlingRight.QUEEN_SIDE.equals(castlingRight)) {
-				move = Constants.DEFAULT_BLACK_OOO;
-			}
+	public boolean isCastling() {
+		return this.equals(Castling.KING_SIDE.getKingMove(Side.WHITE))
+			|| this.equals(Castling.QUEEN_SIDE.getKingMove(Side.WHITE))
+			|| this.equals(Castling.KING_SIDE.getKingMove(Side.BLACK))
+			|| this.equals(Castling.QUEEN_SIDE.getKingMove(Side.BLACK));
+	}
+
+	/**
+	 * Checks if this move is a king side castling
+	 *
+	 * @return {@code true} if this move is a king side castling, {@code false} otherwise
+	 */
+	public boolean isKingSideCastling() {
+		return this.equals(Castling.KING_SIDE.getKingMove(Side.WHITE))
+			|| this.equals(Castling.KING_SIDE.getKingMove(Side.BLACK));
+	}
+
+	/**
+	 * Checks if this move a queen side castling
+	 *
+	 * @return {@code true} if this is a queen side castling, {@code false} otherwise
+	 */
+	public boolean isQueenSideCastling() {
+		return this.equals(Castling.QUEEN_SIDE.getKingMove(Side.WHITE))
+			|| this.equals(Castling.QUEEN_SIDE.getKingMove(Side.BLACK));
+	}
+
+	/**
+	 * Gets the corresponding castling type (if any)
+	 *
+	 * @return the corresponding castling type iff this move is a castling, {@code null} otherwise
+	 * @see Move#isCastling()
+	 * @see Move#isKingSideCastling()
+	 * @see Move#isQueenSideCastling()
+	 */
+	public @Nullable Castling getCastling() {
+
+		if (isKingSideCastling()) {
+			return Castling.KING_SIDE;
 		}
-		return move;
-	}
 
-	/**
-	 * Gets the rook castle move
-	 *
-	 * @param side        the side
-	 * @param castleRight the castle right
-	 * @return rook castle move
-	 */
-	public Move getRookCastleMove(Side side, CastlingRight castleRight) {
-		Move move = null;
-		if (Side.WHITE.equals(side)) {
-			if (CastlingRight.KING_SIDE.equals(castleRight)) {
-				move = Constants.DEFAULT_WHITE_ROOK_OO;
-			} else if (CastlingRight.QUEEN_SIDE.equals(castleRight)) {
-				move = Constants.DEFAULT_WHITE_ROOK_OOO;
-			}
-		} else {
-			if (CastlingRight.KING_SIDE.equals(castleRight)) {
-				move = Constants.DEFAULT_BLACK_ROOK_OO;
-			} else if (CastlingRight.QUEEN_SIDE.equals(castleRight)) {
-				move = Constants.DEFAULT_BLACK_ROOK_OOO;
-			}
+		if (isQueenSideCastling()) {
+			return Castling.QUEEN_SIDE;
 		}
-		return move;
+
+		return null;
+
 	}
 
 	/**
-	 * Checks if this move a castle move
+	 * Checks if the required castling right for this move matches the given castling right
 	 *
-	 * @return {@code true} if this is a castle move, {@code false} otherwise
+	 * @param castlingRight the castling right that the side has
+	 * @return {@code true} if the required castling right for this move matches the given castling right
 	 */
-	public boolean isCastleMove() {
-		return this.equals(Constants.DEFAULT_WHITE_OO)
-			|| this.equals(Constants.DEFAULT_WHITE_OOO)
-			|| this.equals(Constants.DEFAULT_BLACK_OO)
-			|| this.equals(Constants.DEFAULT_BLACK_OOO);
-	}
+	public boolean isAllowedBy(@NotNull CastlingRight castlingRight) {
 
-	/**
-	 * Checks if this move a king side castle move
-	 *
-	 * @return {@code true} if this is a king side castle move, {@code false} otherwise
-	 */
-	public boolean isKingSideCastle() {
-		return this.equals(Constants.DEFAULT_WHITE_OO)
-			|| this.equals(Constants.DEFAULT_BLACK_OO);
-	}
+		Castling castling = getCastling();
 
-	/**
-	 * Checks if this move a queen side castle move
-	 *
-	 * @return {@code true} if this is a queen side castle move, {@code false} otherwise
-	 */
-	public boolean isQueenSideCastle() {
-		return this.equals(Constants.DEFAULT_WHITE_OOO)
-			|| this.equals(Constants.DEFAULT_BLACK_OOO);
-	}
-
-	/**
-	 * Checks if the required castle right for this move matches the given castle right
-	 *
-	 * @param castleRight the castle right
-	 * @return {@code true} if the required castle right for this move matches the given castle right
-	 */
-	public boolean hasCastleRight(final CastlingRight castleRight) {
-
-		// if this is not a castle move, no castle right is required
-		if (!isCastleMove()) {
+		// if this is not a castling move, no castling right is required
+		if (castling == null) {
 			return true;
 		}
 
-		return (CastlingRight.KING_AND_QUEEN_SIDE.equals(castleRight))
-			|| (isKingSideCastle() && CastlingRight.KING_SIDE.equals(castleRight))
-			|| (isQueenSideCastle() && CastlingRight.QUEEN_SIDE.equals(castleRight));
+		return castlingRight.allows(castling);
 
 	}
 

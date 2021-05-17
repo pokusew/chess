@@ -9,7 +9,7 @@ public class Game {
 	public Game() {
 
 		board = new Board();
-		board.loadFromFen(Constants.startStandardFENPosition);
+		board.loadFromFen(Board.STANDARD_STARTING_POSITION_FEN);
 
 	}
 
