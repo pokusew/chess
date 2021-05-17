@@ -185,9 +185,14 @@ public class Move {
 
 	public @NotNull String toDebugString() {
 		return MessageFormat.format(
-			"{0} -> {1} P: {2}",
-			from.name(), to.name(), promotion != null ? promotion.name() : "(none)"
+			"{0} -> {1}{2}",
+			from.getNotation(), to.getNotation(), promotion != null ? " " + promotion.name() : ""
 		);
+	}
+
+	@Override
+	public @NotNull String toString() {
+		return toDebugString();
 	}
 
 }
