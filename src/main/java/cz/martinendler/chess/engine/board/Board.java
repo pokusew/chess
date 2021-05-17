@@ -374,16 +374,20 @@ public class Board {
 
 		// handle en passant
 		if (
-			// TODO: test
-			// TODO: Is this really correct? (where is set the enPassantTarget)
 			movingPiece.isOfType(PieceType.PAWN) // moving piece is a pawn
 				&& getEnPassantTarget() != null // en passant target is NOT null
 				&& from.getFile() != to.getFile() // from and to files (columns) are different
 				&& capturedPiece == null // NO piece was captured on the destination (to) square
 		) {
-			log.info("movePiece: did a en passant capture");
+			log.info("movePiece: did an en passant capture");
 			// set the captured piece that was captured during en passant
 			capturedPiece = getPiece(getEnPassantTarget());
+			// captured piece MUST be explicitly removed
+			if (capturedPiece != null) {
+				removePiece(capturedPiece, getEnPassantTarget());
+				// backup.setCapturedSquare(getEnPassantTarget());
+				// backup.setCapturedPiece(capturedPiece);
+			}
 		}
 
 		return capturedPiece;
@@ -721,7 +725,7 @@ public class Board {
 		long pawns = getBitboard(Piece.make(otherSide, PieceType.PAWN)) & ~moveTo & ~ep;
 
 		// after this move, the king would be attacked by some of the other side's pawns
-		if (pawns != 0L && (Bitboard.getPawnAttacks(side, kingSq) & pawns) == 0L) {
+		if (pawns != 0L && (Bitboard.getPawnAttacks(side, kingSq) & pawns) != 0L) {
 			log.debug(
 				"isMoveLegal({}): false (after this move, the king would be attacked by some" +
 					"of the other side's pawns",
