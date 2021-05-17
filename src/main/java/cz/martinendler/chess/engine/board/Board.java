@@ -5,6 +5,7 @@ import cz.martinendler.chess.engine.CastlingRight;
 import cz.martinendler.chess.engine.Game;
 import cz.martinendler.chess.engine.Side;
 import cz.martinendler.chess.engine.move.Move;
+import cz.martinendler.chess.engine.move.MoveGenerator;
 import cz.martinendler.chess.engine.pieces.Piece;
 import cz.martinendler.chess.engine.pieces.PieceType;
 import org.jetbrains.annotations.NotNull;
@@ -897,6 +898,36 @@ public class Board {
 		moveCounter = 1;
 		halfMoveCounter = 0;
 
+	}
+
+	/**
+	 * Generates legal moves (including captures) for the current board
+	 *
+	 * @return list of only legal moves
+	 * @see MoveGenerator#generateLegalMoves(Board board)
+	 */
+	public List<Move> generateLegalMoves() {
+		return MoveGenerator.generateLegalMoves(this);
+	}
+
+	/**
+	 * Generates all pseudo-legal moves (including captures) for the current board
+	 *
+	 * @return list of pseudo-legal moves
+	 * @see MoveGenerator#generatePseudoLegalMoves(Board board)
+	 */
+	public List<Move> generatePseudoLegalMoves() {
+		return MoveGenerator.generatePseudoLegalMoves(this);
+	}
+
+	/**
+	 * Generates all pseudo-legal captures (ONLY captures) for the current board
+	 *
+	 * @return list of pseudo-legal captures
+	 * @see MoveGenerator#generatePseudoLegalCaptures(Board board)
+	 */
+	public List<Move> generatePseudoLegalCaptures() {
+		return MoveGenerator.generatePseudoLegalCaptures(this);
 	}
 
 	// TODO
