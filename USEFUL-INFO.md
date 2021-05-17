@@ -24,6 +24,7 @@ On this page, I gather various useful information and links related to Java GUI 
 * https://www.baeldung.com/junit-5
 * https://junit.org/junit5/
 * https://junit.org/junit5/docs/current/user-guide/
+* https://junit.org/junit5/docs/current/user-guide/#writing-tests
 * https://howtodoinjava.com/junit5/junit-5-vs-junit-4/
 * https://dzone.com/articles/7-popular-unit-test-naming
 
