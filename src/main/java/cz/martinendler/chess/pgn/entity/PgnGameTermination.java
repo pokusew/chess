@@ -1,8 +1,8 @@
 package cz.martinendler.chess.pgn.entity;
 
-
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Game Termination Marker
@@ -30,17 +30,10 @@ public enum PgnGameTermination {
 	 */
 	UNKNOWN("*");
 
-	private static final Map<String, PgnGameTermination> fromNotation = new HashMap<>(4);
+	// see https://stackoverflow.com/questions/507602/how-can-i-initialise-a-static-map
 
-	static {
-		for (PgnGameTermination value : values()) {
-			fromNotation.put(value.getNotation(), value);
-		}
-
-		fromNotation.put("0-1", BLACK_WINS);
-		fromNotation.put("1/2-1/2", DRAWN_GAME);
-		fromNotation.put("*", UNKNOWN);
-	}
+	private static final Map<String, PgnGameTermination> fromNotation = Arrays.stream(values())
+		.collect(Collectors.toMap(PgnGameTermination::getNotation, t -> t));
 
 	final private String notation;
 

@@ -7,23 +7,34 @@ import cz.martinendler.chess.pgn.entity.PgnGame;
 import cz.martinendler.chess.pgn.entity.PgnGameTermination;
 
 /**
- * A small demo listener that retrieves the player's name and
- * the result from the game termination production rule. Of course
- * the result could more easily be retrieved from the result-tag,
- * [Result "..."], but this is just a quick example of how to
- * retrieve information from the parser context objects.
+ * A simple PGN listener that converts the AST into a {@link PgnDatabase}
+ * <p>
+ * It supports tags, movetext and game termination.
+ * It ignores: NAG (Numeric Annotation Glyph), RAV (Recursive Annotation Variation)
  */
 public class PgnListener extends PGNBaseListener {
 
 	private PgnDatabase database;
 	private PgnGame game;
+	private int variationDepth;
 
 	public PgnListener() {
-
+		database = null;
+		game = null;
+		variationDepth = 0;
 	}
 
 	public PgnDatabase getDatabase() {
 		return database;
+	}
+
+	/**
+	 * Checks if the listener is currently inside a RAV (Recursive Annotation Variation)
+	 *
+	 * @return {@code true} iff the listener is currently inside a RAV (Recursive Annotation Variation)
+	 */
+	public boolean isInVariation() {
+		return variationDepth != 0;
 	}
 
 	@Override
@@ -50,10 +61,24 @@ public class PgnListener extends PGNBaseListener {
 
 	}
 
-	// TODO: correct moves parsing
+	@Override
+	public void enterRecursive_variation(PGNParser.Recursive_variationContext ctx) {
+		variationDepth++;
+	}
+
+	@Override
+	public void exitRecursive_variation(PGNParser.Recursive_variationContext ctx) {
+		variationDepth--;
+	}
 
 	@Override
 	public void enterSan_move(PGNParser.San_moveContext ctx) {
+
+		// currently, moves inside any RAVs (Recursive Annotation Variation) are just ignored
+		if (isInVariation()) {
+			return;
+		}
+
 		game.moves.add(ctx.getText());
 	}
 
