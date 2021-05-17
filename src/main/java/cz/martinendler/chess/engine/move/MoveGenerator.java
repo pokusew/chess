@@ -48,7 +48,7 @@ public class MoveGenerator {
 			long attacks = Bitboard.getPawnCaptures(
 				side,
 				sourceSq,
-				board.getBitboard(side),
+				board.getBitboard(),
 				board.getEnPassantTarget()
 			) & ~board.getBitboard(side);
 			// the part `& ~board.getBitboard(side)` ensures
