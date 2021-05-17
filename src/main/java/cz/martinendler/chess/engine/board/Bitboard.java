@@ -442,23 +442,24 @@ public class Bitboard {
 	}
 
 	/**
-	 * Gets slider attacks based on the attacks mask and occupancy
+	 * Gets slider attacks based on the attacks and occupancy mask
 	 *
 	 * @param attacks bitboard with possible attacks
-	 * @param mask    ???
+	 * @param mask    all occupied squares
 	 * @param index   index of the square where the attacking piece currently is
 	 * @return ???
 	 * @see <a href="https://www.chessprogramming.org/Sliding_Piece_Attacks">Sliding Piece Attacks on CPW</a>
 	 */
 	private static long getSliderAttacks(long attacks, long mask, int index) {
 
-		// TODO: How exactly does this work?
-		// TODO: Cover with tests.
-
 		long occ = mask & attacks;
+
 		if (occ == 0L) {
 			return attacks;
 		}
+
+		// TODO: How exactly does this work?
+		// TODO: Cover with tests.
 		long m = (1L << index) - 1L;
 		long lowerMask = occ & m;
 		long upperMask = occ & ~m;
@@ -472,12 +473,12 @@ public class Bitboard {
 	/**
 	 * Gets the bishop attacks
 	 *
-	 * @param mask   the mask
+	 * @param mask   the mask (all occupied squares)
 	 * @param square the square where the bishop currently is
 	 * @return bishop attacks
 	 */
 	public static long getBishopAttacks(long mask, @NotNull Square square) {
-		// rook is a sliding piece that can move along the diagonals and anti-diagonals
+		// bishop is a sliding piece that can move along the diagonals and anti-diagonals
 		return (
 			getSliderAttacks(diagA1H8Attacks[square.ordinal()], mask, square.ordinal())
 				| getSliderAttacks(diagH1A8Attacks[square.ordinal()], mask, square.ordinal())
@@ -487,7 +488,7 @@ public class Bitboard {
 	/**
 	 * Gets the rook attacks
 	 *
-	 * @param mask   the mask
+	 * @param mask   the mask (all occupied squares)
 	 * @param square the square where the rook currently is
 	 * @return rook attacks
 	 */
@@ -502,7 +503,7 @@ public class Bitboard {
 	/**
 	 * Gets the queen attacks
 	 *
-	 * @param mask   the mask
+	 * @param mask   the mask (all occupied squares)
 	 * @param square the square where the queen currently is
 	 * @return queen attacks
 	 */
@@ -609,12 +610,12 @@ public class Bitboard {
 	/**
 	 * Gets a bitboard with attacked squares by the king in the given square
 	 *
-	 * @param square   the square where the king currently is
-	 * @param occupied the occupied
+	 * @param square the square where the king currently is
+	 * @param mask   the mask of allowed target squares
 	 * @return the king attacks
 	 */
-	public static long getKingAttacks(@NotNull Square square, long occupied) {
-		return adjacentSquares[square.ordinal()] & occupied;
+	public static long getKingAttacks(@NotNull Square square, long mask) {
+		return adjacentSquares[square.ordinal()] & mask;
 	}
 
 	/**
