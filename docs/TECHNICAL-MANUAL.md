@@ -20,7 +20,7 @@ The Chess App is a Java desktop application powered by [JavaFX](https://openjfx.
 
 **Requirements:**
 * **Apache Maven 3.6+**
-* **Java 11+** (tested with Java 15, note: Java 8 will NOT work)
+* **Java 11+** (tested with **Java 15**, note: Java 8 will NOT work)
 * Make sure `JAVA_HOME` is properly set to a JDK 11+ installation directory. 
 
 The project can be **run** using Maven CLI as follows:

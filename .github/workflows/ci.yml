@@ -45,3 +45,12 @@ jobs:
 
       # TODO: upload JUnit 5 test reports
       # TODO: sth like https://github.com/marketplace/actions/publish-unit-test-results
+
+      - name: Build release JAR with Maven
+        run: mvn -B package --file build-pom.xml
+
+      - name: Upload release JAR
+        uses: actions/upload-artifact@v2
+        with:
+          name: executable-${{ matrix.os }}
+          path: target/chess-1.0-SNAPSHOT-jar-with-dependencies.jar
