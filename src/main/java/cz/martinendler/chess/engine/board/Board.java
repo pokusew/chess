@@ -6,6 +6,7 @@ import cz.martinendler.chess.engine.Game;
 import cz.martinendler.chess.engine.Side;
 import cz.martinendler.chess.engine.move.Move;
 import cz.martinendler.chess.engine.move.MoveGenerator;
+import cz.martinendler.chess.engine.move.MoveLogEntry;
 import cz.martinendler.chess.engine.pieces.Piece;
 import cz.martinendler.chess.engine.pieces.PieceType;
 import org.jetbrains.annotations.NotNull;
@@ -337,22 +338,30 @@ public class Board {
 	/**
 	 * Moves a piece as described by the given move
 	 *
-	 * @param move the move
+	 * @param move                the move
+	 * @param moveLogEntryBuilder optional {@link MoveLogEntry} builder for storing details info about move
 	 * @return a captured piece if any, otherwise {@code null}
 	 */
-	private @Nullable Piece movePiece(@NotNull Move move) {
-		return movePiece(move.getFrom(), move.getTo(), move.getPromotion());
+	private @Nullable Piece movePiece(
+		@NotNull Move move,
+		@Nullable MoveLogEntry.MoveLogEntryBuilder moveLogEntryBuilder
+	) {
+		return movePiece(move.getFrom(), move.getTo(), move.getPromotion(), moveLogEntryBuilder);
 	}
 
 	/**
 	 * Moves a piece as described the given arguments
 	 *
-	 * @param from      the from
-	 * @param to        the to
-	 * @param promotion the promotion
+	 * @param from                the from
+	 * @param to                  the to
+	 * @param promotion           the promotion
+	 * @param moveLogEntryBuilder optional {@link MoveLogEntry} builder for storing details info about move
 	 * @return a captured piece if any, otherwise {@code null}
 	 */
-	private Piece movePiece(@NotNull Square from, @NotNull Square to, @Nullable Piece promotion) {
+	private Piece movePiece(
+		@NotNull Square from, @NotNull Square to, @Nullable Piece promotion,
+		@Nullable MoveLogEntry.MoveLogEntryBuilder moveLogEntryBuilder
+	) {
 
 		Piece movingPiece = getPiece(from);
 
@@ -386,9 +395,16 @@ public class Board {
 			// captured piece MUST be explicitly removed
 			if (capturedPiece != null) {
 				removePiece(capturedPiece, getEnPassantTarget());
-				// backup.setCapturedSquare(getEnPassantTarget());
-				// backup.setCapturedPiece(capturedPiece);
+				if (moveLogEntryBuilder != null) {
+					moveLogEntryBuilder.setEnPassantMove(true);
+					moveLogEntryBuilder.setCapturedSquare(getEnPassantTarget());
+				}
 			}
+		}
+
+		if (moveLogEntryBuilder != null) {
+			moveLogEntryBuilder.setMovingPiece(movingPiece);
+			moveLogEntryBuilder.setCapturedPiece(capturedPiece);
 		}
 
 		return capturedPiece;
@@ -745,12 +761,12 @@ public class Board {
 	 *
 	 * @param move           the move
 	 * @param fullValidation perform full validation
-	 * @return true if operation was successful
+	 * @return a move log entry iff the operation was successful, {@code null} otherwise
 	 */
-	public boolean doMove(final Move move, final boolean fullValidation) {
+	public @Nullable MoveLogEntry doMove(final Move move, final boolean fullValidation) {
 
 		if (!isMoveLegal(move, fullValidation)) {
-			return false;
+			return null;
 		}
 
 		Piece movingPiece = getPiece(move.getFrom());
@@ -762,6 +778,17 @@ public class Board {
 
 		Side side = getSideToMove();
 
+		MoveLogEntry.MoveLogEntryBuilder moveLogEntryBuilder = new MoveLogEntry.MoveLogEntryBuilder()
+			.setBoard(new Board(this)) // copy the current state before the move
+			.setSide(side)
+			.setMove(move)
+			// the following will be set in by movePiece method:
+			// .setMovingPiece()
+			// .setCapturedPiece()
+			// .setCapturedPiece()
+			// .setEnPassantMove()
+			;
+
 		// castling rules
 		if (movingPiece.isOfType(PieceType.KING)) {
 
@@ -771,10 +798,10 @@ public class Board {
 			if (castling != null) {
 
 				if (move.isAllowedBy(getCastlingRight(side))) {
-					movePiece(castling.getRookMove(side));
+					movePiece(castling.getRookMove(side), null);
 				} else {
 					// this could happen if fullValidation == false
-					return false;
+					return null;
 				}
 
 			}
@@ -807,7 +834,7 @@ public class Board {
 
 		}
 
-		Piece capturedPiece = movePiece(move);
+		Piece capturedPiece = movePiece(move, moveLogEntryBuilder);
 
 		// if the side captured the other side's rook
 		// it might be needed to update the other side's castling right
@@ -876,7 +903,7 @@ public class Board {
 
 		sideToMove = side.flip();
 
-		return true;
+		return moveLogEntryBuilder.build();
 
 	}
 
