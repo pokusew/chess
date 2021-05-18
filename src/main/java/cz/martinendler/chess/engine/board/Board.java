@@ -930,6 +930,51 @@ public class Board {
 		return MoveGenerator.generatePseudoLegalCaptures(this);
 	}
 
+	/**
+	 * Checks if there is a stalemate on the board
+	 * (i.e. side-to-move is not in check but has not legal move)
+	 *
+	 * @return {@code true} iff there is a stalemate on the board
+	 */
+	public boolean isStaleMate() {
+
+		try {
+			if (!isKingAttacked()) {
+				List<Move> l = MoveGenerator.generateLegalMoves(this);
+				if (l.size() == 0) {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * Checks if there is a checkmate on the board
+	 *
+	 * @return {@code true} iff there is a checkmate on the board
+	 */
+	public boolean isCheckMate() {
+
+		try {
+			if (isKingAttacked()) {
+				final List<Move> l = MoveGenerator.generateLegalMoves(this);
+				if (l.size() == 0) {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		return false;
+
+	}
+
 	// TODO
 	private boolean verifyNotPinnedPiece(@NotNull Side side, @NotNull Square enPassant, @NotNull Square target) {
 
