@@ -141,13 +141,15 @@ public class PgnGame extends PgnEntity {
 			String whiteMove = moves.get(i);
 			String blackMove = i + 1 < moves.size() ? moves.get(i + 1) : null;
 
-			String fullMoveText = fullMoveNumber + " " + whiteMove + (blackMove != null ? (" " + blackMove) : "");
+			String fullMoveText = " " + fullMoveNumber + "." + whiteMove + (blackMove != null ? (" " + blackMove) : "");
 
 			numCharsInLine += fullMoveText.length();
 
 			if (numCharsInLine >= 80) {
 				sb.append("\n");
-				numCharsInLine = fullMoveText.length();
+				// without leading space
+				numCharsInLine = fullMoveText.length() - 1;
+				fullMoveText = fullMoveText.substring(1);
 			}
 
 			sb.append(fullMoveText);
