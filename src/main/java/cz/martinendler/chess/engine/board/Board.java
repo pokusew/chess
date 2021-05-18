@@ -557,7 +557,7 @@ public class Board {
 	/**
 	 * Checks if the side-to-move's king is attacked
 	 *
-	 * @return boolean {@code true} when the side-to-move's king is attacked, false otherwise
+	 * @return boolean {@code true} if the side-to-move's king is attacked, {@code true} otherwise
 	 */
 	public boolean isKingAttacked() {
 

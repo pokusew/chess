@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -44,6 +45,13 @@ public enum PieceType {
 
 	private static final Map<String, PieceType> sanNotationToPiece = Arrays.stream(values())
 		.collect(Collectors.toMap(PieceType::getSanNotation, p -> p));
+
+	private static final List<PieceType> pawnPromotionTypes = List.of(
+		QUEEN,
+		ROOK,
+		BISHOP,
+		KNIGHT
+	);
 
 	/**
 	 * One letter notation for usage in SAN
@@ -101,6 +109,17 @@ public enum PieceType {
 	 */
 	public int getValue() {
 		return value;
+	}
+
+	/**
+	 * Gets all possible piece types a pawn can be promoted to
+	 * <p>
+	 * Sorted by descending piece type value
+	 *
+	 * @return all possible piece types a pawn can be promoted to
+	 */
+	public static List<PieceType> getPawnPromotionTypes() {
+		return pawnPromotionTypes;
 	}
 
 }

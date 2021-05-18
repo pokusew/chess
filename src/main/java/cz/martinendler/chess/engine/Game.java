@@ -1,35 +1,210 @@
 package cz.martinendler.chess.engine;
 
 import cz.martinendler.chess.engine.board.Board;
+import cz.martinendler.chess.engine.board.Square;
+import cz.martinendler.chess.engine.move.Move;
+import cz.martinendler.chess.engine.move.MoveLogEntry;
+import cz.martinendler.chess.engine.pieces.Piece;
+import cz.martinendler.chess.engine.pieces.PieceType;
+import cz.martinendler.chess.pgn.entity.PgnGameTermination;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * A chess game
+ * <p>
+ * It wraps {@link Board} and add support for moves history
+ * and loading/saving {@link Board} state, moves history and other metadata in PGN format.
+ * For PGN, under the hood, it uses classes from {@link cz.martinendler.chess.pgn} package.
+ */
 public class Game {
 
+	private static final Logger log = LoggerFactory.getLogger(Game.class);
+
 	private Board board;
+	private List<Move> legalMoves;
+	private final long[] legalMovesOfSquare;
+	private final List<MoveLogEntry> moveLog;
 
 	public Game() {
 
 		board = new Board();
 		board.loadFromFen(Board.STANDARD_STARTING_POSITION_FEN);
 
+		legalMovesOfSquare = new long[Square.values().length];
+
+		moveLog = new LinkedList<>();
+
+		updateState();
+
 	}
 
-	public Board getBoard() {
-		return board;
+	private void updateState() {
+
+		legalMoves = board.generateLegalMoves();
+
+		Arrays.fill(legalMovesOfSquare, 0L);
+
+		for (Move move : legalMoves) {
+			legalMovesOfSquare[move.getFrom().ordinal()] |= move.getTo().getBitboard();
+		}
+
 	}
 
-	// TODO
+	public boolean isPromotionMove(@NotNull Square from, @NotNull Square to) {
+
+		Optional<Move> move = legalMoves.stream()
+			.filter(m -> m.getFrom() == from && m.getTo() == to)
+			.findFirst();
+
+		if (move.isEmpty()) {
+			log.info("isPromotionMove: move.isEmpty() from={} to={}", from, to);
+			return false;
+		}
+
+		return move.get().hasPromotion();
+
+	}
+
+	public boolean doMove(@NotNull Square from, @NotNull Square to, @Nullable PieceType promotionType) {
+
+		Piece promotion = null;
+
+		if (promotionType != null) {
+			promotion = Piece.make(getSideToMove(), promotionType);
+		}
+
+		Move move = new Move(from, to, promotion);
+
+		if (!legalMoves.contains(move)) {
+			log.info("doMove: !legalMoves.contains({})", move);
+			return false;
+		}
+
+		MoveLogEntry moveLogEntry = board.doMove(move, true);
+
+		if (moveLogEntry == null) {
+			log.error("doMove: moveLogEntry == null, move={}", move);
+			return false;
+		}
+
+		moveLog.add(moveLogEntry);
+
+		updateState();
+
+		return true;
+
+	}
+
+	public boolean undoLastMove() {
+
+		if (moveLog.size() == 0) {
+			return false;
+		}
+
+		MoveLogEntry lastMoveLogEntry = moveLog.remove(moveLog.size() - 1);
+
+		board = lastMoveLogEntry.getBoard();
+
+		updateState();
+
+		return true;
+
+	}
+
+	/**
+	 * Gets the piece on the given square
+	 *
+	 * @param square the square
+	 * @return the piece or {@code null} if there is no piece on the given square
+	 */
+	public @Nullable Piece getPiece(@NotNull Square square) {
+		return board.getPiece(square);
+	}
+
+	/**
+	 * Gets legal moves originating from the given square
+	 *
+	 * @param square the square
+	 * @return legal moves as bitboard of target squares
+	 */
+	public long getLegalMoves(@NotNull Square square) {
+		return legalMovesOfSquare[square.ordinal()];
+	}
+
+	/**
+	 * Checks if the side-to-move's king is attacked (is in check)
+	 *
+	 * @return boolean {@code true} if the side-to-move's king is attacked, {@code false} otherwise
+	 */
 	public boolean isCheck() {
-		return false;
+		return board.isKingAttacked();
 	}
 
-	// TODO
-	public boolean isCheckmate() {
-		return false;
+	/**
+	 * Checks if there is a checkmate on the board
+	 *
+	 * @return {@code true} iff there is a checkmate on the board
+	 */
+	public boolean isCheckMate() {
+		return board.isCheckMate();
 	}
 
-	// TODO
-	public boolean isStalemate() {
-		return false;
+	/**
+	 * Checks if there is a stalemate on the board
+	 * (i.e. side-to-move is not in check but has not legal move)
+	 *
+	 * @return {@code true} iff there is a stalemate on the board
+	 */
+	public boolean isStaleMate() {
+		return board.isStaleMate();
+	}
+
+	/**
+	 * Gets the current game result as a {@link PgnGameTermination}
+	 *
+	 * @return the current game result, {@link PgnGameTermination#UNKNOWN} if this is an ongoing game without result
+	 */
+	public PgnGameTermination getResult() {
+
+		if (isCheckMate()) {
+			return board.getSideToMove().isWhite()
+				? PgnGameTermination.BLACK_WINS
+				: PgnGameTermination.WHITE_WINS;
+		}
+
+		if (isStaleMate()) {
+			return PgnGameTermination.DRAWN_GAME;
+		}
+
+		return PgnGameTermination.UNKNOWN;
+
+	}
+
+	/**
+	 * Gets side to move
+	 *
+	 * @return the side to move
+	 */
+	public @NotNull Side getSideToMove() {
+		return board.getSideToMove();
+	}
+
+	/**
+	 * Generates the FEN representation of the underlying board
+	 *
+	 * @see Board#getFen(boolean includeCounters)
+	 * @see Board#getFen()
+	 */
+	public String getFen() {
+		return board.getFen();
 	}
 
 }
