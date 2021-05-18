@@ -52,9 +52,12 @@ java -jar target/chess-1.0-SNAPSHOT-jar-with-dependencies.jar
 * [ANTLR v4](https://github.com/antlr/antlr4) for generating parser for PGN format from CFG grammar description
 
 
-## App architecture
+## Javadoc
 
-_Note: See also [current development state](../TODO.md)._
+Built HTML Javadoc can be found at [endlemar-pjv-chess-javadoc.netlify.app](https://endlemar-pjv-chess-javadoc.netlify.app/).
+
+
+## App architecture
 
 The game logic (chess rules) is independent of the GUI.
 
@@ -62,44 +65,89 @@ The following diagram briefly describes the packages and the classes:
 ```text
 cz.martinendler.chess
 ├── engine - game logic
-│   └── pieces - chess pieces
-│   │   ├── Piece - abstract class for all pieces
-│   │   ├── Pawn
-│   │   ├── Rook
-│   │   ├── Knight
-│   │   ├── Bishop
-│   │   ├── Queen
-│   │   └── King
-│   ├── Game - chess game state
-│   ├── Board - chess board state
-│   ├── PlayerType - enum (WHITE, BLACK)
-│   ├── 
-│   └──
-├── ui - GUI
+│   ├── board - board logic
+│   │   ├── Bitboard - bit operations
+│   │   ├── Board - board state (chess position)
+│   │   ├── DiagonalA1H8
+│   │   ├── DiagonalH1A8
+│   │   ├── File
+│   │   ├── Rank
+│   │   └── Square
+│   ├── move - move logic
+│   │   ├── Move
+│   │   ├── MoveConversionException
+│   │   ├── MoveGenerator
+│   │   ├── MoveGeneratorException
+│   │   ├── MoveLogEntry
+│   │   └── SanUtils - SAN encoding and decoding
+│   ├── pieces
+│   │   ├── Piece
+│   │   └── PieceType
+│   ├── Castling
+│   ├── CastlingRight
+│   ├── Game - board wrapper with history support to be used by UI
+│   ├── Notation
+│   └── Side
+├── pgn - PGN parsing and encoding
+│   ├── antlr4 - generated PGN lexer and parser using ANTLR v4
+│   ├── entity - PGN entities representation
+│   │   ├── PgnDatabase
+│   │   ├── PgnEntity
+│   │   ├── PgnGame
+│   │   ├── PgnGameTermination
+│   │   └── PgnValidatable
+│   ├── ErrorCollectorListener
+│   ├── PgnListener
+│   ├── PgnMoveTextListener
+│   ├── PgnParseException
+│   ├── PgnUtils - PGN parsing and string escaping
+│   └── PgnValidationException
+├── ui - GUI (JavaFX)
 │   ├── controllers - FXML controllers
-│   ├── routing - routing primitives
-│   ├── Board - represents the chessboard
-│   ├── BorderSegment - represents a border segment of the chessboard
+│   │   ├── AppAwareController
+│   │   ├── GameController
+│   │   ├── RightViewController
+│   │   └── SideInfoBoxController
+│   ├── Board - represents the chessboard view
 │   ├── BorderDescription - represents a border segment with a text description
-│   ├── Square - represents a square on the chessboard
-│   └── Piece - represents a chess piece that can be placed on a square
-├── ControllerFactory - handles dependency injection for FXML
+│   ├── BorderSegment - represents a border segment of the chessboard
+│   ├── ChessClock - chess clock implementation
+│   ├── MoveAttemptHandler
+│   ├── MoveLogEntry
+│   ├── Piece - represents a chess piece that can be placed on a square
+│   ├── ChessClock - chess clock implementation
+│   └── Square - represents a square on the chessboard
+├── utils - other utils
+│   └── StringUtils - string utils
 ├── App - JavaFX application, entrypoint
+├── ControllerFactory - handles dependency injection for FXML
 └── Main - entrypoint (calls App.main()) (bug workaround, see Main code)
 ```
 
 
 ### package: `cz.martinendler.chess.engine`
 
-_Note: This is an early version.
-It is functionally-incomplete (with regard to all chess rules
-that needs to be considered). It will be modified a lot._
+A chess engine that uses [bitboards](https://www.chessprogramming.org/Bitboards) to represent the state
+and efficiently validate the rules. The most of the code lives in `Board` class that represents a chess position.
 
 _It was designed with help of [Chess Programming WIKI](https://www.chessprogramming.org/).
 A lot of inspiration and some pieces of code (though much rewritten) come
 from [github.com/bhlangonijr/chesslib](https://github.com/bhlangonijr/chesslib)._
 
-<img alt="class diagram of the package cz.martinendler.chess.engine" title="cz.martinendler.chess.engine" src="./images/package-engine.png" width="1200" />
+<img alt="class diagram of the package cz.martinendler.chess.engine" title="cz.martinendler.chess.engine" src="./images/package-engine-v2.png" width="1200" />
+
+
+### package: `cz.martinendler.chess.pgn`
+
+`PgnUtils` class offers static methods for parsing PGN files.
+The lexer, tokenizer and parser are automatically generated from PGN context-free (CF) grammar file.
+The conversion from the Abstract Syntax Tree (AST) is implemented using "listener pattern" in `PgnListener`.
+
+The subpackage `cz.martinendler.chess.entitiy` contains definitions for common PGN entities.
+They work as simple DTOs and implement `PgnValidatable` interface that allows easy entity-specific validation.
+On top of that can also be converted back to a valid PGN via their `toString()` methods.
+
+<img alt="class diagram of the package cz.martinendler.chess.pgn" title="cz.martinendler.chess.pgn" src="./images/package-pgn.png" width="800" />
 
 
 ### package: `cz.martinendler.chess.ui`
@@ -113,9 +161,7 @@ It is **fully responsive** (It automatically adapts the layout according to the 
 `Sqaure` represents a square on the chessboard. It is a container for a `Piece`.
 When a `Piece` is dropped on a `Sqaure`, the `Square` make the `Piece` its child node.
 
-<img alt="class diagram of the package cz.martinendler.chess.ui" title="cz.martinendler.chess.ui" src="./images/package-ui-board-related.png" width="800" />
+`GameController` (with the help of other controllers) wires everything together (connects the UI and the engine).
 
+<img alt="class diagram of the package cz.martinendler.chess.ui" title="cz.martinendler.chess.ui" src="./images/package-ui-v2.png" width="1200" />
 
-### package: `cz.martinendler.chess.pgn`
-
-TODO: document, also update architecture graph
