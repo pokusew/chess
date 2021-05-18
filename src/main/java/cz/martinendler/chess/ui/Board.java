@@ -4,11 +4,11 @@ import cz.martinendler.chess.engine.board.File;
 import cz.martinendler.chess.engine.board.Rank;
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.css.*;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import org.jetbrains.annotations.NotNull;
@@ -139,8 +139,14 @@ public class Board extends Region {
 	protected double clipArcAbs = 0.0;
 
 	private final @NotNull SimpleObjectProperty<Square> moveOrigin = new SimpleObjectProperty<>(
-		null, "moveOrigin"
+		null, "moveOrigin", null
 	);
+
+	private final @NotNull SimpleLongProperty legalMoves = new SimpleLongProperty(
+		null, "legalMoves", 0L
+	);
+
+	private @Nullable MoveAttemptHandler moveAttemptHandler;
 
 	public Board() {
 		super();
@@ -161,9 +167,9 @@ public class Board extends Region {
 
 		initChildren();
 
-		setOnMouseClicked((MouseEvent event) -> {
-			log.info("onMouseClicked: source = {}, target = {}", event.getSource(), event.getTarget());
-		});
+		// setOnMouseClicked((MouseEvent event) -> {
+		// 	log.info("onMouseClicked: source = {}, target = {}", event.getSource(), event.getTarget());
+		// });
 
 		customArcClipRelative.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
 
@@ -185,6 +191,16 @@ public class Board extends Region {
 
 		});
 
+		moveAttemptHandler = null;
+
+	}
+
+	public @Nullable MoveAttemptHandler getMoveAttemptHandler() {
+		return moveAttemptHandler;
+	}
+
+	public void setMoveAttemptHandler(@Nullable MoveAttemptHandler moveAttemptHandler) {
+		this.moveAttemptHandler = moveAttemptHandler;
 	}
 
 	public @NotNull SimpleObjectProperty<Square> moveOriginProperty() {
@@ -198,6 +214,54 @@ public class Board extends Region {
 	public void setMoveOrigin(@Nullable Square moveOrigin) {
 		log.info("setMoveOrigin: {}", moveOrigin);
 		this.moveOrigin.set(moveOrigin);
+	}
+
+	public void updateMove(@NotNull Square originOrDestination) {
+
+		log.info("updateMove: {}", originOrDestination);
+
+		if (getMoveOrigin() != null && (getLegalMoves() & originOrDestination.getSquare().getBitboard()) != 0L) {
+			// TODO: inform controller
+			log.info("legal move from " + getMoveOrigin() + " to " + originOrDestination);
+			if (moveAttemptHandler != null) {
+				moveAttemptHandler.onLegalMoveAttempt(getMoveOrigin(), originOrDestination);
+			}
+			return;
+		}
+
+		if (getMoveOrigin() == originOrDestination) {
+			setMoveOrigin(null);
+			return;
+		}
+
+		if (originOrDestination.getPiece() != null) {
+			setMoveOrigin(originOrDestination);
+			return;
+		}
+
+		setMoveOrigin(null);
+
+	}
+
+	public long getLegalMoves() {
+		return legalMoves.get();
+	}
+
+	public @NotNull SimpleLongProperty legalMovesProperty() {
+		return legalMoves;
+	}
+
+	public void setLegalMoves(long legalMoves) {
+		this.legalMoves.set(legalMoves);
+	}
+
+	public void clean() {
+		setMoveOrigin(null);
+		for (int r = 0; r < NUM_ROWS; r++) {
+			for (int c = 0; c < NUM_COLS; c++) {
+				squares[r][c].setPiece(null);
+			}
+		}
 	}
 
 	protected boolean areInitialSizesComputed() {
@@ -232,7 +296,7 @@ public class Board extends Region {
 			light = !light;
 			for (int c = 0; c < NUM_COLS; c++) {
 				light = !light;
-				squares[r][c] = new Square(r, c, light);
+				squares[r][c] = new Square(cz.martinendler.chess.engine.board.Square.encode(r, c));
 				addUnmanagedChild(squares[r][c]);
 			}
 		}
@@ -369,8 +433,11 @@ public class Board extends Region {
 	}
 
 	public Square getSquareAt(int r, int c) {
-		// TODO: assert
 		return squares[r][c];
+	}
+
+	public Square getSquare(cz.martinendler.chess.engine.board.Square square) {
+		return squares[square.getRank().ordinal()][square.getFile().ordinal()];
 	}
 
 	@Override

@@ -208,6 +208,14 @@
 	visibility: visible;
 }
 
+.square.square--move-hint .move-hint {
+	visibility: visible;
+}
+
+.square.square--capture-hint .capture-hint {
+	visibility: visible;
+}
+
 .piece {
 	-fx-cursor: open-hand;
 }
@@ -223,6 +231,7 @@
 .player-box {
 	/*-fx-background-color: #ffc0cb;*/
 	-fx-alignment: center-left;
+	-fx-opacity: .5;
 }
 
 .player-box Text {
@@ -260,6 +269,7 @@
 	-fx-fill: #ffffff;
 }
 
+.side-info-box--active .player-box,
 .side-info-box--active .time-box {
 	-fx-opacity: 1;
 }

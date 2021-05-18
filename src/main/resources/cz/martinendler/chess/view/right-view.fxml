@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.*?>
+<AnchorPane
+	xmlns:fx="http://javafx.com/fxml"
+	fx:controller="cz.martinendler.chess.ui.controllers.RightViewController"
+	styleClass="right-view"
+>
+	<HBox
+		styleClass="message-box"
+		AnchorPane.topAnchor="0.0"
+		AnchorPane.leftAnchor="0.0"
+		AnchorPane.rightAnchor="0.0"
+		minHeight="100"
+		maxHeight="100"
+	>
+		<Rectangle
+			width="60"
+			height="60"
+			arcWidth="5"
+			arcHeight="5"
+			fill="white"
+		/>
+		<VBox
+			styleClass="bubble"
+			HBox.hgrow="ALWAYS"
+		>
+			<Text fx:id="messageBubbleText">
+				There will be a useful message
+			</Text>
+		</VBox>
+
+	</HBox>
+	<ScrollPane
+		styleClass="move-log"
+		VBox.vgrow="NEVER"
+		hbarPolicy="NEVER"
+		AnchorPane.topAnchor="100.0"
+		AnchorPane.bottomAnchor="0.0"
+		AnchorPane.leftAnchor="0.0"
+		AnchorPane.rightAnchor="0.0"
+		fitToWidth="true"
+		fx:id="moveLog"
+	>
+		<VBox
+			styleClass="move-log-content"
+			fx:id="moveLogContent"
+		>
+
+		</VBox>
+	</ScrollPane>
+</AnchorPane>

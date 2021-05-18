@@ -2,8 +2,11 @@ package cz.martinendler.chess.ui.controllers;
 
 import cz.martinendler.chess.App;
 import cz.martinendler.chess.engine.Game;
+import cz.martinendler.chess.engine.Side;
+import cz.martinendler.chess.engine.pieces.PieceType;
 import cz.martinendler.chess.ui.Board;
 import cz.martinendler.chess.ui.Piece;
+import cz.martinendler.chess.ui.Square;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,15 +14,17 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class GameController extends AppAwareController implements Initializable, Reloadable {
@@ -45,19 +50,17 @@ public class GameController extends AppAwareController implements Initializable,
 	private SideInfoBoxController blackInfoController;
 
 	@FXML
-	private Text messageBubbleText;
+	private AnchorPane rightView;
 
 	@FXML
-	private ScrollPane moveLog;
+	private RightViewController rightViewController;
 
 	private Game game;
 
 	public GameController(App app) {
 		super(app);
 		log.info("constructor");
-
-		game = new Game();
-
+		game = null;
 	}
 
 	protected void addMenusToMenuBar() {
@@ -172,19 +175,40 @@ public class GameController extends AppAwareController implements Initializable,
 
 		addMenusToMenuBar();
 
-		Piece knight0 = new Piece(0);
-		Piece knight1 = new Piece(1);
-		Piece knight2 = new Piece(2);
+		board.moveOriginProperty().addListener((observable, oldValue, newValue) -> {
 
-		moveLog.setOnMouseClicked((MouseEvent event) -> {
-			log.info("onMouseClicked: target " + event.getTarget().toString());
+			log.info("move origin changed to " + newValue);
+
+			if (newValue == null) {
+				board.setLegalMoves(0L);
+				return;
+			}
+
+			if (game == null) {
+				log.info("move origin changed but game is null");
+				return;
+			}
+
+			long hintForOrigin = game.getLegalMoves(newValue.getSquare());
+
+			log.info("hintForOrigin " + Long.toBinaryString(hintForOrigin));
+
+			board.setLegalMoves(hintForOrigin);
+
 		});
 
-		// game.getBoard().getPiece(Square.fromIndex(1))
+		board.setMoveAttemptHandler((origin, destination) -> {
 
-		board.getSquareAt(3, 2).getChildren().setAll(knight0);
-		board.getSquareAt(5, 2).getChildren().setAll(knight1);
-		board.getSquareAt(3, 7).getChildren().setAll(knight2);
+			if (game == null) {
+				log.info("move attempt but game is null");
+				return;
+			}
+
+			doMove(origin, destination);
+
+		});
+
+		newGame();
 
 	}
 
@@ -196,7 +220,108 @@ public class GameController extends AppAwareController implements Initializable,
 		log.info("unload");
 	}
 
+	private @Nullable PieceType showPromotionDialog() {
+
+		ChoiceDialog<PieceType> choiceDialog = new ChoiceDialog<>(PieceType.QUEEN, PieceType.getPawnPromotionTypes());
+
+		choiceDialog.setTitle("Pawn promotion");
+		choiceDialog.setHeaderText("Pawn promotion");
+		choiceDialog.setContentText("Select pawn promotion target:");
+
+		Optional<PieceType> pieceType = choiceDialog.showAndWait();
+
+		return pieceType.orElse(null);
+
+	}
+
+	private void doMove(@NotNull Square origin, @NotNull Square target) {
+
+		if (game == null) {
+			log.error("doMove: game == null");
+			return;
+		}
+
+		PieceType promotion = null;
+
+		if (game.isPromotionMove(origin.getSquare(), target.getSquare())) {
+
+			log.info("doMove: isPromotionMove == true");
+
+			promotion = showPromotionDialog();
+
+			if (promotion == null) {
+				// user did not select anything
+				// do not attempt to this move
+				log.info("doMove: isPromotionMove == true BUT showPromotionDialog() returned null");
+				return;
+			}
+
+		}
+
+		boolean success = game.doMove(origin.getSquare(), target.getSquare(), promotion);
+
+		if (success) {
+			log.info("move executed");
+			syncWithGame();
+		} else {
+			log.error("doMove unexpected error");
+		}
+
+	}
+
+	private void syncWithGame() {
+
+		if (game == null) {
+			log.error("syncWithGame: game == null");
+			return;
+		}
+
+		for (cz.martinendler.chess.engine.board.Square sq : cz.martinendler.chess.engine.board.Square.values()) {
+
+			cz.martinendler.chess.engine.pieces.Piece requiredPiece = game.getPiece(sq);
+
+			Piece uiPiece = board.getSquare(sq).getPiece();
+
+			cz.martinendler.chess.engine.pieces.Piece currentPiece = uiPiece != null ? uiPiece.getPiece() : null;
+
+			// this square is okay
+			if (requiredPiece == currentPiece) {
+				continue;
+			}
+
+			// there is should be no piece on this square
+			if (requiredPiece == null) {
+				board.getSquare(sq).setPiece(null);
+				continue;
+			}
+
+			// there should be a piece and there is currently none
+			// or there should be a different piece
+			Piece newUiPiece = new Piece(requiredPiece);
+			board.getSquare(sq).setPiece(newUiPiece);
+
+		}
+
+		// reset move origin
+		board.setMoveOrigin(null);
+
+		// TODO: sync moveLog
+
+		whiteInfoController.setActive(game.getSideToMove() == Side.WHITE);
+		blackInfoController.setActive(game.getSideToMove() == Side.BLACK);
+		rightViewController.setMessageBubbleText(game.getSideToMove() + " player is on move");
+
+	}
+
 	private void newGame() {
+
+		// TODO
+
+		game = new Game();
+
+		board.clean();
+
+		syncWithGame();
 
 	}
 

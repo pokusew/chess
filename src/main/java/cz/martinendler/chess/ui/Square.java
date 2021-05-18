@@ -2,8 +2,6 @@ package cz.martinendler.chess.ui;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.input.MouseDragEvent;
@@ -23,50 +21,67 @@ public class Square extends StackPane {
 
 	private static final Logger log = LoggerFactory.getLogger(Square.class);
 
-	public final int row;
-	public final int column;
-	public final boolean light;
-
-	private @Nullable Board parentBoard;
-
-	private final @NotNull ChangeListener<Square> moveOriginListener;
+	private final cz.martinendler.chess.engine.board.Square square;
 
 	private final @NotNull Circle moveHint;
 	private final @NotNull Region captureHint;
 	private final @NotNull Region dragReleaseHint;
 
-	// protected Piece piece;
+	private final @NotNull ChangeListener<Square> moveOriginListener;
+	private final @NotNull ChangeListener<Number> legalMovesListener;
 
-	public Square(int row, int column, boolean light) {
+	private @Nullable Board parentBoard;
+
+	private boolean isMoveOrigin;
+
+	public Square(cz.martinendler.chess.engine.board.Square square) {
 		super();
 
 		// TODO: cleaner/correct solution (without these initial sizes it does not work)
 		setWidth(40);
 		setHeight(40);
 
-		this.row = row;
-		this.column = column;
-		this.light = light;
-
+		this.square = square;
 		this.parentBoard = null;
 
 		this.moveOriginListener = (observable, oldValue, newValue) -> {
 
 			if (oldValue == this) {
-				log.info("r={} c={} is no longer move origin", row, column);
+				log.info("{} is no longer move origin", this);
+				isMoveOrigin = false;
 				getStyleClass().remove("square--origin");
 			}
 
 			if (newValue == this) {
-				log.info("r={} c={} is move origin", row, column);
+				log.info("{} is move origin", this);
+				isMoveOrigin = true;
 				getStyleClass().addAll("square--origin");
+			}
+
+		};
+
+		this.legalMovesListener = (observable, oldValue, newValue) -> {
+
+			if ((oldValue.longValue() & square.getBitboard()) != 0L) {
+				log.info("{} removing hint", this);
+				getStyleClass().remove("square--move-hint");
+				getStyleClass().remove("square--capture-hint");
+			}
+
+			if ((newValue.longValue() & square.getBitboard()) != 0L) {
+				log.info("{} adding hint", this);
+				if (getPiece() != null) {
+					getStyleClass().add("square--capture-hint");
+				} else {
+					getStyleClass().add("square--move-hint");
+				}
 			}
 
 		};
 
 		getStyleClass().add("square");
 
-		if (light) {
+		if (square.isLightSquare()) {
 			getStyleClass().add("square--light");
 		} else {
 			getStyleClass().add("square--dark");
@@ -91,25 +106,22 @@ public class Square extends StackPane {
 		getChildren().add(dragReleaseHint);
 
 		setOnMouseClicked((MouseEvent event) -> {
-			log.info("r={} c={} clicked", row, column);
+			log.info("{} clicked", this);
+			event.consume();
+			updateMove();
 		});
 
 		setOnMouseDragEntered((MouseDragEvent event) -> {
-			log.info("r={} c={} onMouseDragEntered", row, column);
+			// log.info("{} onMouseDragEntered", this);
 			getStyleClass().add("square--target");
 		});
 
 		setOnMouseDragExited((MouseDragEvent event) -> {
-			log.info("r={} c={} onMouseDragExited", row, column);
+			// log.info("{} onMouseDragExited", this);
 			getStyleClass().remove("square--target");
 		});
 
 		setOnMouseDragReleased((MouseDragEvent event) -> {
-
-			log.info(
-				"r={} c={} onMouseDragReleased:  source = {}, target = {}",
-				row, column, event.getSource(), event.getTarget()
-			);
 
 			if (event.getGestureSource() instanceof Piece) {
 
@@ -117,15 +129,25 @@ public class Square extends StackPane {
 
 				if (movingPiece.getParentSquare() == this) {
 					// no position change
+					log.info("{} onMouseDragReleased: no position change", this);
 					return;
 				}
 
-				log.info("r={} c={} onMouseDragReleased: piece {} released here", row, column, movingPiece.id);
+				log.info("{} onMouseDragReleased: piece {} released here", this, movingPiece.getPiece());
 				movingPiece.stopDragging();
 
-				// TODO: this is temp solution
-				getChildren().removeIf((Node node) -> node instanceof Piece);
-				getChildren().add(movingPiece);
+				// // TODO: this is temp solution
+				// getChildren().removeIf((Node node) -> node instanceof Piece);
+				// getChildren().add(movingPiece);
+
+				updateMove();
+
+			} else {
+
+				log.info(
+					"{} onMouseDragReleased: unknown gesture source {}",
+					this, event.getGestureSource()
+				);
 
 			}
 
@@ -133,7 +155,7 @@ public class Square extends StackPane {
 
 		parentProperty().addListener((ObservableValue<? extends Parent> observable, Parent oldValue, Parent newValue) -> {
 
-			log.info("r={} c={} parent changed from {} to {}", row, column, oldValue, newValue);
+			log.info("{} parent changed from {} to {}", this, oldValue, newValue);
 
 			registerToBoard(newValue);
 
@@ -149,6 +171,7 @@ public class Square extends StackPane {
 
 		// unregister
 		parentBoard.moveOriginProperty().removeListener(moveOriginListener);
+		parentBoard.legalMovesProperty().removeListener(legalMovesListener);
 		// unset reference
 		parentBoard = null;
 
@@ -160,12 +183,13 @@ public class Square extends StackPane {
 
 		if (!(newParent instanceof Board)) {
 			// we cloud use lookup(".board") if Board was not the direct predecessor
-			log.info("r={} c={} parent is not Board", row, column);
+			log.info("{} parent is not Board", this);
 			return;
 		}
 
 		parentBoard = (Board) newParent;
 		parentBoard.moveOriginProperty().addListener(moveOriginListener);
+		parentBoard.legalMovesProperty().addListener(legalMovesListener);
 
 	}
 
@@ -199,23 +223,64 @@ public class Square extends StackPane {
 
 	}
 
-	public @Nullable Piece removePiece() {
+	/**
+	 * Sets the new piece for this square
+	 *
+	 * @param newPiece if {@code null} is given
+	 * @return old piece if there was any, {@code null} otherwise
+	 */
+	public @Nullable Piece setPiece(@Nullable Piece newPiece) {
 
-		if (getChildren().size() <= 3) {
-			return null;
+		Piece oldPiece = getPiece();
+
+		if (oldPiece != null) {
+			int lastIndex = getChildren().size() - 1;
+			getChildren().remove(lastIndex);
 		}
 
-		int lastIndex = getChildren().size() - 1;
-
-		Node lastChild = getChildren().get(lastIndex);
-
-		if (!(lastChild instanceof Piece)) {
-			return null;
+		if (newPiece != null) {
+			getChildren().add(newPiece);
 		}
 
-		getChildren().remove(lastChild);
-		return (Piece) lastChild;
+		return oldPiece;
 
+	}
+
+	public void setMoveOrigin(@Nullable Square square) {
+
+		Board board = getParentBoard();
+
+		if (board == null) {
+			return;
+		}
+
+		board.setMoveOrigin(square);
+
+	}
+
+	public boolean isMoveOrigin() {
+		return isMoveOrigin;
+	}
+
+	public void updateMove() {
+
+		Board board = getParentBoard();
+
+		if (board == null) {
+			return;
+		}
+
+		board.updateMove(this);
+
+	}
+
+	public cz.martinendler.chess.engine.board.Square getSquare() {
+		return square;
+	}
+
+	@Override
+	public String toString() {
+		return square.getNotation();
 	}
 
 }

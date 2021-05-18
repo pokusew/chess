@@ -7,16 +7,17 @@
 	xmlns:fx="http://javafx.com/fxml"
 	fx:controller="cz.martinendler.chess.ui.controllers.SideInfoBoxController"
 	styleClass="side-info-box"
+	fx:id="sideBox"
 >
 	<HBox
 		styleClass="player-box"
 		HBox.hgrow="ALWAYS"
 	>
-		<Text>Smart Computer</Text>
+		<Text fx:id="sideName">Smart Computer</Text>
 	</HBox>
 	<HBox
 		styleClass="time-box"
 	>
-		<Text>00:00</Text>
+		<Text fx:id="sideTime">00:00</Text>
 	</HBox>
 </HBox>
