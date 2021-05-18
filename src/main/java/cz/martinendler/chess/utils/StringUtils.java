@@ -34,4 +34,61 @@ public class StringUtils {
 
 	}
 
+	/**
+	 * Extracts the last char sequence of a string
+	 *
+	 * @param str  the str
+	 * @param size the size
+	 * @return string
+	 */
+	public static String lastSequence(final String str, int size) {
+		return str.substring(str.length() - size);
+	}
+
+	/**
+	 * Extracts the sequence after the given subsequence
+	 *
+	 * @param str  the str
+	 * @param seq  the seq
+	 * @param size the size
+	 * @return string
+	 */
+	public static String afterSequence(final String str, final String seq, int size) {
+		int idx = str.indexOf(seq) + seq.length();
+		if (idx == 0) {
+			return "";
+		}
+		return str.substring(idx, idx + size);
+	}
+
+	/**
+	 * Extracts the sequence after the given subsequence
+	 *
+	 * @param str the str
+	 * @param seq the seq
+	 * @return string
+	 */
+	public static String afterSequence(final String str, final String seq) {
+		int idx = str.indexOf(seq) + seq.length();
+		if (idx == 0) {
+			return "";
+		}
+		return str.substring(idx);
+	}
+
+	/**
+	 * Extracts the sequence before the given subsequence
+	 *
+	 * @param str the str
+	 * @param seq the seq
+	 * @return string
+	 */
+	public static String beforeSequence(final String str, final String seq) {
+		int idx = str.indexOf(seq);
+		if (idx == -1) {
+			return str;
+		}
+		return str.substring(0, idx);
+	}
+
 }
