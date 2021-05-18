@@ -205,7 +205,7 @@ public class SanUtils {
 	}
 
 	/**
-	 * Decodes the given move in SAN to a {@link Move]
+	 * Decodes the given move in SAN to a {@link Move}
 	 *
 	 * @param board the board
 	 * @param san   the san

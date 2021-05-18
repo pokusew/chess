@@ -20,7 +20,6 @@ module chess {
 
 	opens cz.martinendler.chess.ui;
 	opens cz.martinendler.chess.ui.controllers;
-	opens cz.martinendler.chess.ui.routing;
 
 	opens cz.martinendler.chess.pgn;
 	opens cz.martinendler.chess.pgn.antlr4;
@@ -39,7 +38,6 @@ module chess {
 
 	exports cz.martinendler.chess.ui;
 	exports cz.martinendler.chess.ui.controllers;
-	exports cz.martinendler.chess.ui.routing;
 
 	exports cz.martinendler.chess.pgn;
 	exports cz.martinendler.chess.pgn.antlr4;

@@ -1,5 +1,8 @@
 package cz.martinendler.chess.pgn.entity;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,10 +44,21 @@ public enum PgnGameTermination {
 		this.notation = notation;
 	}
 
-	public static PgnGameTermination fromNotation(String s) {
-		return fromNotation.get(s);
+	/**
+	 * Creates a Game Termination Marker from its PGN notation
+	 *
+	 * @param notation PGN notation
+	 * @return {@link PgnGameTermination} or {@code null} if there is no Game Termination Marker for the given notation
+	 */
+	public static @Nullable PgnGameTermination fromNotation(@NotNull String notation) {
+		return fromNotation.get(notation);
 	}
 
+	/**
+	 * Gets PGN notation
+	 *
+	 * @return the PGN notation
+	 */
 	public String getNotation() {
 		return notation;
 	}

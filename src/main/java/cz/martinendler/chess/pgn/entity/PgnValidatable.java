@@ -22,6 +22,6 @@ public interface PgnValidatable {
 	 *
 	 * @return {@code true} iff the {@link PgnValidatable#validate()} does NOT throw {@link PgnValidationException}
 	 */
-	public boolean isValid();
+	boolean isValid();
 
 }

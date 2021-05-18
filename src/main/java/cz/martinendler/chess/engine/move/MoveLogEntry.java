@@ -98,6 +98,9 @@ public class MoveLogEntry {
 		this.enPassantMove = enPassantMove;
 	}
 
+	/**
+	 * A helper to create instances of {@link MoveLogEntry}
+	 */
 	public static class MoveLogEntryBuilder {
 
 		private @Nullable Board board;

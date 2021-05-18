@@ -6,7 +6,9 @@ import cz.martinendler.chess.pgn.antlr4.PGNParser;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * A simple PGN listener that converts the movetext AST into a SAN moves array
+ */
 public class PgnMoveTextListener extends PGNBaseListener {
 
 	private final List<String> moves;

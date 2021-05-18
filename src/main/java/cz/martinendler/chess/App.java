@@ -99,19 +99,6 @@ public class App extends Application {
 		primaryStage.setMinWidth(primaryStage.getWidth());
 		primaryStage.setMinHeight(primaryStage.getHeight());
 
-		// TilePane tile = new TilePane();
-		// tile.setHgap(8);
-		// tile.setPrefColumns(4);
-		// for (int i = 0; i < 20; i++) {
-		// 	tile.getChildren().add(new Square());
-		// }
-		//
-		// scene.setRoot(tile);
-		//
-		// stage.setTitle("Chess");
-		// stage.setX(-1500);
-		// stage.setY(100);
-
 	}
 
 	public <P, C> Pair<P, C> loadFXML(String fxml) {

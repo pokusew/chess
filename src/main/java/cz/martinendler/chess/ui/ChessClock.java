@@ -9,7 +9,10 @@ import java.time.Clock;
 
 import static java.lang.Thread.sleep;
 
-
+/**
+ * A simple chess clock implementation (WIP)
+ * TODO: implement
+ */
 public class ChessClock implements Runnable {
 
 	private final Text whiteClockNode;

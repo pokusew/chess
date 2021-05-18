@@ -17,12 +17,20 @@ import java.util.Objects;
  */
 public class Move {
 
-	@NotNull
-	private final Square from;
-	@NotNull
-	private final Square to;
-	@Nullable
-	private final Piece promotion;
+	/**
+	 * The origin square
+	 */
+	private final @NotNull Square from;
+
+	/**
+	 * The destination square
+	 */
+	private final @NotNull Square to;
+
+	/**
+	 * The piece for a pawn promotion
+	 */
+	private final @Nullable Piece promotion;
 
 	/**
 	 * Creates a new {@link Move}
@@ -74,6 +82,11 @@ public class Move {
 		return promotion;
 	}
 
+	/**
+	 * Checks if this move has a valid promotion piece set for a pawn promotion
+	 *
+	 * @return {@code true} iff {@code getPromotion() != null}
+	 */
 	public boolean hasPromotion() {
 		return promotion != null;
 	}
@@ -183,6 +196,11 @@ public class Move {
 		return Objects.hash(from, to, promotion);
 	}
 
+	/**
+	 * Converts to debug string
+	 *
+	 * @return debug string
+	 */
 	public @NotNull String toDebugString() {
 		return MessageFormat.format(
 			"{0} -> {1}{2}",

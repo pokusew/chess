@@ -7,12 +7,16 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the right view of the game view
+ */
 public class RightViewController implements Initializable {
 
 	private static final Logger log = LoggerFactory.getLogger(RightViewController.class);
@@ -43,7 +47,12 @@ public class RightViewController implements Initializable {
 
 	}
 
-	public void setMessageBubbleText(String value) {
+	/**
+	 * Sets message text that is shown in the bubble
+	 *
+	 * @param value message text
+	 */
+	public void setMessageBubbleText(@Nullable String value) {
 		messageBubbleText.setText(value);
 	}
 

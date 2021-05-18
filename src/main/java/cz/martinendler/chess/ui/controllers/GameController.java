@@ -27,7 +27,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class GameController extends AppAwareController implements Initializable, Reloadable {
+public class GameController extends AppAwareController implements Initializable {
 
 	private static final Logger log = LoggerFactory.getLogger(GameController.class);
 

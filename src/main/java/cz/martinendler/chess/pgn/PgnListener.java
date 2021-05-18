@@ -84,7 +84,16 @@ public class PgnListener extends PGNBaseListener {
 
 	@Override
 	public void enterGame_termination(PGNParser.Game_terminationContext ctx) {
-		game.termination = PgnGameTermination.fromNotation(ctx.getText());
+
+		PgnGameTermination termination = PgnGameTermination.fromNotation(ctx.getText());
+
+		// this should never happen as we only process AST without syntax errors
+		if (termination == null) {
+			return;
+		}
+
+		game.termination = termination;
+
 	}
 
 }
