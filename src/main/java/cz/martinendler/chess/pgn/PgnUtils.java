@@ -3,6 +3,7 @@ package cz.martinendler.chess.pgn;
 import cz.martinendler.chess.pgn.antlr4.PGNLexer;
 import cz.martinendler.chess.pgn.antlr4.PGNParser;
 import cz.martinendler.chess.pgn.entity.PgnDatabase;
+import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
@@ -11,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Utils for working with Portable Game Notation (PGN)
@@ -63,21 +66,7 @@ public class PgnUtils {
 
 	}
 
-	/**
-	 * Parses the given PGN file into a {@link PgnDatabase}
-	 *
-	 * @param fileName path to the PGN file
-	 * @return a PGN database (all games inside the the given PGN file)
-	 * @throws IOException       when there is an error loading the file (e.g.: the file does not exist)
-	 * @throws PgnParseException where here is an parsing error
-	 */
-	public static @NotNull PgnDatabase parseFile(@NotNull String fileName) throws IOException, PgnParseException {
-
-		// create lexer and parser
-		PGNLexer lexer = new PGNLexer(CharStreams.fromFileName(fileName));
-
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		PGNParser parser = new PGNParser(tokens);
+	private static @NotNull ErrorCollectorListener setupErrorHandling(@NotNull PGNParser parser) {
 
 		// BailErrorStrategy throws a ParseCancellationException on first syntax error
 		// and does NOT attempt any error recovery
@@ -89,14 +78,26 @@ public class PgnUtils {
 		parser.removeErrorListeners();
 		parser.addErrorListener(errorCollectorListener);
 
-		// parse the file into a AST
-		// and handle RecognitionException (just to be sure, because DefaultErrorStrategy
+		return errorCollectorListener;
+
+	}
+
+	private static @NotNull <T> T parseAndHandleErrors(CharStream input, Function<PGNParser, T> parserFunction) throws PgnParseException {
+
+		// create lexer and parser
+		PGNLexer lexer = new PGNLexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		PGNParser parser = new PGNParser(tokens);
+
+		// setup custom error handling
+		ErrorCollectorListener errorCollectorListener = setupErrorHandling(parser);
+
+		// parse and handle RecognitionException (just to be sure, because DefaultErrorStrategy
 		// normally does not throw any exceptions during parsing)
-		PGNParser.ParseContext tree;
+		T tree;
 		try {
 
-			// parse the file into a AST
-			tree = parser.parse();
+			tree = parserFunction.apply(parser);
 
 		} catch (RecognitionException e) {
 
@@ -113,6 +114,26 @@ public class PgnUtils {
 			);
 		}
 
+		return tree;
+
+	}
+
+	/**
+	 * Parses the given PGN file into a {@link PgnDatabase}
+	 *
+	 * @param fileName path to the PGN file
+	 * @return a PGN database (all games inside the the given PGN file)
+	 * @throws IOException       when there is an error loading the file (e.g.: the file does not exist)
+	 * @throws PgnParseException where here is an parsing error
+	 */
+	public static @NotNull PgnDatabase parseFile(@NotNull String fileName) throws IOException, PgnParseException {
+
+		// convert file to a char stream
+		CharStream input = CharStreams.fromFileName(fileName);
+
+		// parse into an AST
+		PGNParser.ParseContext tree = parseAndHandleErrors(input, PGNParser::parse);
+
 		// use listener design pattern to automatically walk trough the AST
 		// and convert it into a PgnDatabase object
 		PgnListener pgnListener = new PgnListener();
@@ -127,6 +148,30 @@ public class PgnUtils {
 		}
 
 		return pgnDatabase;
+
+	}
+
+	/**
+	 * Parses the given PGN move text into a SAN moves array
+	 *
+	 * @param moveText PGN move text
+	 * @return a SAN moves array
+	 * @throws PgnParseException where here is an parsing error
+	 */
+	public static @NotNull List<@NotNull String> parseMoveText(@NotNull String moveText) throws PgnParseException {
+
+		// convert string to a char stream
+		CharStream input = CharStreams.fromString(moveText);
+
+		// parse the given move text into an AST
+		PGNParser.Movetext_sectionContext tree = parseAndHandleErrors(input, PGNParser::movetext_section);
+
+		// use listener design pattern to automatically walk trough the AST
+		// and convert it into a SAN moves array
+		PgnMoveTextListener listener = new PgnMoveTextListener();
+		ParseTreeWalker.DEFAULT.walk(listener, tree);
+
+		return listener.getMoves();
 
 	}
 
