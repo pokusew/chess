@@ -76,8 +76,8 @@ public class App extends Application {
 
 		// TODO: remove
 		// show the main window in the second display for easier developing
-		primaryStage.setX(-1500);
-		primaryStage.setY(100);
+		// primaryStage.setX(-1500);
+		// primaryStage.setY(100);
 
 		// Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
 		// stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
