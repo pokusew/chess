@@ -3,7 +3,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.text.Text?>
 <AnchorPane
 	xmlns:fx="http://javafx.com/fxml"
 	fx:controller="cz.martinendler.chess.ui.controllers.RightViewController"
@@ -29,7 +29,7 @@
 			HBox.hgrow="ALWAYS"
 		>
 			<Text fx:id="messageBubbleText">
-				There will be a useful message
+				Select an option from menu
 			</Text>
 		</VBox>
 

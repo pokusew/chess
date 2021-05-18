@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.Callable;
 
 /**
  * JavaFX App
@@ -72,6 +74,7 @@ public class App extends Application {
 		primaryStage = stage;
 		primaryStage.setTitle("Chess");
 
+		// TODO: remove
 		// show the main window in the second display for easier developing
 		primaryStage.setX(-1500);
 		primaryStage.setY(100);
@@ -113,6 +116,54 @@ public class App extends Application {
 			return new Pair<>(elem, controller);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		}
+
+	}
+
+	public void logExceptionAndShowAlert(Exception e) {
+
+		log.error("withErrorDialog: " + e.toString());
+
+		// show "feedback" to the user
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.initOwner(primaryStage);
+		alert.setTitle("An error occurred");
+		alert.setHeaderText("An error occurred");
+		alert.setContentText(e.getMessage());
+		alert.showAndWait();
+
+	}
+
+	public boolean withErrorDialog(Runnable operation) {
+
+		try {
+
+			operation.run();
+
+			return true;
+
+		} catch (Exception e) {
+
+			logExceptionAndShowAlert(e);
+
+			return false;
+
+		}
+
+	}
+
+	public <T> T withErrorDialog(Callable<T> operation) {
+
+		try {
+
+			return operation.call();
+
+		} catch (Exception e) {
+
+			logExceptionAndShowAlert(e);
+
+			return null;
+
 		}
 
 	}

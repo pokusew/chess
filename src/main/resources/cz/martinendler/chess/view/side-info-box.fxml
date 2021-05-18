@@ -13,7 +13,7 @@
 		styleClass="player-box"
 		HBox.hgrow="ALWAYS"
 	>
-		<Text fx:id="sideName">Smart Computer</Text>
+		<Text fx:id="sideName">Player</Text>
 	</HBox>
 	<HBox
 		styleClass="time-box"

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -39,11 +40,9 @@ public class RightViewController implements Initializable {
 
 		log.info("initialize");
 
-		moveLog.setOnMouseClicked((MouseEvent event) -> {
-			log.info("onMouseClicked: target " + event.getTarget().toString());
-		});
-
-		moveLogContent.getChildren().add(new MoveLogEntry(1, "e4", "e6"));
+		// moveLog.setOnMouseClicked((MouseEvent event) -> {
+		// 	log.info("onMouseClicked: target " + event.getTarget().toString());
+		// });
 
 	}
 
@@ -54,6 +53,31 @@ public class RightViewController implements Initializable {
 	 */
 	public void setMessageBubbleText(@Nullable String value) {
 		messageBubbleText.setText(value);
+	}
+
+	/**
+	 * Updates the move log with the {@link cz.martinendler.chess.engine.Game} move log
+	 *
+	 * @param gameMoveLog the game move log
+	 */
+	public void updateMoveLog(List<cz.martinendler.chess.engine.move.MoveLogEntry> gameMoveLog) {
+
+		// TODO: get rid of this horrible thing
+		moveLogContent.getChildren().remove(0, moveLogContent.getChildren().size());
+
+		for (int i = 0, fullMoveCounter = 1; i < gameMoveLog.size(); i += 2, fullMoveCounter++) {
+
+			cz.martinendler.chess.engine.move.MoveLogEntry whiteEntry = gameMoveLog.get(i);
+			cz.martinendler.chess.engine.move.MoveLogEntry blackEntry = (i + 1 < gameMoveLog.size())
+				? gameMoveLog.get(i + 1)
+				: null;
+
+			moveLogContent.getChildren().add(new MoveLogEntry(
+				fullMoveCounter, whiteEntry.getSan(), blackEntry != null ? blackEntry.getSan() : null
+			));
+
+		}
+
 	}
 
 }

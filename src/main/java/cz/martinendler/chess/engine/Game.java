@@ -3,19 +3,19 @@ package cz.martinendler.chess.engine;
 import cz.martinendler.chess.engine.board.Board;
 import cz.martinendler.chess.engine.board.Square;
 import cz.martinendler.chess.engine.move.Move;
+import cz.martinendler.chess.engine.move.MoveConversionException;
 import cz.martinendler.chess.engine.move.MoveLogEntry;
+import cz.martinendler.chess.engine.move.SanUtils;
 import cz.martinendler.chess.engine.pieces.Piece;
 import cz.martinendler.chess.engine.pieces.PieceType;
+import cz.martinendler.chess.pgn.entity.PgnGame;
 import cz.martinendler.chess.pgn.entity.PgnGameTermination;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * A chess game
@@ -31,9 +31,29 @@ public class Game {
 	private Board board;
 	private List<Move> legalMoves;
 	private final long[] legalMovesOfSquare;
-	private final List<MoveLogEntry> moveLog;
+	private final @NotNull List<@NotNull MoveLogEntry> moveLog;
+	private final @NotNull EnumMap<@NotNull Side, @NotNull Player> players;
 
-	public Game() {
+	private final Random random = new Random();
+
+	public Game(String fen) {
+
+		board = new Board();
+		board.loadFromFen(fen);
+
+		legalMovesOfSquare = new long[Square.values().length];
+
+		moveLog = new LinkedList<>();
+
+		players = new EnumMap<>(Side.class);
+		players.put(Side.WHITE, new Player("WHITE player"));
+		players.put(Side.BLACK, new Player("BLACK player"));
+
+		updateState();
+
+	}
+
+	public Game(PgnGame game) throws GameLoadingException, MoveConversionException {
 
 		board = new Board();
 		board.loadFromFen(Board.STANDARD_STARTING_POSITION_FEN);
@@ -42,7 +62,27 @@ public class Game {
 
 		moveLog = new LinkedList<>();
 
-		updateState();
+		for (String sanMove : game.moves) {
+
+			Move move = SanUtils.decodeSan(board, sanMove, board.getSideToMove());
+
+			MoveLogEntry moveLogEntry = board.doMove(move, true);
+
+			if (moveLogEntry == null) {
+				throw new GameLoadingException("Game could not be loaded due to invalid moves");
+			}
+
+			moveLog.add(moveLogEntry);
+
+		}
+
+		if (getResult() != game.termination) {
+			log.info("getResult() {} != game.termination {}", getResult(), game.termination);
+		}
+
+		players = new EnumMap<>(Side.class);
+		players.put(Side.WHITE, new Player(game.tags.get("White")));
+		players.put(Side.BLACK, new Player(game.tags.get("Black")));
 
 	}
 
@@ -92,6 +132,33 @@ public class Game {
 
 		if (moveLogEntry == null) {
 			log.error("doMove: moveLogEntry == null, move={}", move);
+			return false;
+		}
+
+		moveLog.add(moveLogEntry);
+
+		updateState();
+
+		return true;
+
+	}
+
+	public boolean doRandomMove() {
+
+		if (legalMoves.size() == 0) {
+			return false;
+		}
+
+		Move randomMove = legalMoves.get(random.nextInt(legalMoves.size()));
+
+		if (randomMove == null) {
+			return false;
+		}
+
+		MoveLogEntry moveLogEntry = board.doMove(randomMove, true);
+
+		if (moveLogEntry == null) {
+			log.error("doRandomMove: moveLogEntry == null, move={}", randomMove);
 			return false;
 		}
 
@@ -205,6 +272,46 @@ public class Game {
 	 */
 	public String getFen() {
 		return board.getFen();
+	}
+
+	/**
+	 * Gets the move log
+	 * TODO: better encapsulation (immutable view)
+	 *
+	 * @return the move log
+	 */
+	public List<MoveLogEntry> getMoveLog() {
+		return moveLog;
+	}
+
+	/**
+	 * Gets player for the given side
+	 *
+	 * @param side the side
+	 * @return the player for the given side
+	 */
+	public @NotNull Player getPlayer(@NotNull Side side) {
+		return players.get(side);
+	}
+
+	/**
+	 * Converts this game to a PGN game entity
+	 *
+	 * @return a PGN game entity
+	 */
+	public @NotNull PgnGame toPgnGame() {
+
+		PgnGame pgnGame = new PgnGame();
+
+		pgnGame.tags.put("White", getPlayer(Side.WHITE).getName());
+		pgnGame.tags.put("Black", getPlayer(Side.BLACK).getName());
+		pgnGame.tags.put("Result", getResult().getNotation());
+		pgnGame.termination = getResult();
+
+		moveLog.forEach(moveLogEntry -> pgnGame.moves.add(moveLogEntry.getSan()));
+
+		return pgnGame;
+
 	}
 
 }

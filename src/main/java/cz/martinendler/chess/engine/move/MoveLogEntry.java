@@ -52,6 +52,8 @@ public class MoveLogEntry {
 	 */
 	private final boolean enPassantMove;
 
+	private @Nullable String san;
+
 	public @NotNull Board getBoard() {
 		return board;
 	}
@@ -78,6 +80,16 @@ public class MoveLogEntry {
 
 	public boolean isEnPassantMove() {
 		return enPassantMove;
+	}
+
+	public @NotNull String getSan() {
+
+		if (san == null) {
+			san = SanUtils.encodeToSan(this);
+		}
+
+		return san;
+
 	}
 
 	public MoveLogEntry(

@@ -148,7 +148,10 @@ public class SanUtils {
 
 		boolean ambiguityResolved = false;
 
-		san.append(piece.getNotation(notation));
+		// do not add pawn piece identification
+		if (!piece.isOfType(PieceType.PAWN)) {
+			san.append(piece.getNotation(notation));
+		}
 
 		if (!pawnMove) {
 			// resolving ambiguous move
