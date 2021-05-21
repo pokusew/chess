@@ -13,6 +13,17 @@ import java.util.stream.Collectors;
  */
 public class PgnGame extends PgnEntity {
 
+	/**
+	 * In PGN export format, tokens in the movetext are placed left justified
+	 * on successive text lines each of which has less than 80 printing characters.
+	 */
+	public static final int MOVE_TEXT_LINE_CHAR_LIMIT = 80;
+
+	/**
+	 * Each PGN game must have at least these 7 tags in this order
+	 *
+	 * @see PgnGame#SEVEN_TAG_ROSTER_SET
+	 */
 	public final static @NotNull List<@NotNull String> SEVEN_TAG_ROSTER = List.of(
 		"Event",
 		"Site",
@@ -23,8 +34,16 @@ public class PgnGame extends PgnEntity {
 		"Result"
 	);
 
+	/**
+	 * Each PGN game must have at least these 7 tags
+	 *
+	 * @see PgnGame#SEVEN_TAG_ROSTER
+	 */
 	public final static @NotNull Set<@NotNull String> SEVEN_TAG_ROSTER_SET = Set.copyOf(SEVEN_TAG_ROSTER);
 
+	/**
+	 * PGN game tag pairs
+	 */
 	public final @NotNull Map<String, String> tags;
 
 	/**
@@ -32,6 +51,9 @@ public class PgnGame extends PgnEntity {
 	 */
 	public final @NotNull List<String> moves;
 
+	/**
+	 * PGN game termination marker
+	 */
 	public @NotNull PgnGameTermination termination;
 
 	public PgnGame() {
@@ -122,6 +144,44 @@ public class PgnGame extends PgnEntity {
 	}
 
 	/**
+	 * Appends the given string {@code str} to the movetext
+	 * <p>
+	 * In PGN export format, tokens in the movetext are placed left justified
+	 * on successive text lines each of which has less
+	 * than {@link PgnGame#MOVE_TEXT_LINE_CHAR_LIMIT} printing characters.
+	 *
+	 * @param movetext       the movetext string builder
+	 * @param numCharsInLine the number of characters in the current line
+	 * @param str            the non-null string to append
+	 * @return the updated number of characters in the current line
+	 */
+	private static int appendToMoveText(@NotNull StringBuilder movetext, int numCharsInLine, @NotNull String str) {
+
+		// In PGN export format, tokens in the movetext are placed left justified
+		// on successive text lines each of which has less than 80 printing characters.
+
+		final boolean spaceNeeded = numCharsInLine != 0;
+
+		int numCharsInLineAfter = numCharsInLine + str.length() + (spaceNeeded ? 1 : 0);
+
+		if (numCharsInLineAfter >= MOVE_TEXT_LINE_CHAR_LIMIT) {
+			// append a newline (separator) between the previous and the current fullMoveText
+			movetext.append("\n");
+			// reset the value of numCharsInLine
+			numCharsInLineAfter = str.length();
+		} else if (spaceNeeded) {
+			// append a space (separator) between the previous and the current fullMoveText
+			movetext.append(" ");
+		}
+
+		// append the actual given string
+		movetext.append(str);
+
+		return numCharsInLineAfter;
+
+	}
+
+	/**
 	 * Converts all moves (array of string of SAN-encoded moves) to a movetext string
 	 * in the PGN Export format
 	 *
@@ -129,47 +189,37 @@ public class PgnGame extends PgnEntity {
 	 */
 	public String movesToString() {
 
-		final StringBuilder sb = new StringBuilder();
+		final StringBuilder movetext = new StringBuilder();
 
-		// In PGN export format, tokens in the movetext are placed left justified
-		// on successive text lines  each of which has less than 80 printing characters.
 		int numCharsInLine = 0;
 
-		for (int i = 0; i < moves.size(); i += 2) {
+		// iterate trough moves by 2 (two moves form one full-move)
+		// first full-move has number 1
+		for (
+			int whiteIdx = 0, blackIdx = 1, fullMoveCounter = 1;
+			whiteIdx < moves.size();
+			whiteIdx += 2, blackIdx += 2, fullMoveCounter += 1
+		) {
 
-			String fullMoveNumber = Integer.toString(i + 1); // first full-move has number 1
-			String whiteMove = moves.get(i);
-			String blackMove = i + 1 < moves.size() ? moves.get(i + 1) : null;
+			final String whiteMove = moves.get(whiteIdx);
+			final String blackMove = blackIdx < moves.size() ? moves.get(blackIdx) : null;
 
-			String fullMoveText = " " + fullMoveNumber + "." + whiteMove + (blackMove != null ? (" " + blackMove) : "");
+			final String fullMoveText = fullMoveCounter + "."
+				+ whiteMove
+				+ (blackMove != null ? (" " + blackMove) : "");
 
-			numCharsInLine += fullMoveText.length();
-
-			if (numCharsInLine >= 80) {
-				sb.append("\n");
-				// without leading space
-				numCharsInLine = fullMoveText.length() - 1;
-				fullMoveText = fullMoveText.substring(1);
-			}
-
-			sb.append(fullMoveText);
+			numCharsInLine = appendToMoveText(movetext, numCharsInLine, fullMoveText);
 
 		}
 
 		// add game termination marker
-		if (numCharsInLine >= 80) {
-			sb.append("\n");
-			sb.append(termination.getNotation());
-		} else {
-			sb.append(" ");
-			sb.append(termination.getNotation());
-
-		}
+		// (here we can ignore the return value)
+		appendToMoveText(movetext, numCharsInLine, termination.getNotation());
 
 		// trailing end of line
-		sb.append("\n");
+		movetext.append("\n");
 
-		return sb.toString();
+		return movetext.toString();
 
 	}
 
