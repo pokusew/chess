@@ -28,40 +28,84 @@ public class Game {
 
 	private static final Logger log = LoggerFactory.getLogger(Game.class);
 
-	private Board board;
-	private List<Move> legalMoves;
-	private final long[] legalMovesOfSquare;
-	private final @NotNull List<@NotNull MoveLogEntry> moveLog;
+	/**
+	 * Players info
+	 */
 	private final @NotNull EnumMap<@NotNull Side, @NotNull Player> players;
 
+	/**
+	 * Boards history
+	 * Always holds: {@code boards.size() + 1 == moveLog.size()}
+	 * {@code boards.get(0)} --> starting board
+	 * {@code boards.get(1)} --> board AFTER move 0
+	 * {@code boards.get(2)} --> board AFTER move 1
+	 * {@code boards.get(N)} --> board AFTER move N-1
+	 */
+	private final @NotNull List<@NotNull Board> boards;
+	/**
+	 * Moves history
+	 */
+	private final @NotNull List<@NotNull MoveLogEntry> moveLog;
+
+	/**
+	 * Latest board
+	 */
+	private Board board;
+	/**
+	 * Legal moves for the {@link #board}
+	 */
+	private List<Move> legalMoves;
+	/**
+	 * Legal moves for the {@link #board}, indexed by from (i.e. origin) square
+	 */
+	private final long[] legalMovesOfSquare;
+
+	/**
+	 * Random number generator for {@link #doRandomMove()}
+	 */
 	private final Random random = new Random();
 
+	/**
+	 * Creates a new game from a given starting chess position
+	 *
+	 * @param fen the starting chess position in FEN format
+	 */
 	public Game(String fen) {
-
-		board = new Board();
-		board.loadFromFen(fen);
-
-		legalMovesOfSquare = new long[Square.values().length];
-
-		moveLog = new LinkedList<>();
 
 		players = new EnumMap<>(Side.class);
 		players.put(Side.WHITE, new Player("WHITE player"));
 		players.put(Side.BLACK, new Player("BLACK player"));
 
+		boards = new LinkedList<>();
+		moveLog = new LinkedList<>();
+
+		board = new Board();
+		board.loadFromFen(fen);
+		boards.add(new Board(board));
+
+		legalMovesOfSquare = new long[Square.values().length];
+
+		// sync legal moves cache
 		updateState();
 
 	}
 
 	public Game(PgnGame game) throws GameLoadingException, MoveConversionException {
 
+		players = new EnumMap<>(Side.class);
+		players.put(Side.WHITE, new Player(game.tags.get("White")));
+		players.put(Side.BLACK, new Player(game.tags.get("Black")));
+
+		boards = new LinkedList<>();
+		moveLog = new LinkedList<>();
+
 		board = new Board();
 		board.loadFromFen(game.resolveSetUpFEN());
+		boards.add(new Board(board));
 
 		legalMovesOfSquare = new long[Square.values().length];
 
-		moveLog = new LinkedList<>();
-
+		// tries to replay all moves in the PGN game
 		for (String sanMove : game.moves) {
 
 			Move move = SanUtils.decodeSan(board, sanMove, board.getSideToMove());
@@ -73,6 +117,7 @@ public class Game {
 			}
 
 			moveLog.add(moveLogEntry);
+			boards.add(new Board(board));
 
 		}
 
@@ -80,14 +125,14 @@ public class Game {
 			log.info("getResult() {} != game.termination {}", getResult(), game.termination);
 		}
 
-		players = new EnumMap<>(Side.class);
-		players.put(Side.WHITE, new Player(game.tags.get("White")));
-		players.put(Side.BLACK, new Player(game.tags.get("Black")));
-
+		// sync legal moves cache
 		updateState();
 
 	}
 
+	/**
+	 * Computes {@link #legalMoves} and {@link #legalMovesOfSquare} for the current {@link #board}
+	 */
 	private void updateState() {
 
 		legalMoves = board.generateLegalMoves();
@@ -100,6 +145,13 @@ public class Game {
 
 	}
 
+	/**
+	 * Checks if the given move leads to a pawn promotion
+	 *
+	 * @param from the origin square
+	 * @param to   the target square
+	 * @return {@code true} iff the given move leads to a pawn promotion
+	 */
 	public boolean isPromotionMove(@NotNull Square from, @NotNull Square to) {
 
 		Optional<Move> move = legalMoves.stream()
@@ -138,6 +190,7 @@ public class Game {
 		}
 
 		moveLog.add(moveLogEntry);
+		boards.add(new Board(board));
 
 		updateState();
 
@@ -165,6 +218,7 @@ public class Game {
 		}
 
 		moveLog.add(moveLogEntry);
+		boards.add(new Board(board));
 
 		updateState();
 
@@ -172,6 +226,11 @@ public class Game {
 
 	}
 
+	/**
+	 * Tries to undo the last move
+	 *
+	 * @return {@code true} if the move was undone and the board updated
+	 */
 	public boolean undoLastMove() {
 
 		if (moveLog.size() == 0) {
@@ -179,6 +238,7 @@ public class Game {
 		}
 
 		MoveLogEntry lastMoveLogEntry = moveLog.remove(moveLog.size() - 1);
+		boards.remove(boards.size() - 1);
 
 		board = lastMoveLogEntry.getBoard();
 
@@ -189,21 +249,45 @@ public class Game {
 	}
 
 	/**
-	 * Gets the board that was immediately before N-th move
+	 * Undoes last N moves
+	 * <p>
+	 * NOTE: Might successfully undo N - 1 move and still return {@code false}.
+	 *
+	 * @param n the number of moves to try to undo
+	 * @return {@code false} if all N moves were undone successfully, {@code false} otherwise
+	 */
+	public boolean undoLastMoves(int n) {
+
+		for (int i = 0; i < n; i++) {
+
+			if (!undoLastMove()) {
+				return false;
+			}
+
+		}
+
+		return true;
+
+	}
+
+	/**
+	 * Gets the board that was immediately after N-th move
 	 *
 	 * @param moveIdx the move index
-	 * @return the board that was immediately before N-th move
+	 * @return the board that was immediately after N-th move
 	 * @throws IllegalArgumentException when the given moveIdx is out of the valid range
 	 */
 	private @NotNull Board getSpecificBoard(int moveIdx) {
 
-		if (moveIdx < 0 || moveIdx >= moveLog.size()) {
+		int boardIdx = moveIdx + 1;
+
+		if (boardIdx < 0 || boardIdx >= boards.size()) {
 			throw new IllegalArgumentException(
-				"The given moveIdx " + moveIdx + " is out of the valid range [0 ," + (moveLog.size() - 1) + "]"
+				"The given moveIdx " + moveIdx + " is out of the valid range [-1 ," + (moveLog.size() - 1) + "]"
 			);
 		}
 
-		return moveLog.get(moveIdx).getBoard();
+		return boards.get(boardIdx);
 
 	}
 
@@ -218,12 +302,12 @@ public class Game {
 	}
 
 	/**
-	 * Gets the piece on the given square in board state that was immediately before N-th move
+	 * Gets the piece on the given square in board state that was immediately after N-th move
 	 *
 	 * @param moveIdx the move index
 	 * @param square  the square
 	 * @return the piece or {@code null} if there is no piece on the given square in board state
-	 * that was immediately before N-th move
+	 * that was immediately after N-th move
 	 * @throws IllegalArgumentException when the given moveIdx is out of the valid range
 	 */
 	public @Nullable Piece getPiece(int moveIdx, @NotNull Square square) {
@@ -310,7 +394,7 @@ public class Game {
 
 	/**
 	 * Generates the FEN representation of the underlying board
-	 * (that was immediately before N-th move)
+	 * (that was immediately after N-th move)
 	 *
 	 * @param moveIdx the move index
 	 * @throws IllegalArgumentException when the given moveIdx is out of the valid range
@@ -367,13 +451,29 @@ public class Game {
 
 	/**
 	 * Gets last move index
-	 *
+	 * <p>
 	 * Returns {@code -1} if there is no move in the move log yet.
 	 *
 	 * @return the last move index in range [-1, number of moves - 1]
 	 */
 	public int getLastMoveIndex() {
 		return moveLog.size() - 1;
+	}
+
+	/**
+	 * Gets the specific move by index
+	 *
+	 * @param moveIdx the move index, in range [-1, moveLog.size() - 1]
+	 * @return {@code moveIdx == -1 -> null}, otherwise a non-null {@link Move}
+	 */
+	public @Nullable Move getMove(int moveIdx) {
+
+		if (moveIdx == -1) {
+			return null;
+		}
+
+		return moveLog.get(moveIdx).getMove();
+
 	}
 
 }
