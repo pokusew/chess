@@ -2,10 +2,10 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <AnchorPane
 	xmlns:fx="http://javafx.com/fxml"
-	fx:controller="cz.martinendler.chess.ui.controllers.GameDialogController"
+	prefWidth="800.0"
+	fx:controller="cz.martinendler.chess.ui.controllers.NewGameDialogController"
 >
 	<children>
 		<GridPane
@@ -17,31 +17,41 @@
 			vgap="20"
 		>
 			<columnConstraints>
-				<ColumnConstraints hgrow="SOMETIMES"/>
-				<ColumnConstraints hgrow="ALWAYS"/>
+				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" prefWidth="400"/>
 			</columnConstraints>
 			<children>
 				<Label
-					text="Game type"
+					text="Starting position in FEN"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="0"
+				/>
+				<Label
+					text="Game type"
+					GridPane.columnIndex="0"
+					GridPane.rowIndex="1"
 				/>
 				<Label
 					text="Human side"
 					GridPane.columnIndex="0"
-					GridPane.rowIndex="1"
+					GridPane.rowIndex="2"
 				/>
-				<ComboBox
-					fx:id="typeField"
+				<TextField
+					fx:id="fenField"
 					GridPane.columnIndex="1"
 					GridPane.rowIndex="0"
 				/>
 				<ComboBox
-					fx:id="humanSideField"
+					fx:id="typeField"
 					GridPane.columnIndex="1"
 					GridPane.rowIndex="1"
 				/>
-				<ButtonBar GridPane.rowIndex="2" GridPane.columnSpan="2">
+				<ComboBox
+					fx:id="humanSideField"
+					GridPane.columnIndex="1"
+					GridPane.rowIndex="2"
+				/>
+				<ButtonBar GridPane.rowIndex="3" GridPane.columnSpan="2">
 					<buttons>
 						<Button mnemonicParsing="false" onAction="#handleSubmit" text="Start"/>
 						<Button mnemonicParsing="false" onAction="#handleCancel" text="Cancel"/>

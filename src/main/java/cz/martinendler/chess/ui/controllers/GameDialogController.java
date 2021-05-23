@@ -1,14 +1,13 @@
 package cz.martinendler.chess.ui.controllers;
 
-
 import cz.martinendler.chess.engine.Side;
 import cz.martinendler.chess.ui.GameOptions;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,18 +18,16 @@ public class GameDialogController {
 	private static final Logger log = LoggerFactory.getLogger(GameDialogController.class);
 
 	@FXML
-	private TextField fenField;
+	protected ComboBox<GameOptions.GameType> typeField;
 	@FXML
-	private ComboBox<GameOptions.GameType> typeField;
-	@FXML
-	private ComboBox<Side> humanSideField;
+	protected ComboBox<Side> humanSideField;
 
-	private Stage dialogStage;
-	private GameOptions options;
-	private boolean successful = false;
+	protected @Nullable Stage dialogStage;
+	protected @Nullable GameOptions options;
+	protected boolean successful = false;
 
 	@FXML
-	private void initialize() {
+	protected void initialize() {
 
 		ObservableList<GameOptions.GameType> types = FXCollections.observableList(new ArrayList<>());
 		types.addAll(GameOptions.GameType.values());
@@ -43,18 +40,12 @@ public class GameDialogController {
 
 	}
 
-	public void setDialogStage(Stage dialogStage) {
+	public void setDialogStage(@Nullable Stage dialogStage) {
 		this.dialogStage = dialogStage;
 	}
 
-	public void setOptions(GameOptions options) {
-
-		this.options = options;
-
-		fenField.setText(options.getStartingFen());
-		typeField.setValue(options.getType());
-		humanSideField.setValue(options.getHumanSide());
-
+	public @Nullable Stage getDialogStage() {
+		return dialogStage;
 	}
 
 	public boolean isSuccessful() {
@@ -62,33 +53,55 @@ public class GameDialogController {
 	}
 
 	@FXML
-	private void handleSubmit() {
-
-		if (options == null) {
-			return;
-		}
+	protected void handleSubmit() {
 
 		if (!validateInput()) {
 			return;
 		}
 
-		options.setStartingFen(fenField.getText());
-		options.setType(typeField.getValue());
-		options.setHumanSide(humanSideField.getValue());
+		setOptionsFromFieldValues();
 
 		successful = true;
-		dialogStage.close();
+		if (dialogStage != null) {
+			dialogStage.close();
+		}
 
 	}
 
 	@FXML
 	private void handleCancel() {
-		dialogStage.close();
+		if (dialogStage != null) {
+			dialogStage.close();
+		}
 	}
 
-	private boolean validateInput() {
-
+	protected boolean validateInput() {
 		return true;
+	}
+
+	public void setOptions(@Nullable GameOptions options) {
+
+		this.options = options;
+
+		if (options != null) {
+			typeField.setValue(options.getType());
+			humanSideField.setValue(options.getHumanSide());
+		}
+
+	}
+
+	public @Nullable GameOptions getOptions() {
+		return options;
+	}
+
+	protected void setOptionsFromFieldValues() {
+
+		if (options == null) {
+			return;
+		}
+
+		options.setType(typeField.getValue());
+		options.setHumanSide(humanSideField.getValue());
 
 	}
 

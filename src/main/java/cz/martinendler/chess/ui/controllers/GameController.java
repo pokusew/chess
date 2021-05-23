@@ -409,7 +409,7 @@ public class GameController extends AppAwareController implements Initializable 
 
 		log.info("newGame: starting new game");
 
-		GameOptions options = showGameDialog();
+		GameOptions options = showNewGameOptionsDialog();
 
 		if (options == null) {
 			log.info("newGame: options == null");
@@ -476,7 +476,7 @@ public class GameController extends AppAwareController implements Initializable 
 		}
 
 		if (options == null) {
-			options = showGameDialog();
+			options = showOpenGameOptionsDialog();
 			if (options == null) {
 				log.info("openGame: options == null");
 				return;
@@ -675,16 +675,16 @@ public class GameController extends AppAwareController implements Initializable 
 
 	}
 
-	private @Nullable GameOptions showGameDialog() {
+	private @Nullable GameOptions showGameOptionsDialog(@NotNull String title, @NotNull String fxml) {
 
 		// TODO: consider reusing same instance of the dialog
 
-		Pair<AnchorPane, GameDialogController> loaded = app.loadFXML("view/game-dialog");
+		Pair<AnchorPane, GameDialogController> loaded = app.loadFXML(fxml);
 		AnchorPane root = loaded.getKey();
 		GameDialogController controller = loaded.getValue();
 
 		Stage dialogStage = new Stage();
-		dialogStage.setTitle("Game Options");
+		dialogStage.setTitle(title);
 		dialogStage.initModality(Modality.WINDOW_MODAL);
 		dialogStage.initOwner(app.getPrimaryStage());
 		Scene scene = new Scene(root);
@@ -703,6 +703,14 @@ public class GameController extends AppAwareController implements Initializable 
 
 		return options;
 
+	}
+
+	private @Nullable GameOptions showOpenGameOptionsDialog() {
+		return showGameOptionsDialog("Open PGN Game Options", "view/game-dialog");
+	}
+
+	private @Nullable GameOptions showNewGameOptionsDialog() {
+		return showGameOptionsDialog("New Game Options", "view/new-game-dialog");
 	}
 
 	// TODO: edit time dialog
