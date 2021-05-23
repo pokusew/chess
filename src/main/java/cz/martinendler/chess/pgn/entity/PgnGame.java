@@ -3,6 +3,7 @@ package cz.martinendler.chess.pgn.entity;
 import cz.martinendler.chess.pgn.PgnUtils;
 import cz.martinendler.chess.pgn.PgnValidationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -12,6 +13,12 @@ import java.util.stream.Collectors;
  * A representation of a PGN Game that is inside a {@link PgnDatabase}
  */
 public class PgnGame extends PgnEntity {
+
+	/**
+	 * Standard starting chess position as FEN
+	 */
+	public static final String DEFAULT_SET_UP_FEN =
+		"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 	/**
 	 * In PGN export format, tokens in the movetext are placed left justified
@@ -106,6 +113,66 @@ public class PgnGame extends PgnEntity {
 		}
 
 		// currently, nothing else is validated
+
+	}
+
+	/**
+	 * Sets or unsets custom starting position (SetUp and FEN tags)
+	 * <p>
+	 * If the {@code fen} is {@code null} or an empty string or it equals to the {@link PgnGame#DEFAULT_SET_UP_FEN},
+	 * then the SetUp and FEN tags are both removed.
+	 * <p>
+	 * Otherwise (if the {@code fen} is a non-null string different from the {@link PgnGame#DEFAULT_SET_UP_FEN}),
+	 * the SetUp tag is set to 1 and the FEN tag is set to the value {@code fen}.
+	 *
+	 * @param fen the starting chess position as FEN
+	 */
+	public void setSetUpFEN(@Nullable String fen) {
+
+		if (fen == null || fen.isEmpty() || DEFAULT_SET_UP_FEN.equals(fen)) {
+			tags.remove("SetUp");
+			tags.remove("FEN");
+			return;
+		}
+
+		tags.put("SetUp", "1");
+		tags.put("FEN", fen);
+
+	}
+
+	/**
+	 * Gets custom starting position (when the SetUp tag == "1" and the FEN tag is non-null non-empty string)
+	 *
+	 * @return the custom starting chess position as FEN if set, {@code null} otherwise
+	 */
+	public @Nullable String getSetUpFEN() {
+
+		@Nullable String setUpTag = tags.get("SetUp");
+		@Nullable String fenTag = tags.get("FEN");
+
+		if ("1".equals(setUpTag) && fenTag != null && !fenTag.isEmpty()) {
+			return fenTag;
+		}
+
+		return null;
+
+	}
+
+	/**
+	 * Gets starting position
+	 *
+	 * @return the starting chess position as FEN
+	 * @see PgnGame#getSetUpFEN()
+	 */
+	public @NotNull String resolveSetUpFEN() {
+
+		@Nullable String customSetUpFEN = getSetUpFEN();
+
+		if (customSetUpFEN != null) {
+			return customSetUpFEN;
+		}
+
+		return DEFAULT_SET_UP_FEN;
 
 	}
 
