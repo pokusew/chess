@@ -7,25 +7,19 @@ See also [Chess Game Notes](./CHESS-GAME-NOTES.md) which contains some useful ch
 See also [Useful info](./USEFUL-INFO.md) which contains some useful Java-related links.
 
 
-
 ## Current state 👀
 
-<img alt="Chessboard" title="An early version of chessboard" src="./docs/images/chess-dev-update-2021.04-02.png" width="400" />
-
-Project is fully setup (Maven, JavaFX 15, logging, unit testing).
-
-Currently, basic **GUI for the chessboard is implemented**.
-It is **fully responsive** (it automatically adapts according to the current window size).
-It supports **moving chess pieces using drag and drop**. It is located in package
-`cz.martinendler.chess.ui` and consists of the following classes: `Board`, `Square`, `Piece`,
-`BorderSegment`, `BorderDescription`.
-
-Furthermore, there is a PoC implementation of **app controllers** (package `cz.martinendler.chess.ui.controllers`).
-They are designed to work with the `cz.martinendler.chess.ControllerFactory`
-that **handles automatic dependency injection**.
+The project is completed. See:
+* [Technical Manual ⚙️](./docs/TECHNICAL-MANUAL.md)
+    * 👉 See its **[Development section](./docs/TECHNICAL-MANUAL.md#development)** that includes notes
+        about **building and running the project**.
+* [User Manual 📘](./docs/USER-MANUAL.md)
+* [the project README](./README.md)
 
 
 ## Plan 🗓️
+
+NOTE: It is obsolete as the project has been completed.
 
 It is regularly updated as the development progresses.
 
@@ -58,13 +52,8 @@ It is regularly updated as the development progresses.
 
 ## Other notes
 
-* build and export
-    * copy `build.sh` and `build-pom.xml`
-        from my [cookbook project](https://github.com/pokusew/fel-dbs-hw06)
-    * copy `export.sh` and the appropriate section from `export/README.md`
-        from my [cookbook project](https://github.com/pokusew/fel-dbs-hw06)
-* sounds
-    * add sound effects for:
+* It would be cool if the app supported also sound effects.
+    * Add sound effects for:
         * chess piece moved
         * chess piece captured
         * invalid move attempted
