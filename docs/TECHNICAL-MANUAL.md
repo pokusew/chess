@@ -187,7 +187,7 @@ _It was designed with help of [Chess Programming WIKI](https://www.chessprogramm
 A lot of inspiration and some pieces of code (though much rewritten) come
 from [github.com/bhlangonijr/chesslib](https://github.com/bhlangonijr/chesslib)._
 
-<img alt="class diagram of the package cz.martinendler.chess.engine" title="cz.martinendler.chess.engine" src="./images/package-engine-v2.png" width="1200" />
+<img alt="class diagram of the package cz.martinendler.chess.engine" title="cz.martinendler.chess.engine" src="./images/package-engine-v3.png" width="1200" />
 
 
 ### package: `cz.martinendler.chess.pgn`
@@ -200,7 +200,7 @@ The subpackage `cz.martinendler.chess.entitiy` contains definitions for common P
 They work as simple DTOs and implement `PgnValidatable` interface that allows easy entity-specific validation.
 On top of that can also be converted back to a valid PGN via their `toString()` methods.
 
-<img alt="class diagram of the package cz.martinendler.chess.pgn" title="cz.martinendler.chess.pgn" src="./images/package-pgn.png" width="800" />
+<img alt="class diagram of the package cz.martinendler.chess.pgn" title="cz.martinendler.chess.pgn" src="./images/package-pgn-v3.png" width="800" />
 
 
 ### package: `cz.martinendler.chess.ui`
@@ -221,5 +221,5 @@ When a `Piece` is dropped on a `Sqaure`, the `Square` make the `Piece` its child
 are designed to work with the `cz.martinendler.chess.ControllerFactory`
 that **handles automatic dependency injection**.
 
-<img alt="class diagram of the package cz.martinendler.chess.ui" title="cz.martinendler.chess.ui" src="./images/package-ui-v2.png" width="1200" />
+<img alt="class diagram of the package cz.martinendler.chess.ui" title="cz.martinendler.chess.ui" src="./images/package-ui-v3.png" width="1200" />
 
