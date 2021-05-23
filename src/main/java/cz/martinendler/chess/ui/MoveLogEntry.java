@@ -6,6 +6,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A move log entry
@@ -17,6 +19,8 @@ public class MoveLogEntry extends HBox {
 
 	public MoveLogEntry(
 		int fullMoveCounter,
+		int whiteMoveIndex,
+		int blackMoveIndex,
 		@Nullable String whiteMove,
 		@Nullable String blackMove,
 		@NotNull SimpleIntegerProperty activeMoveIndex
@@ -32,10 +36,6 @@ public class MoveLogEntry extends HBox {
 		HBox counterBox = new HBox(new Text(fullMoveCounter + "."));
 		counterBox.getStyleClass().add("counter");
 		getChildren().add(counterBox);
-
-		int movePairIndex = fullMoveCounter - 1;
-		int whiteMoveIndex = movePairIndex * 2;
-		int blackMoveIndex = (movePairIndex * 2) + 1;
 
 		whiteMoveBox = new Box(
 			whiteMoveIndex,
@@ -67,6 +67,8 @@ public class MoveLogEntry extends HBox {
 	}
 
 	private static class Box extends HBox {
+
+		private static final Logger log = LoggerFactory.getLogger(Box.class);
 
 		private final int moveIndex;
 		private final @NotNull SimpleIntegerProperty activeMoveIndex;
@@ -101,6 +103,11 @@ public class MoveLogEntry extends HBox {
 				}
 
 			};
+
+			// initial value
+			if (this.moveIndex == this.activeMoveIndex.get()) {
+				innerBox.getStyleClass().add("inner-box--active");
+			}
 
 			register();
 

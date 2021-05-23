@@ -104,18 +104,21 @@ public class RightViewController implements Initializable {
 		}
 		moveLogContent.getChildren().remove(0, moveLogContent.getChildren().size());
 
-		for (int i = 0, fullMoveCounter = 1; i < gameMoveLog.size(); i += 2, fullMoveCounter++) {
-
-			cz.martinendler.chess.engine.move.MoveLogEntry whiteEntry = gameMoveLog.get(i);
-			cz.martinendler.chess.engine.move.MoveLogEntry blackEntry = (i + 1 < gameMoveLog.size())
-				? gameMoveLog.get(i + 1)
-				: null;
+		// iterate trough moves by 2 (two moves form one full-move)
+		// first full-move has number 1
+		for (
+			int whiteIdx = 0, blackIdx = 1, fullMoveCounter = 1;
+			whiteIdx < gameMoveLog.size();
+			whiteIdx += 2, blackIdx += 2, fullMoveCounter += 1
+		) {
 
 			moveLogContent.getChildren().add(
 				new MoveLogEntry(
 					fullMoveCounter,
-					whiteEntry.getSan(),
-					blackEntry != null ? blackEntry.getSan() : null,
+					whiteIdx,
+					blackIdx,
+					gameMoveLog.get(whiteIdx).getSan(),
+					blackIdx < gameMoveLog.size() ? gameMoveLog.get(blackIdx).getSan() : null,
 					activeMoveIndex
 				)
 			);
