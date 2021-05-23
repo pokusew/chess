@@ -8,13 +8,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /**
  * JavaFX App
@@ -33,6 +37,8 @@ public class App extends Application {
 
 	private ControllerFactory controllerFactory;
 	private Stage primaryStage;
+
+	private static @Nullable String openArg = null;
 
 	public ControllerFactory getControllerFactory() {
 		return controllerFactory;
@@ -60,10 +66,42 @@ public class App extends Application {
 		super.stop();
 	}
 
+	/**
+	 * Parses the {@code --open} argument from CLI arguments
+	 *
+	 * @param args the CLI arguments
+	 * @return the value of the {@code --open} argument (may be an empty string)
+	 * or {@code null} if there is none
+	 */
+	private static @Nullable String parseOpenArg(String[] args) {
+
+		List<String> openArgs = Arrays.stream(args)
+			.filter(str -> str != null && str.startsWith("--open="))
+			.collect(Collectors.toUnmodifiableList());
+
+		if (openArgs.size() == 0) {
+			return null;
+		}
+
+		// last one wins
+		@NotNull String lastOpenArgs = openArgs.get(openArgs.size() - 1);
+
+		return lastOpenArgs.substring(7);
+
+	}
+
+	public @Nullable String getOpenArg() {
+		return openArg;
+	}
+
 	public static void main(String[] args) {
 		String javaVersion = System.getProperty("java.version");
 		String javafxVersion = System.getProperty("javafx.version");
-		log.info("main, java.version = " + javaVersion + ", javafx.version = " + javafxVersion);
+		openArg = parseOpenArg(args);
+		log.info(
+			"main: java.version = {}, javafx.version = {}, args = {}, openArg={}",
+			javaVersion, javafxVersion, args, openArg
+		);
 		launch(args);
 	}
 
@@ -88,16 +126,11 @@ public class App extends Application {
 	}
 
 	/**
-	 * Parses the custom window startup position option
+	 * Parses the custom window startup position option value
 	 * <p>
-	 * The custom window startup position can be specified as java VM argument/option:
-	 * For example, the following option
-	 * <pre>
-	 *     -Dcz.martinendler.chess.position=-1500:100
-	 * <pre/>
-	 * corresponds to the position x=-1500, y=100.
+	 * For example, the value {@code -1500:100} corresponds to the position {@code x=-1500, y=100}.
 	 *
-	 * @param value the value of {@code cz.martinendler.chess.position} option
+	 * @param value the value of the option
 	 * @return {@link StartupPosition} the custom startup position, or {@code null} if there was an parsing error
 	 */
 	public static @Nullable StartupPosition parseCustomWindowStartupPosition(@Nullable String value) {
@@ -192,6 +225,9 @@ public class App extends Application {
 
 	}
 
+	/**
+	 * Initializes the root scene and shows it in the {@link #primaryStage}
+	 */
 	private void initRootScene() {
 
 		Pair<Parent, AppAwareController> root = loadFXML("view/game");
@@ -209,6 +245,17 @@ public class App extends Application {
 
 	}
 
+	/**
+	 * Loads a FXML file from the given URL (relative to the resources path for {@link App} class)
+	 * <p>
+	 * Uses {@link #controllerFactory} to create all controllers
+	 * (that allows for an easy DI, mainly of the {@link App} instance).
+	 *
+	 * @param fxml the FXML file URL (relative to the resources path for {@link App} class)
+	 * @param <P>  type of the root element
+	 * @param <C>  type of the controller
+	 * @return pair of the root element and the controller
+	 */
 	public <P, C> Pair<P, C> loadFXML(String fxml) {
 
 		URL location = App.class.getResource(fxml + ".fxml");
@@ -225,6 +272,12 @@ public class App extends Application {
 
 	}
 
+	/**
+	 * Logs the given exception and shows an error alert dialog to the user
+	 * Waits until the user closes the dialog
+	 *
+	 * @param e the exception
+	 */
 	public void logExceptionAndShowAlert(Exception e) {
 
 		log.error("withErrorDialog: " + e.toString());
@@ -239,6 +292,11 @@ public class App extends Application {
 
 	}
 
+	/**
+	 * Runs the given operation and handles all exceptions using {@link #logExceptionAndShowAlert(Exception e)}
+	 *
+	 * @param operation the operation to run
+	 */
 	public boolean withErrorDialog(Runnable operation) {
 
 		try {
@@ -257,7 +315,15 @@ public class App extends Application {
 
 	}
 
-	public <T> T withErrorDialog(Callable<T> operation) {
+	/**
+	 * Runs the given operation that returns an result of type {@code T}
+	 * and handles all exceptions using {@link #logExceptionAndShowAlert(Exception e)}
+	 *
+	 * @param operation the operation to run
+	 * @param <T>       type of the result of the operation
+	 * @return the result of the operation if it finished without any exceptions, {@code null} otherwise
+	 */
+	public <T> @Nullable T withErrorDialog(Callable<T> operation) {
 
 		try {
 
