@@ -3,6 +3,10 @@
 A [**Chess** board game](https://en.wikipedia.org/wiki/Chess) implemented as a Java desktop application  
 A term project in [CTU FEE](https://fel.cvut.cz/en/) ([ČVUT FEL](https://fel.cvut.cz/cz/)) [B0B36PJV course](https://cw.fel.cvut.cz/wiki/courses/b0b36pjv/start).
 
+<div style="text-align: center">
+<img alt="A chessboard with a piece that is being moved" title="A screenshot from the running app" src="./docs/images/chess-game.png" width="800" />
+</div>
+
 
 ## Content
 

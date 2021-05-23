@@ -3,9 +3,10 @@
 The Chess App allows to play the standard [**Chess** board game](https://en.wikipedia.org/wiki/Chess).
 It implements all standard chess rules as defined
 by [FIDE Laws of Chess taking effect from 1 January 2018](https://handbook.fide.com/chapter/E012018)
-(see also Wikipedia's [Rules of chess](https://en.wikipedia.org/wiki/Rules_of_chess)).
+(see also Wikipedia's [Rules of chess](https://en.wikipedia.org/wiki/Rules_of_chess))
+(except fifty-move rule, insufficient material rule,  threefold repetition rule).
 
-The app offers **a simple responsive GUI** with drag-and-drop support.
+The app offers **a simple responsive GUI** with **drag-and-drop** support.
 
 
 ## Installation
@@ -15,7 +16,7 @@ The Chess App is a platform independent desktop application. It supports **macOS
 The app is distributed as a single JAR with no dependencies.
 However, a JRE 11+ is needed for running it.
 
-Note: In the future, we might ship a platform specific executable with a bundled JRE.
+_Note:_ In the future, we might ship a platform specific executable with a bundled JRE.
 
 
 ## Game modes
@@ -23,7 +24,9 @@ Note: In the future, we might ship a platform specific executable with a bundled
 The app offers several game modes:
 1. **local two-player game, human vs human**
     * In this mode, two players can play on the same computer taking turns.
-2. **human vs computer against an arbitrary chess engine (via [UCI](https://www.shredderchess.com/chess-features/uci-universal-chess-interface.html))**
+2. **human vs computer (random legal moves generator)**
+    * In this mode, a player can play against a random legal moves generator.
+3. **(not implemented yet)** **human vs computer against an arbitrary chess engine (via [UCI](https://www.shredderchess.com/chess-features/uci-universal-chess-interface.html))**
     * In this mode, a player can play against an arbitrary chess engine
         that supports [UCI (Universal Chess Interface)](https://www.shredderchess.com/chess-features/uci-universal-chess-interface.html) (such as [Stockfish](https://stockfishchess.org/)).
     * The engine must be installed manually.
@@ -37,27 +40,29 @@ The app offers several game modes:
     * Note! The following rules are not implemented:
       fifty-move rule, insufficient material rule, threefold repetition rule.
 
-* **Initiative chessboard**
+* **Intuitive chessboard**
     * Two **possibilities for moving pieces** on the board:
         1. **Drag-And-Drop**
         2. Selecting a piece to move with a click and then selecting a target square with another click.
-    * The **chessboard can be rotated** (by 180 degrees) at any time.
+    * **(not implemented yet)** The **chessboard can be rotated** (by 180 degrees) at any time.
 * **Moves log**
     * All moves all logged. In mode 1, also undoing of the last _n_ moves is supported.
+    * Click on the move, one can view the board state after that move (which is also highlighted).
 * **Saving and loading of the game state**
     * The game state can be loaded or saved to a file at any point.
     * The app supports standard [PGN](https://en.wikipedia.org/wiki/Portable_Game_Notation) format.
 * **Game editor**
-    * Chess pieces can be **manually placed** on the board before starting the game.
+    * Chess pieces can be **manually placed** on the board before starting the game (using FEN).
     * Any possible (even legally impossible) placement is allowed (e.g. more pieces).
     * The currently running game can be **stopped, edited and then restarted** with the changed state.
 * **Chess clock**
     * There is an option to use chess clock during the game.
     * The amount of time is configurable.
-    * The chess clock can be stopped and restarted with an arbitrary value at any time.
 
 
 ## Using the app
+
+Upon the app startup, a _New Game Dialog_ is shown.
 
 
 ### App menu
@@ -73,16 +78,6 @@ The menu offers the following options _(corresponding keyboard shortcuts are in 
     * Save As... _(Ctrl-Shift-S / Cmd-Shift-S)_
 * Edit
     * Undo Move _(Ctrl-Z / Cmd-Z)_
-    * Redo Move _(Ctrl-Y / Cmd-Y)_
-* Help
-    * About Chess
-    * Preferences
-
-
-### Startup screen
-
-Upon the app startup, a _Welcome screen_ is showed.
-The _Welcome screen_ offers the same options as the app menu.
 
 
 ### Game screen
@@ -90,10 +85,11 @@ The _Welcome screen_ offers the same options as the app menu.
 When a game is started (either via _New Game..._ or _Open..._),
 the game screen with the chessboard moves log is shown.
 
-_Note: The screenshot comes from an early development version
-and it is subject to change. Currently, only the chessboard is shown._
+_**An example of moving a piece:**_
+<img alt="A chessboard with a piece that is being moved" title="A chessboard with a piece that is being moved" src="./images/chess-game.png" width="800" />
 
-<img alt="Chessboard" title="An early version of chessboard" src="./images/chess-dev-update-2021.04-02.png" width="400" />
+_**An example of browsing a game moves history:**_
+<img alt="A chessboard with a hightlighted move" title="A chessboard with a hightlighted move" src="./images/chess-moves-history-browsing.png" width="800" />
 
 
 ### Option: Help > Preferences
@@ -134,13 +130,7 @@ The user is presented with a standard system file dialog to choose where to save
 
 ### Option: Edit > Undo Move
 
-Only available in game mode 1.
+Only available in game mode 1 and 2.
 Undoes the latest move in the moves log.
 Can be used repeatedly as long as there are moves to undo in the moves log.
 
-
-### Option: Edit > Redo Move
-
-Only available in game mode 1.
-Redoes the latest move that was undone using _Undo Move_.
-It can be only used iff no other move was played between undoing and redoing.
