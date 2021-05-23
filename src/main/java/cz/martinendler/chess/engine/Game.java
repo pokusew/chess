@@ -56,7 +56,7 @@ public class Game {
 	public Game(PgnGame game) throws GameLoadingException, MoveConversionException {
 
 		board = new Board();
-		board.loadFromFen(Board.STANDARD_STARTING_POSITION_FEN);
+		board.loadFromFen(game.resolveSetUpFEN());
 
 		legalMovesOfSquare = new long[Square.values().length];
 
@@ -83,6 +83,8 @@ public class Game {
 		players = new EnumMap<>(Side.class);
 		players.put(Side.WHITE, new Player(game.tags.get("White")));
 		players.put(Side.BLACK, new Player(game.tags.get("Black")));
+
+		updateState();
 
 	}
 
@@ -302,6 +304,10 @@ public class Game {
 	public @NotNull PgnGame toPgnGame() {
 
 		PgnGame pgnGame = new PgnGame();
+
+		if (moveLog.size() > 0) {
+			pgnGame.setSetUpFEN(moveLog.get(0).getBoard().getFen());
+		}
 
 		pgnGame.tags.put("White", getPlayer(Side.WHITE).getName());
 		pgnGame.tags.put("Black", getPlayer(Side.BLACK).getName());
