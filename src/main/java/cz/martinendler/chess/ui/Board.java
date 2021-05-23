@@ -459,13 +459,13 @@ public class Board extends Region {
 
 	@Override
 	public void resize(double width, double height) {
-		log.info(
-			"resize: w = {}, h = {}," +
-				" cw = {}, ch = {}",
-			width, height,
-			getWidth(), getHeight()
-		);
 		if (width != getWidth() || height != getHeight()) {
+			log.info(
+				"resize: w = {}, h = {}," +
+					" cw = {}, ch = {}",
+				width, height,
+				getWidth(), getHeight()
+			);
 			recomputeSizes(width, height);
 			setWidth(boardSize);
 			setHeight(boardSize);
