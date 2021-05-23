@@ -4,15 +4,16 @@
   "private": true,
   "description": "Chess implementation in Java",
   "keywords": [
+    "chess",
     "fel"
   ],
-  "homepage": "https://gitlab.fel.cvut.cz/B202_B0B36PJV/endlemar#readme",
+  "homepage": "https://github.com/pokusew/chess#readme",
   "bugs": {
-    "url": "https://gitlab.fel.cvut.cz/B202_B0B36PJV/endlemar/issues"
+    "url": "https://github.com/pokusew/chess/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.fel.cvut.cz/B202_B0B36PJV/endlemar.git"
+    "url": "https://github.com/pokusew/chess.git"
   },
   "license": "proprietary",
   "author": {

@@ -1,7 +1,7 @@
 # Chess
 
 A [**Chess** board game](https://en.wikipedia.org/wiki/Chess) implemented as a Java desktop application  
-A term project in [CTU FEL B0B36PJV course](https://cw.fel.cvut.cz/wiki/courses/b0b36pjv/start).
+A term project in [CTU FEE](https://fel.cvut.cz/en/) ([ČVUT FEL](https://fel.cvut.cz/cz/)) [B0B36PJV course](https://cw.fel.cvut.cz/wiki/courses/b0b36pjv/start).
 
 
 ## Content
@@ -63,8 +63,8 @@ implementation of the [**Chess** board game](https://en.wikipedia.org/wiki/Chess
 ## Git repository
 
 The Git repository for this project is hosted at:
-1. **CUT FEL GitLab** [B202_B0B36PJV/endlemar](https://gitlab.fel.cvut.cz/B202_B0B36PJV/endlemar) (as required by the assigment description)
-2. **GitHub** [pokusew/chess](https://github.com/pokusew/chess) (my private GitHub repository)
+1. **GitHub** [pokusew/chess](https://github.com/pokusew/chess) (my GitHub repository)
+2. **CTU FEE (CVUT FEL) GitLab** [B202_B0B36PJV/endlemar](https://gitlab.fel.cvut.cz/B202_B0B36PJV/endlemar) (as required by the assigment description)
 
 
 ## Further information
