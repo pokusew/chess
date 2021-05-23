@@ -211,6 +211,9 @@ public class Square extends StackPane {
 		parentBoard.legalMovesProperty().addListener(legalMovesListener);
 		parentBoard.highlightsProperty().addListener(highlightsListener);
 
+		// TODO: apart from adding the change listeners
+		//       we should also run the listener with the initial (current) values
+
 	}
 
 	public @Nullable Board getParentBoard() {
