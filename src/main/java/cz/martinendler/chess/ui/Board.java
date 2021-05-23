@@ -146,6 +146,10 @@ public class Board extends Region {
 		null, "legalMoves", 0L
 	);
 
+	private final @NotNull SimpleLongProperty highlights = new SimpleLongProperty(
+		null, "highlights", 0L
+	);
+
 	private @Nullable MoveAttemptHandler moveAttemptHandler;
 
 	public Board() {
@@ -253,6 +257,19 @@ public class Board extends Region {
 
 	public void setLegalMoves(long legalMoves) {
 		this.legalMoves.set(legalMoves);
+	}
+
+	public long getHighlights() {
+		return highlights.get();
+	}
+
+	public @NotNull SimpleLongProperty highlightsProperty() {
+		return highlights;
+	}
+
+	public void setHighlights(long highlights) {
+		log.info("setHighlights " + Long.toBinaryString(highlights));
+		this.highlights.set(highlights);
 	}
 
 	public void clean() {

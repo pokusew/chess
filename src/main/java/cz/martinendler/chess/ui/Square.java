@@ -29,10 +29,12 @@ public class Square extends StackPane {
 
 	private final @NotNull ChangeListener<Square> moveOriginListener;
 	private final @NotNull ChangeListener<Number> legalMovesListener;
+	private final @NotNull ChangeListener<Number> highlightsListener;
 
 	private @Nullable Board parentBoard;
 
 	private boolean isMoveOrigin;
+	private boolean isHighlighted;
 
 	public Square(cz.martinendler.chess.engine.board.Square square) {
 		super();
@@ -75,6 +77,22 @@ public class Square extends StackPane {
 				} else {
 					getStyleClass().add("square--move-hint");
 				}
+			}
+
+		};
+
+		this.highlightsListener = (observable, oldValue, newValue) -> {
+
+			if ((oldValue.longValue() & square.getBitboard()) != 0L) {
+				log.info("{} removing highlight", this);
+				isHighlighted = false;
+				getStyleClass().remove("square--highlight");
+			}
+
+			if ((newValue.longValue() & square.getBitboard()) != 0L) {
+				log.info("{} adding highlight", this);
+				isHighlighted = true;
+				getStyleClass().add("square--highlight");
 			}
 
 		};
@@ -172,6 +190,7 @@ public class Square extends StackPane {
 		// unregister
 		parentBoard.moveOriginProperty().removeListener(moveOriginListener);
 		parentBoard.legalMovesProperty().removeListener(legalMovesListener);
+		parentBoard.highlightsProperty().removeListener(highlightsListener);
 		// unset reference
 		parentBoard = null;
 
@@ -190,6 +209,7 @@ public class Square extends StackPane {
 		parentBoard = (Board) newParent;
 		parentBoard.moveOriginProperty().addListener(moveOriginListener);
 		parentBoard.legalMovesProperty().addListener(legalMovesListener);
+		parentBoard.highlightsProperty().addListener(highlightsListener);
 
 	}
 
@@ -260,6 +280,10 @@ public class Square extends StackPane {
 
 	public boolean isMoveOrigin() {
 		return isMoveOrigin;
+	}
+
+	public boolean isHighlighted() {
+		return isHighlighted;
 	}
 
 	public void updateMove() {

@@ -203,12 +203,24 @@
 	-fx-background-color: -fx-chess-square-dark-color;
 }
 
-.square.square--light.square--origin {
+.square.square--light.square--highlight {
+	/*-fx-background-color: #ffd700;*/
+	-fx-background-color: #f7d26b;
+}
+
+.square.square--dark.square--highlight {
+	/*-fx-background-color: #ffd700;*/
+	-fx-background-color: #b3a237;
+}
+
+.square.square--light.square--origin,
+.square.square--light.square--highlight.square--origin {
 	/*-fx-background-color: #ffd700;*/
 	-fx-background-color: #f6f669;
 }
 
-.square.square--dark.square--origin {
+.square.square--dark.square--origin,
+.square.square--dark.square--highlight.square--origin {
 	/*-fx-background-color: #ffd700;*/
 	-fx-background-color: #baca2b;
 }
