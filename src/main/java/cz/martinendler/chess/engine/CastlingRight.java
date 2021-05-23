@@ -62,6 +62,7 @@ public enum CastlingRight {
 	 * {@link Side#WHITE} pieces: KQ K Q (UPPERCASE letters)
 	 * {@link Side#BLACK} pieces: kq k q (lowercase letters)
 	 *
+	 * @param side the side that has this castling right as the notation is side-dependent
 	 * @return the castling notation for usage in FEN
 	 */
 	public @NotNull String getFenNotation(@NotNull Side side) {
