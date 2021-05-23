@@ -21,11 +21,11 @@ A term project in [CTU FEE](https://fel.cvut.cz/en/) ([ČVUT FEL](https://fel.cv
 
 ## Documentation
 
-* [Development plan incl. current state 🗓️](./TODO.md)
 * [Technical Manual ⚙️](./docs/TECHNICAL-MANUAL.md)
     * 👉 See its **[Development section](./docs/TECHNICAL-MANUAL.md#development)** that includes notes
         about **building and running the project**.
 * [User Manual 📘](./docs/USER-MANUAL.md)
+* [Development plan incl. current state 🗓️](./TODO.md)
 
 
 ## Goal 🎯
