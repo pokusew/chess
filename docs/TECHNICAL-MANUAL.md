@@ -131,7 +131,9 @@ cz.martinendler.chess
 │   ├── Castling
 │   ├── CastlingRight
 │   ├── Game - board wrapper with history support to be used by UI
+│   ├── GameLoadingException
 │   ├── Notation
+│   ├── Player
 │   └── Side
 ├── pgn - PGN parsing and encoding
 │   ├── antlr4 - generated PGN lexer and parser using ANTLR v4
@@ -151,18 +153,24 @@ cz.martinendler.chess
 │   ├── controllers - FXML controllers
 │   │   ├── AppAwareController
 │   │   ├── GameController
+│   │   ├── GameDialogController
+│   │   ├── LifecycleAwareController
+│   │   ├── NewGameDialogController
 │   │   ├── RightViewController
 │   │   └── SideInfoBoxController
 │   ├── Board - represents the chessboard view
 │   ├── BorderDescription - represents a border segment with a text description
 │   ├── BorderSegment - represents a border segment of the chessboard
 │   ├── ChessClock - chess clock implementation
+│   ├── GameOptions - DTO for game options dialog
 │   ├── MoveAttemptHandler
 │   ├── MoveLogEntry
 │   ├── Piece - represents a chess piece that can be placed on a square
-│   ├── ChessClock - chess clock implementation
+│   ├── ResponsiveRectangle - a resizeable rectangle
 │   └── Square - represents a square on the chessboard
 ├── utils - other utils
+│   ├── DialogUtils
+│   ├── FormUtils
 │   └── StringUtils - string utils
 ├── App - JavaFX application, entrypoint
 ├── ControllerFactory - handles dependency injection for FXML
@@ -202,11 +210,16 @@ _Note: Only chessboard related classes are shown and described._
 `Board` represents the chessboard. It extends from `javafx.scene.layout.Region`.
 It handles positioning of its children nodes (instances of `Square` and `BorderSegment`) in `layoutChildren()`.
 It is **fully responsive** (It automatically adapts the layout according to the available width from its parent).
+It supports **moving chess pieces using drag and drop**.
  
 `Sqaure` represents a square on the chessboard. It is a container for a `Piece`.
 When a `Piece` is dropped on a `Sqaure`, the `Square` make the `Piece` its child node.
 
 `GameController` (with the help of other controllers) wires everything together (connects the UI and the engine).
+
+**App controllers** (package `cz.martinendler.chess.ui.controllers`)
+are designed to work with the `cz.martinendler.chess.ControllerFactory`
+that **handles automatic dependency injection**.
 
 <img alt="class diagram of the package cz.martinendler.chess.ui" title="cz.martinendler.chess.ui" src="./images/package-ui-v2.png" width="1200" />
 
