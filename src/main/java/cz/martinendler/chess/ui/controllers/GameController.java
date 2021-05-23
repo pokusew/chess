@@ -784,8 +784,10 @@ public class GameController extends AppAwareController implements Initializable,
 
 	}
 
-	// TODO: edit time dialog
+	// TODO: edit chess clock dialog
+	//       (currently chess clock time limit can be set only when creating/opening new game)
 	// TODO: edit player name dialog
+	//       (currently custom names are supported only when loaded from PGN and cannot be changed in the app)
 
 	protected void addMenusToMenuBar() {
 
