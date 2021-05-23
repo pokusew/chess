@@ -1,6 +1,6 @@
 package cz.martinendler.chess;
 
-import cz.martinendler.chess.ui.controllers.AppAwareController;
+import cz.martinendler.chess.ui.controllers.LifecycleAwareController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -37,6 +37,7 @@ public class App extends Application {
 
 	private ControllerFactory controllerFactory;
 	private Stage primaryStage;
+	private Object rootController;
 
 	private static @Nullable String openArg = null;
 
@@ -62,8 +63,24 @@ public class App extends Application {
 
 	@Override
 	public void stop() throws Exception {
+
 		log.info("stop");
+
+		if (rootController != null && rootController instanceof LifecycleAwareController) {
+			log.info("calling rootController.stop()");
+			LifecycleAwareController lifecycleAwareController = (LifecycleAwareController) rootController;
+			lifecycleAwareController.stop();
+		}
+
+		controllerFactory = null;
+		primaryStage = null;
+		rootController = null;
+
+		// in fact, the parent implementation does nothing (see its source)
 		super.stop();
+
+		log.info("stop method end");
+
 	}
 
 	/**
@@ -230,7 +247,9 @@ public class App extends Application {
 	 */
 	private void initRootScene() {
 
-		Pair<Parent, AppAwareController> root = loadFXML("view/game");
+		Pair<Parent, Object> root = loadFXML("view/game");
+
+		rootController = root.getValue();
 
 		Scene scene = new Scene(root.getKey());
 
