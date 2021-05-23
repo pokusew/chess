@@ -189,13 +189,45 @@ public class Game {
 	}
 
 	/**
-	 * Gets the piece on the given square
+	 * Gets the board that was immediately before N-th move
+	 *
+	 * @param moveIdx the move index
+	 * @return the board that was immediately before N-th move
+	 * @throws IllegalArgumentException when the given moveIdx is out of the valid range
+	 */
+	private @NotNull Board getSpecificBoard(int moveIdx) {
+
+		if (moveIdx < 0 || moveIdx >= moveLog.size()) {
+			throw new IllegalArgumentException(
+				"The given moveIdx " + moveIdx + " is out of the valid range [0 ," + (moveLog.size() - 1) + "]"
+			);
+		}
+
+		return moveLog.get(moveIdx).getBoard();
+
+	}
+
+	/**
+	 * Gets the piece on the given square in the current board state
 	 *
 	 * @param square the square
-	 * @return the piece or {@code null} if there is no piece on the given square
+	 * @return the piece or {@code null} if there is no piece on the given square in the current board state
 	 */
 	public @Nullable Piece getPiece(@NotNull Square square) {
 		return board.getPiece(square);
+	}
+
+	/**
+	 * Gets the piece on the given square in board state that was immediately before N-th move
+	 *
+	 * @param moveIdx the move index
+	 * @param square  the square
+	 * @return the piece or {@code null} if there is no piece on the given square in board state
+	 * that was immediately before N-th move
+	 * @throws IllegalArgumentException when the given moveIdx is out of the valid range
+	 */
+	public @Nullable Piece getPiece(int moveIdx, @NotNull Square square) {
+		return getSpecificBoard(moveIdx).getPiece(square);
 	}
 
 	/**
@@ -277,12 +309,25 @@ public class Game {
 	}
 
 	/**
+	 * Generates the FEN representation of the underlying board
+	 * (that was immediately before N-th move)
+	 *
+	 * @param moveIdx the move index
+	 * @throws IllegalArgumentException when the given moveIdx is out of the valid range
+	 * @see Board#getFen(boolean includeCounters)
+	 * @see Board#getFen()
+	 */
+	public String getFen(int moveIdx) {
+		return getSpecificBoard(moveIdx).getFen();
+	}
+
+	/**
 	 * Gets the move log
 	 * TODO: better encapsulation (immutable view)
 	 *
 	 * @return the move log
 	 */
-	public List<MoveLogEntry> getMoveLog() {
+	public @NotNull List<MoveLogEntry> getMoveLog() {
 		return moveLog;
 	}
 
@@ -318,6 +363,17 @@ public class Game {
 
 		return pgnGame;
 
+	}
+
+	/**
+	 * Gets last move index
+	 *
+	 * Returns {@code -1} if there is no move in the move log yet.
+	 *
+	 * @return the last move index in range [-1, number of moves - 1]
+	 */
+	public int getLastMoveIndex() {
+		return moveLog.size() - 1;
 	}
 
 }
