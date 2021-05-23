@@ -13,18 +13,14 @@ import cz.martinendler.chess.pgn.PgnUtils;
 import cz.martinendler.chess.pgn.entity.PgnDatabase;
 import cz.martinendler.chess.pgn.entity.PgnGame;
 import cz.martinendler.chess.pgn.entity.PgnGameTermination;
-import cz.martinendler.chess.ui.Board;
-import cz.martinendler.chess.ui.GameOptions;
-import cz.martinendler.chess.ui.Piece;
-import cz.martinendler.chess.ui.Square;
+import cz.martinendler.chess.ui.*;
+import cz.martinendler.chess.utils.StringUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -50,7 +46,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class GameController extends AppAwareController implements Initializable {
+public class GameController extends AppAwareController implements Initializable, LifecycleAwareController {
 
 	private static final Logger log = LoggerFactory.getLogger(GameController.class);
 
@@ -73,6 +69,7 @@ public class GameController extends AppAwareController implements Initializable 
 	private RightViewController rightViewController;
 
 	// controller state
+	private final @NotNull ChessClock clock;
 	private @Nullable Game game;
 	private @Nullable GameOptions.GameType gameType;
 	private @Nullable Side humanSide;
@@ -81,9 +78,25 @@ public class GameController extends AppAwareController implements Initializable 
 	private int moveIndex;
 
 	public GameController(App app) {
+
 		super(app);
+
 		log.info("constructor");
+
+		clock = new ChessClock(ChessClock.DISABLED, Platform::runLater);
+
 		reset();
+
+	}
+
+	@Override
+	public void stop() {
+
+		log.info("stop");
+
+		// cleanup chess clock thread
+		clock.destroy();
+
 	}
 
 	private void reset() {
@@ -154,6 +167,28 @@ public class GameController extends AppAwareController implements Initializable 
 			}
 
 			viewMove(newValue.intValue());
+
+		});
+
+		clock.setOnRemainingTimeChange((side, time) -> {
+
+			// log.info("clock onRemainingTimeChange: side={} time={}", side, time);
+
+			String formattedTime = StringUtils.formatTimeDuration(time);
+
+			if (side.isWhite()) {
+				whiteInfoController.setSideTime(formattedTime);
+			} else {
+				blackInfoController.setSideTime(formattedTime);
+			}
+
+		});
+
+		clock.setOnTimeElapsedChange(side -> {
+
+			log.info("clock onTimeElapsedChange: side={}", side);
+
+			showTimeElapsedDialog(side);
 
 		});
 
@@ -374,6 +409,9 @@ public class GameController extends AppAwareController implements Initializable 
 			}
 		}
 
+		// notify chess clock about side to move change
+		clock.start(game.getSideToMove());
+
 	}
 
 	private void offerSaveBeforeReset() {
@@ -385,7 +423,7 @@ public class GameController extends AppAwareController implements Initializable 
 
 	}
 
-	private void replaceGame(Game newGame, GameOptions.GameType gameType, Side humanSide) {
+	private void replaceGame(@NotNull Game newGame, @NotNull GameOptions.GameType gameType, @NotNull Side humanSide) {
 
 		offerSaveBeforeReset();
 		reset();
@@ -395,6 +433,9 @@ public class GameController extends AppAwareController implements Initializable 
 		this.humanSide = humanSide;
 		dirty = true;
 		saveTo = null;
+
+		// TODO: set from options
+		clock.setRemainingTime(10000L);
 
 		if (gameType == GameOptions.GameType.HUMAN_COMPUTER) {
 			Player computer = game.getPlayer(humanSide.flip());
@@ -711,6 +752,24 @@ public class GameController extends AppAwareController implements Initializable 
 
 	private @Nullable GameOptions showNewGameOptionsDialog() {
 		return showGameOptionsDialog("New Game Options", "view/new-game-dialog");
+	}
+
+	private void showTimeElapsedDialog(@NotNull Side side) {
+
+		if (game == null) {
+			log.info("showTimeElapsedDialog: game == null");
+			return;
+		}
+
+		final String message = "Time on " + side.toString() + "'s chess clock elapsed";
+
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.initOwner(app.getPrimaryStage());
+		alert.setTitle("Time elapsed");
+		alert.setHeaderText(message);
+		alert.setContentText(message);
+		alert.showAndWait();
+
 	}
 
 	// TODO: edit time dialog
