@@ -8,17 +8,26 @@
  */
 
 .app-theme-default {
+
 	/* Looked-up Colors definitions: */
+
 	-fx-custom-menu-color: rgb(34, 32, 29);
 	-fx-custom-menu-color-highlighted: #0096C9;
 	-fx-custom-menu-font-color: #bfbeba;
 	-fx-custom-menu-font-color-highlighted: #ffffff;
-	/* TODO: use Looked-up Colors also for the rest of the colors */
+
 	-fx-chess-square-light-color: #eeeed2;
 	-fx-chess-square-dark-color: #769656;
 	-fx-chess-sqaure-highlight-color: rgba(255, 255, 0, 0.5);
 	-fx-chess-move-hint-color: rgba(0, 0, 0, 0.1);
 	-fx-chess-drag-release-hint-color: rgba(255, 255, 255, 0.65);
+
+	-fx-chess-move-active-bg-color: #0096c9;
+	-fx-chess-move-active-text-color: #ffffff;
+	-fx-chess-move-hover-bg-color: rgba(255, 255, 255, 0.2);
+
+	/* TODO: use Looked-up Colors also for the rest of the colors */
+
 }
 
 .app-root {
@@ -357,10 +366,33 @@
 
 .move-log-entry {
 	-fx-background-color: transparent;
+	-fx-spacing: 20px;
+}
+
+.move-log-entry .inner-box {
 	-fx-min-height: 28px;
 	-fx-pref-height: 28px;
 	-fx-max-height: 28px;
-	-fx-spacing: 20px;
+	-fx-padding: 0 5px 0 5px;
+	-fx-background-radius: 6px;
+	-fx-cursor: hand;
+}
+
+.move-log-entry .inner-box:hover {
+	-fx-background-color: -fx-chess-move-hover-bg-color;
+}
+
+.move-log-entry .inner-box:hover Text {
+	/* no special color */
+	/* -fx-fill: -fx-chess-move-active-text-color; */
+}
+
+.move-log-entry .inner-box.inner-box--active {
+	-fx-background-color: -fx-chess-move-active-bg-color;
+}
+
+.move-log-entry .inner-box.inner-box--active Text {
+	-fx-fill: -fx-chess-move-active-text-color;
 }
 
 .move-log-entry Text {
@@ -374,9 +406,7 @@
 	-fx-background-color: rgba(255, 255, 255, 0.02);
 }
 
-.move-log-entry .counter,
-.move-log-entry .white-move,
-.move-log-entry .black-move {
+.move-log-entry .inner-box {
 	-fx-alignment: center-left;
 }
 

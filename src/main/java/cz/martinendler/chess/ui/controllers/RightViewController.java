@@ -1,12 +1,15 @@
 package cz.martinendler.chess.ui.controllers;
 
 import cz.martinendler.chess.ui.MoveLogEntry;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +34,24 @@ public class RightViewController implements Initializable {
 	@FXML
 	private VBox moveLogContent;
 
+	private final @NotNull SimpleIntegerProperty activeMoveIndex = new SimpleIntegerProperty(
+		null, "activeMoveIndex", 0
+	);
+
 	public RightViewController() {
 		super();
+	}
+
+	public int getActiveMoveIndex() {
+		return activeMoveIndex.get();
+	}
+
+	public @NotNull SimpleIntegerProperty activeMoveIndexProperty() {
+		return activeMoveIndex;
+	}
+
+	public void setActiveMoveIndex(int activeMoveIndex) {
+		this.activeMoveIndex.set(activeMoveIndex);
 	}
 
 	@Override
@@ -40,10 +59,34 @@ public class RightViewController implements Initializable {
 
 		log.info("initialize");
 
-		// moveLog.setOnMouseClicked((MouseEvent event) -> {
-		// 	log.info("onMouseClicked: target " + event.getTarget().toString());
-		// });
+		moveLog.setOnMouseClicked((MouseEvent event) -> {
+			log.info(
+				"onMouseClicked: vertical scroll {}/{}/{}",
+				moveLog.getVmin(), moveLog.getVvalue(), moveLog.getVmax()
+			);
+		});
 
+		moveLogContent.heightProperty().addListener((observable, oldValue, newValue) -> {
+
+			log.info(
+				"moveLogContent height changed: {} -> {}",
+				oldValue.doubleValue(), newValue.doubleValue()
+			);
+
+			scrollMoveLogToEnd();
+
+		});
+
+	}
+
+	/**
+	 * Scrolls the move log to the end (last row)
+	 * <p>
+	 * Note: It might not have any effect if called immediately after move log update
+	 * (before scroll pane's internal relayout happens).
+	 */
+	public void scrollMoveLogToEnd() {
+		moveLog.setVvalue(moveLog.getVmax());
 	}
 
 	/**
@@ -62,7 +105,11 @@ public class RightViewController implements Initializable {
 	 */
 	public void updateMoveLog(List<cz.martinendler.chess.engine.move.MoveLogEntry> gameMoveLog) {
 
-		// TODO: get rid of this horrible thing
+		// TODO: implement whole method in a more effective way than recreating the whole content
+		for (Node oldChild : moveLogContent.getChildren()) {
+			MoveLogEntry oldEntry = (MoveLogEntry) oldChild;
+			oldEntry.deregister();
+		}
 		moveLogContent.getChildren().remove(0, moveLogContent.getChildren().size());
 
 		for (int i = 0, fullMoveCounter = 1; i < gameMoveLog.size(); i += 2, fullMoveCounter++) {
@@ -72,11 +119,21 @@ public class RightViewController implements Initializable {
 				? gameMoveLog.get(i + 1)
 				: null;
 
-			moveLogContent.getChildren().add(new MoveLogEntry(
-				fullMoveCounter, whiteEntry.getSan(), blackEntry != null ? blackEntry.getSan() : null
-			));
+			moveLogContent.getChildren().add(
+				new MoveLogEntry(
+					fullMoveCounter,
+					whiteEntry.getSan(),
+					blackEntry != null ? blackEntry.getSan() : null,
+					activeMoveIndex
+				)
+			);
 
 		}
+
+		// automatically set the active move index to the last move
+		setActiveMoveIndex(gameMoveLog.size() - 1);
+
+		scrollMoveLogToEnd();
 
 	}
 
