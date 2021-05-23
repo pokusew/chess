@@ -20,10 +20,11 @@ reset=$(tput sgr0)
 # here you can rewrite JAVA_HOME and Maven will use it (in case you work with more java versions)
 # export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home
 
-echo "${gray}Running mvm clean ... ${reset}"
+echo "${gray}Running ${bold}${cyan}mvm clean${reset}${gray} ... ${reset}"
 
 mvn clean
 
-echo "${gray}Starting nodemon ... ${reset}"
+echo "${gray}Running ${bold}${cyan}nodemon --exec \"mvn compile && mvn javafx:run ${*}\" --watch 'src/**/*' --config nodemon.json${reset}${gray} ... ${reset}"
 
-nodemon --exec "mvn compile && mvn javafx:run" --watch "src/**/*" --config nodemon.json
+# see https://nodemon.io/
+nodemon --exec "mvn compile && mvn javafx:run ${*}" --watch 'src/**/*' --config nodemon.json

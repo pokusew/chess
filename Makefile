@@ -1,5 +1,4 @@
 EXPORT_DIR = export
-TEMP_DIR = temp
 ZIP = zip
 EXPORT_NAME = endlemar-pjv-semestral-work-chess
 EXPORT_VERSION = $(shell git describe --long --always --dirty="-dirty")
@@ -49,7 +48,7 @@ doc-deploy: doc
 	(cd docs/javadoc && netlify deploy --dir dist --prod)
 
 clean:
-	rm -rf $(EXPORT_DIR) $(TEMP_DIR)
+	rm -rf $(EXPORT_DIR) docs/javadoc/dist
 
 # what is .PHONY? see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
 .PHONY: $(EXPORT_DIR) doc doc-deploy clean
