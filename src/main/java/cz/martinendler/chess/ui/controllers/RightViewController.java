@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.jetbrains.annotations.NotNull;
@@ -58,13 +57,6 @@ public class RightViewController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 
 		log.info("initialize");
-
-		moveLog.setOnMouseClicked((MouseEvent event) -> {
-			log.info(
-				"onMouseClicked: vertical scroll {}/{}/{}",
-				moveLog.getVmin(), moveLog.getVvalue(), moveLog.getVmax()
-			);
-		});
 
 		moveLogContent.heightProperty().addListener((observable, oldValue, newValue) -> {
 
