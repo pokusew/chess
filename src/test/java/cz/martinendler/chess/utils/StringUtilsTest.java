@@ -12,4 +12,14 @@ class StringUtilsTest {
 		assertEquals("   ", StringUtils.leftPad(null, " ", 3));
 	}
 
+	@Test
+	void formatTimeDuration() {
+
+		assertEquals("10:00", StringUtils.formatTimeDuration(10 * 60 * 1000));
+		assertEquals("10:00", StringUtils.formatTimeDuration(10 * 60 * 1000 + 256));
+		assertEquals("04:28", StringUtils.formatTimeDuration(4 * 60 * 1000 + 28 * 1000 + 800));
+		assertEquals("00:00", StringUtils.formatTimeDuration(0));
+		assertEquals("00:00", StringUtils.formatTimeDuration(-1));
+
+	}
 }

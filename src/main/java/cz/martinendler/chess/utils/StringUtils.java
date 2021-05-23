@@ -91,4 +91,33 @@ public class StringUtils {
 		return str.substring(0, idx);
 	}
 
+	/**
+	 * Formats the given time duration as {@code [mm]:[ss]},
+	 * where mm are minutes and ss are seconds (both with leading zero(s))
+	 * <p>
+	 * Note: For negative duration, it returns {@code 00:00}.
+	 *
+	 * @param ms the time duration in milliseconds
+	 * @return the formatted string {@code [mm]:[ss]}
+	 */
+	public static @NotNull String formatTimeDuration(long ms) {
+
+		if (ms <= 0) {
+			return "00:00";
+		}
+
+		long seconds = ms / 1000;
+
+		long mm = seconds / 60;
+		long ss = seconds % 60;
+
+		if (mm > 99) {
+			mm = 99;
+		}
+
+		return leftPad(Long.toString(mm), "0", 2)
+			+ ":" + leftPad(Long.toString(ss), "0", 2);
+
+	}
+
 }
