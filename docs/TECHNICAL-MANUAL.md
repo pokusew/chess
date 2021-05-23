@@ -9,9 +9,17 @@ The Chess App is a Java desktop application powered by [JavaFX](https://openjfx.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Development](#development)
+  - [Running from CLI using Maven](#running-from-cli-using-maven)
+  - [Using with IDE](#using-with-ide)
+  - [Auto restarting on source code changes](#auto-restarting-on-source-code-changes)
+  - [Building a release JAR](#building-a-release-jar)
+  - [Makefile](#makefile)
 - [Used technologies and libraries](#used-technologies-and-libraries)
+- [Javadoc](#javadoc)
 - [App architecture](#app-architecture)
-  - [Class diagram](#class-diagram)
+  - [package: `cz.martinendler.chess.engine`](#package-czmartinendlerchessengine)
+  - [package: `cz.martinendler.chess.pgn`](#package-czmartinendlerchesspgn)
+  - [package: `cz.martinendler.chess.ui`](#package-czmartinendlerchessui)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -23,14 +31,39 @@ The Chess App is a Java desktop application powered by [JavaFX](https://openjfx.
 * **Java 11+** (tested with **Java 15**, note: Java 8 will NOT work)
 * Make sure `JAVA_HOME` is properly set to a JDK 11+ installation directory. 
 
+
+### Running from CLI using Maven
+
 The project can be **run** using Maven CLI as follows:
 ```bash
 mvn clean && mvn compile && mvn javafx:run
 ```
 
+
+### Using with IDE
+
 The project can be also **imported into Intellij IDEA** (_Open or Import_ or _File > New > Project from existing sources ..._ then select Maven ...).
 
-The **executable fat JAR can be built** using:
+
+### Auto restarting on source code changes
+
+There is also [hot.sh](../hot.sh) script that allows automatically rerunning the project on source changes.
+It requires [nodemon](https://nodemon.io/) to be installed globally (via Node.js's npm or Yarn).  
+Usage _(run from the project root)_:
+```bash
+./hot.sh [arguments]
+```
+All arguments are translated to `mvn javafx:run [arguments]`.
+For example, for easier development, one might want to use the following command:
+```bash
+CHESS_UI_POSITION='-1500:100' ./hot.sh '-Djavafx.args=--open=/absolute/path/to/sample-file.pgn'
+```
+For more info about `CHESS_UI_POSITION` and `--open` option, see the code of `cz.martinendler.chess.App` class.
+
+
+### Building a release JAR
+
+The **executable fat JAR (i.e. all dependencies included) can be built** using:
 ```bash
 ./build.sh
 ```
@@ -40,6 +73,18 @@ It can be run as follows:
 ```bash
 java -jar target/chess-1.0-SNAPSHOT-jar-with-dependencies.jar
 ```
+
+
+### Makefile
+
+The project level [Makefile](../Makefile) defines these commands:
+* `make export` – exports the whole repository as ZIP,
+    output: `export/endlemar-pjv-semestral-work-chess-[version via git describe].zip`
+* `make doc` – generates HTML Javadoc in `docs/javadoc/dist` that is ready to be deployed
+* `make doc-deploy` – deploys `docs/javadoc/dist` to Netlify
+* `make clean` – cleans `make export` and `make doc` outputs
+
+See the [Makefile](../Makefile) definition for more details.
 
 
 ## Used technologies and libraries
