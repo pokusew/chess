@@ -2,6 +2,8 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
 <AnchorPane
 	xmlns:fx="http://javafx.com/fxml"
 	prefWidth="800.0"
@@ -21,42 +23,79 @@
 				<ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" prefWidth="400"/>
 			</columnConstraints>
 			<children>
+
 				<Label
 					text="Starting position in FEN"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="0"
-				/>
-				<Label
-					text="Game type"
-					GridPane.columnIndex="0"
-					GridPane.rowIndex="1"
-				/>
-				<Label
-					text="Human side"
-					GridPane.columnIndex="0"
-					GridPane.rowIndex="2"
 				/>
 				<TextField
 					fx:id="fenField"
 					GridPane.columnIndex="1"
 					GridPane.rowIndex="0"
 				/>
+
+				<Label
+					text="Game type"
+					GridPane.columnIndex="0"
+					GridPane.rowIndex="1"
+				/>
 				<ComboBox
 					fx:id="typeField"
 					GridPane.columnIndex="1"
 					GridPane.rowIndex="1"
+				/>
+
+				<Label
+					text="Human side"
+					GridPane.columnIndex="0"
+					GridPane.rowIndex="2"
 				/>
 				<ComboBox
 					fx:id="humanSideField"
 					GridPane.columnIndex="1"
 					GridPane.rowIndex="2"
 				/>
-				<ButtonBar GridPane.rowIndex="3" GridPane.columnSpan="2">
+
+				<Label
+					GridPane.columnIndex="0"
+					GridPane.rowIndex="3"
+					GridPane.columnSpan="2"
+					wrapText="true"
+				>
+					Chess clock time limit in minutes.&#13;
+					When set to 0, player's chess clock is disabled:
+				</Label>
+
+				<Label
+					text="WHITE time limit"
+					GridPane.columnIndex="0"
+					GridPane.rowIndex="4"
+				/>
+				<TextField
+					fx:id="whiteTimeLimitField"
+					GridPane.columnIndex="1"
+					GridPane.rowIndex="4"
+				/>
+
+				<Label
+					text="BLACK time limit"
+					GridPane.columnIndex="0"
+					GridPane.rowIndex="5"
+				/>
+				<TextField
+					fx:id="blackTimeLimitField"
+					GridPane.columnIndex="1"
+					GridPane.rowIndex="5"
+				/>
+
+				<ButtonBar GridPane.rowIndex="6" GridPane.columnSpan="2">
 					<buttons>
 						<Button mnemonicParsing="false" onAction="#handleSubmit" text="Start"/>
 						<Button mnemonicParsing="false" onAction="#handleCancel" text="Cancel"/>
 					</buttons>
 				</ButtonBar>
+
 			</children>
 		</GridPane>
 	</children>

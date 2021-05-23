@@ -103,6 +103,8 @@ public class GameController extends AppAwareController implements Initializable,
 
 		log.info("reset");
 
+		clock.stop();
+
 		game = null;
 		gameType = null;
 		humanSide = null;
@@ -423,7 +425,13 @@ public class GameController extends AppAwareController implements Initializable,
 
 	}
 
-	private void replaceGame(@NotNull Game newGame, @NotNull GameOptions.GameType gameType, @NotNull Side humanSide) {
+	private void replaceGame(
+		@NotNull Game newGame,
+		@NotNull GameOptions.GameType gameType,
+		@NotNull Side humanSide,
+		long whiteTimeLimit,
+		long blackTimeLimit
+	) {
 
 		offerSaveBeforeReset();
 		reset();
@@ -434,8 +442,8 @@ public class GameController extends AppAwareController implements Initializable,
 		dirty = true;
 		saveTo = null;
 
-		// TODO: set from options
-		clock.setRemainingTime(10000L);
+		clock.setRemainingTime(Side.WHITE, whiteTimeLimit);
+		clock.setRemainingTime(Side.BLACK, blackTimeLimit);
 
 		if (gameType == GameOptions.GameType.HUMAN_COMPUTER) {
 			Player computer = game.getPlayer(humanSide.flip());
@@ -460,7 +468,9 @@ public class GameController extends AppAwareController implements Initializable,
 		replaceGame(
 			new Game(options.getStartingFen()),
 			options.getType(),
-			options.getHumanSide()
+			options.getHumanSide(),
+			options.getWhiteTimeLimit(),
+			options.getBlackTimeLimit()
 		);
 
 	}
@@ -527,7 +537,9 @@ public class GameController extends AppAwareController implements Initializable,
 		replaceGame(
 			gameFromPgn,
 			options.getType(),
-			options.getHumanSide()
+			options.getHumanSide(),
+			options.getWhiteTimeLimit(),
+			options.getBlackTimeLimit()
 		);
 
 	}

@@ -213,6 +213,13 @@ public class ChessClock {
 	}
 
 	/**
+	 * Stops counting
+	 */
+	public void stop() {
+		start(null);
+	}
+
+	/**
 	 * The code that runs in {@link #thread}
 	 */
 	private void run() {

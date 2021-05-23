@@ -2,7 +2,6 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <AnchorPane
 	xmlns:fx="http://javafx.com/fxml"
 	fx:controller="cz.martinendler.chess.ui.controllers.GameDialogController"
@@ -21,32 +20,68 @@
 				<ColumnConstraints hgrow="ALWAYS"/>
 			</columnConstraints>
 			<children>
+
 				<Label
 					text="Game type"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="0"
-				/>
-				<Label
-					text="Human side"
-					GridPane.columnIndex="0"
-					GridPane.rowIndex="1"
 				/>
 				<ComboBox
 					fx:id="typeField"
 					GridPane.columnIndex="1"
 					GridPane.rowIndex="0"
 				/>
+
+				<Label
+					text="Human side"
+					GridPane.columnIndex="0"
+					GridPane.rowIndex="1"
+				/>
 				<ComboBox
 					fx:id="humanSideField"
 					GridPane.columnIndex="1"
 					GridPane.rowIndex="1"
 				/>
-				<ButtonBar GridPane.rowIndex="2" GridPane.columnSpan="2">
+
+				<Label
+					GridPane.columnIndex="0"
+					GridPane.rowIndex="2"
+					GridPane.columnSpan="2"
+					wrapText="true"
+				>
+					Chess clock time limit in minutes.&#13;
+					When set to 0, player's chess clock is disabled:
+				</Label>
+
+				<Label
+					text="WHITE time limit"
+					GridPane.columnIndex="0"
+					GridPane.rowIndex="3"
+				/>
+				<TextField
+					fx:id="whiteTimeLimitField"
+					GridPane.columnIndex="1"
+					GridPane.rowIndex="3"
+				/>
+
+				<Label
+					text="BLACK time limit"
+					GridPane.columnIndex="0"
+					GridPane.rowIndex="4"
+				/>
+				<TextField
+					fx:id="blackTimeLimitField"
+					GridPane.columnIndex="1"
+					GridPane.rowIndex="4"
+				/>
+
+				<ButtonBar GridPane.rowIndex="5" GridPane.columnSpan="2">
 					<buttons>
 						<Button mnemonicParsing="false" onAction="#handleSubmit" text="Start"/>
 						<Button mnemonicParsing="false" onAction="#handleCancel" text="Cancel"/>
 					</buttons>
 				</ButtonBar>
+
 			</children>
 		</GridPane>
 	</children>
